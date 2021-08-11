@@ -25,6 +25,14 @@
             android:text="Celsius"
             android:textSize="30dp" />
 
+        <EditText
+            android:id="@+id/choose_city"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:hint="Choose City"
+            android:background="@color/white"
+            android:layout_marginLeft="50dp"/>
+
         <ImageButton
             android:id="@+id/refresh_btn"
             android:layout_width="wrap_content"
@@ -37,6 +45,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
+        android:id="@+id/frame_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
