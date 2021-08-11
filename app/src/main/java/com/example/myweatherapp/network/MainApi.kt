@@ -7,6 +7,12 @@ import retrofit2.http.Query
 
 interface MainApi {
 
+   /* @GET("box/city")
+    suspend fun getCitiesList(@Query("bbox") bbox: String,
+                              @Query("appid") appid: String): Response<List<Weather>>*/
+
     @GET("weather")
-    suspend fun getWeather(@Query("q") cityName: String, @Query("appid") appid: String): Response<Weather>
+    suspend fun getWeather(@Query("q") cityName: String,
+                           @Query("appid") appid: String,
+                           @Query("units") units: String): Response<Weather>
 }

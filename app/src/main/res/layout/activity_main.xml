@@ -17,13 +17,13 @@
 
 
         <TextView
-            android:id="@+id/celsius"
+            android:id="@+id/degree_units"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="30dp"
             android:text="Celsius"
-            android:textSize="30dp" />
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/choose_city"

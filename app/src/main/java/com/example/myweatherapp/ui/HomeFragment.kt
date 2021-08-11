@@ -15,10 +15,12 @@ import kotlinx.android.synthetic.main.home_fragment_layout.*
 class HomeFragment : Fragment() {
     private val mViewModel: MainViewModel by viewModels()
     private lateinit var mCityName: String
+    private lateinit var mUnits: String
 
     companion object {
-        fun newInstance(cityName: String) = HomeFragment().apply {
+        fun newInstance(cityName: String, units: String) = HomeFragment().apply {
             mCityName = cityName
+            mUnits = units
         }
     }
 
@@ -27,13 +29,14 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.home_fragment_layout, container, false)
-        mViewModel.getWeather(mCityName)
-        mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer {
-            city_name.text = it.name
+        mViewModel.getWeather(mCityName, mUnits)
+
+        mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer {weather->
+            city_name.text = weather.name
+            clear_sky.text = weather.weather[0].description
+            current_temp.text = weather.main.temp.toString()
+            temp_var.text = "min " +weather.main.temp_min.toString() + "- max " + weather.main.temp_max.toString()
         })
-
-
-        /* city_name = */
 
         return v
     }
