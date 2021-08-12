@@ -12,7 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainListener {
     private val mViewModel: MainViewModel by viewModels()
     private var mUnits = "metric"
     private lateinit var mCityName: String
@@ -21,7 +21,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        mViewModel.getCitiesList()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frame_layout, HomeFragment.newInstance(mUnits, this), "HOME_FRAGMENT")
+            .addToBackStack(null)
+            .commit()
 
         degree_units.setOnClickListener {
             if (degree_units.text.equals("Celsius")) {
@@ -38,29 +41,27 @@ class MainActivity : AppCompatActivity() {
             refreshBtn()
         }
 
-        choose_city.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                mCityName = s.toString()
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.frame_layout, HomeFragment.newInstance(s.toString(), mUnits))
-                    .commit()
-            }
-
-        })
-
-
     }
 
     private fun refreshBtn() {
+        if (supportFragmentManager.findFragmentByTag("HOME_FRAGMENT")?.isVisible!!) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame_layout, HomeFragment.newInstance(mUnits, this), "HOME_FRAGMENT")
+                .addToBackStack(null)
+                .commit()
+        } else if (supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")?.isVisible!!) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.frame_layout, CityFragment.newInstance(mCityName, mUnits), "CITY_FRAGMENT")
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    override fun replaceFragment(cityName: String) {
+        mCityName = cityName
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_layout, HomeFragment.newInstance(mCityName, mUnits))
+            .replace(R.id.frame_layout, CityFragment.newInstance(cityName, mUnits), "CITY_FRAGMENT")
+            .addToBackStack(null)
             .commit()
     }
 }
