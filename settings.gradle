@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name = "Dagger Hilt MVVM"
+rootProject.name = "Evyatar Weather App"

@@ -21,6 +21,17 @@ class MainViewModel @ViewModelInject constructor(private val repository: Weather
         get() = mCitiesLiveData
 
 
+    fun getCityByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
+        repository.getCityByLocation(lat, long, units).let { response ->
+            if (response.isSuccessful) {
+                mLiveData.postValue(response.body())
+            } else {
+                Log.d("TAG", "getCityByLocation Error Response: ${response.message()}")
+            }
+        }
+    }
+
+
     fun getCitiesList(units: String) = viewModelScope.launch {
         repository. getCitiesList(units).let { response ->
             if (response.isSuccessful) {

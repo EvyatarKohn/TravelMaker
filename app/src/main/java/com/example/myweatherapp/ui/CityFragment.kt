@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.myweatherapp.R
@@ -16,11 +17,18 @@ class CityFragment: Fragment() {
     private val mViewModel: MainViewModel by viewModels()
     private lateinit var mCityName: String
     private lateinit var mUnits: String
+    private lateinit var mLat: String
+    private lateinit var mLong: String
+    private lateinit var mMainListener: MainListener
+    private lateinit var nBtn: Button
 
     companion object {
-        fun newInstance(cityName: String, units: String) = CityFragment().apply {
+        fun newInstance(lat: String, long: String, cityName: String, units: String, mainListener: MainListener) = CityFragment().apply {
             mCityName = cityName
             mUnits = units
+            mLat = lat
+            mLong = long
+            mMainListener = mainListener
         }
     }
 
@@ -29,12 +37,20 @@ class CityFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.city_fragment_layout, container, false)
+        nBtn = v.findViewById(R.id.to_cities_list_btn)
         var degreeUnit = "\u2103"
         if (mUnits == "imperial") {
             degreeUnit = "\u2109"
         }
-
-        mViewModel.getWeather(mCityName, mUnits)
+        if (mLat.isNullOrEmpty() || mLong.isNullOrEmpty()) {
+            mViewModel.getWeather(mCityName, mUnits)
+            nBtn.visibility = View.GONE
+        } else {
+            mViewModel.getCityByLocation(mLat, mLong, mUnits)
+            nBtn.setOnClickListener {
+                mMainListener.replaceToCitiesListFragment()
+            }
+        }
 
         mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer {weather->
             city_name.text = weather.name

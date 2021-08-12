@@ -12,22 +12,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myweatherapp.adapter.CitiesAdapter
 import com.example.myweatherapp.citiesmodel.CityData
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.home_fragment_layout.*
+import kotlinx.android.synthetic.main.cities_fragment_layout.*
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
-
+class CitiesFragment : Fragment() {
     private val mViewModel: MainViewModel by viewModels()
     private lateinit var mAdapter: CitiesAdapter
     private lateinit var mCitiesList: List<CityData>
-    private lateinit var maMinListener: MainListener
+    private lateinit var mMainListener: MainListener
     private lateinit var mUnits: String
 
 
     companion object {
-        fun newInstance(units: String, mainListener: MainListener) = HomeFragment().apply {
+        fun newInstance(units: String, mainListener: MainListener) = CitiesFragment().apply {
             mUnits = units
-            maMinListener = mainListener
+            mMainListener = mainListener
         }
     }
 
@@ -35,20 +34,17 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val v = inflater.inflate(R.layout.home_fragment_layout, container, false)
+        val v = inflater.inflate(R.layout.cities_fragment_layout, container, false)
         mViewModel.getCitiesList(mUnits)
 
         mViewModel.citiesWeatherRepo.observe(viewLifecycleOwner, Observer { citiesWeather ->
             mCitiesList = citiesWeather.list
-            mAdapter = CitiesAdapter(mCitiesList, maMinListener, mUnits)
+            mAdapter = CitiesAdapter(mCitiesList, mMainListener, mUnits)
             val layoutManager = LinearLayoutManager(activity?.applicationContext)
             recycler_view.layoutManager = layoutManager
             recycler_view.adapter = mAdapter
         })
 
-/*
-        mAdapter = CitiesAdapter()
-        recycler_view*/
         return v
     }
 
