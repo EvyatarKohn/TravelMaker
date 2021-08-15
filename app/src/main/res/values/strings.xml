@@ -1,3 +1,39 @@
 <resources>
-    <string name="app_name">Evyatar Weather App</string>
+    <string name="app_name">Evya Weather App</string>
+
+    <!-- Activity texts  -->
+    <string name="degree_units_celsius">Celsius</string>
+    <string name="degree_units_fahrenheit">Fahrenheit</string>
+
+    <!-- City Fragment texts  -->
+    <string name="to_cities_list_btn">to cities list</string>
+    <string name="to_custom_city_btn">to custom city</string>
+
+    <!-- Custom City Fragment texts  -->
+    <string name="choose_city_error_message_no_fields">You forgot something!</string>
+    <string name="choose_city_error_message_only_one_fields">You need to choose only one option</string>
+    <string name="city_name_title">Choose city by name:</string>
+    <string name="city_name">City name</string>
+    <string name="lat_long_title">Choose city by\nlat &amp; long:</string>
+    <string name="longitude">Longitude</string>
+    <string name="latitude">Latitude</string>
+    <string name="continue_btn">Continue</string>
+    <string name="city_name_country">%1$s (%2$s)</string>
+    <string name="humidity">Humidity: %1$s</string>
+    <string name="wind_speed">Wind: %1$s</string>
+    <string name="right_now_temp">Right now: %1$s</string>
+    <string name="feels_like_temp">Feels like: %1$s</string>
+    <string name="temp_var">min %1$s - max %2$s</string>
+
+
+    <!-- Adapter strings  -->
+    <string name="adapter_city_name">Tel-aviv</string>
+    <string name="adapter_clear_sky">Sunny</string>
+    <string name="adapter_wind_speed">2.5 m/s</string>
+
+
+    <!-- Permission denied dialog texts  -->
+    <string name="you_have_to_approve_permissions">You Have to approve location permissions to use this app</string>
+    <string name="exit_btn">Exit</string>
+    <string name="approve_permissions">Approve</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.myweatherapp.ui
+package com.example.myweatherapp.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +11,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myweatherapp.adapter.CitiesAdapter
 import com.example.myweatherapp.citiesmodel.CityData
+import com.example.myweatherapp.ui.MainListener
+import com.example.myweatherapp.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.cities_fragment_layout.*
 

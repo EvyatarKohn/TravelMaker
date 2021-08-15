@@ -1,96 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lite_blue">
 
     <TextView
-        android:id="@+id/city_name"
+        android:id="@+id/error_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:textSize="30dp"
+        android:layout_marginTop="85dp"
+        android:gravity="center"
+        android:text="@string/choose_city_error_message_no_fields"
+        android:textColor="@color/red"
+        android:textSize="15dp"
+        android:visibility="invisible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/clear_sky"
+        android:id="@+id/name_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="@string/city_name_title"
+        android:textSize="30dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/error_title" />
+
+
+    <EditText
+        android:id="@+id/city_name"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:gravity="center"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ -''"
+        android:hint="@string/city_name"
+        android:textSize="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_title" />
+
+    <TextView
+        android:id="@+id/lat_long_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/lat_long_title"
         android:textSize="30dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/city_name" />
 
-    <TextView
-        android:id="@+id/humidity"
-        android:layout_width="wrap_content"
+
+    <EditText
+        android:id="@+id/latitude"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textSize="30dp"
+        android:layout_marginTop="35dp"
+        android:digits="1234567890."
+        android:gravity="center"
+        android:hint="@string/latitude"
+        android:textSize="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clear_sky" />
+        app:layout_constraintTop_toBottomOf="@+id/lat_long_title" />
 
-    <TextView
-        android:id="@+id/wind_speed"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/longitude"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textSize="30dp"
+        android:digits="1234567890."
+        android:gravity="center"
+        android:hint="@string/longitude"
+        android:textSize="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/humidity" />
-
-    <TextView
-        android:id="@+id/current_temp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textSize="30dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wind_speed" />
-
-    <TextView
-        android:id="@+id/feels_like"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textSize="30dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_temp" />
-
-    <TextView
-        android:id="@+id/temp_var"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="25dp"
-        android:textSize="25dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feels_like" />
-
-    <TextView
-        android:id="@+id/sunrise_sunset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="25dp"
-        android:textSize="25dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/temp_var" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/latitude" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -113,13 +103,14 @@
             android:visibility="visible" />
 
         <Button
-            android:id="@+id/to_custom_city_btn"
+            android:id="@+id/continue_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="25dp"
             android:layout_marginBottom="15dp"
             android:layout_weight="0.5"
-            android:text="@string/to_custom_city_btn"
-            android:visibility="visible" />
+            android:text="@string/continue_btn" />
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

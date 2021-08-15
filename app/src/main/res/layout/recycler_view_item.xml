@@ -31,7 +31,7 @@
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tel-aviv"
+            android:text="@string/adapter_city_name"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:textColor="@color/white" />
@@ -40,9 +40,18 @@
             android:id="@+id/clear_sky_rec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="sunny"
+            android:text="@string/adapter_city_name"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/city_name"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/adapter_wind_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/adapter_wind_speed"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clear_sky_rec"
             android:textColor="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

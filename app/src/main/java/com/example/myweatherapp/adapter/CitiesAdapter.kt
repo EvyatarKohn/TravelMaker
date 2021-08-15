@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myweatherapp.R
 import com.example.myweatherapp.citiesmodel.CityData
 import com.example.myweatherapp.ui.MainListener
+import kotlinx.android.synthetic.main.city_fragment_layout.*
 import kotlinx.android.synthetic.main.city_fragment_layout.view.*
 import kotlinx.android.synthetic.main.recycler_view_item.view.*
 import kotlinx.android.synthetic.main.recycler_view_item.view.city_name
@@ -31,8 +32,10 @@ class CitiesAdapter(
     override fun onBindViewHolder(holder: CitiesViewHolder, position: Int) {
         var weatherImage = R.drawable.ic_day
         var degreeUnit = "\u2103"
+        var windSpeedDgree =" m/s"
         if (degreeUnits == "imperial") {
             degreeUnit = "\u2109"
+            windSpeedDgree = " miles/hr"
         }
         when {
             citiesList[position].clouds.today in 1..99 -> {
@@ -54,6 +57,7 @@ class CitiesAdapter(
         holder.bind(
             citiesList[position].name,
             citiesList[position].weather[0].description,
+            "wind: " + String.format("%.2f", citiesList[position].wind.speed) + windSpeedDgree,
             weatherImage,
             citiesList[position].main.temp_min.toInt().toString() + degreeUnit,
             citiesList[position].main.temp_max.toInt().toString() + degreeUnit,
@@ -68,12 +72,14 @@ class CitiesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.recycler_view_item, parent, false)) {
     private var mCityName: TextView? = null
     private var mClearSky: TextView? = null
+    private var mWindSpeed: TextView? = null
     private var mWeatherImage: ImageView? = null
     private var mTemp: TextView? = null
 
     init {
         mCityName = itemView.city_name
         mClearSky = itemView.clear_sky_rec
+        mWindSpeed = itemView.adapter_wind_speed
         mWeatherImage = itemView.weather_image
         mTemp = itemView.temp
     }
@@ -81,6 +87,7 @@ class CitiesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     fun bind(
         cityName: String,
         clearSky: String,
+        windSpeed: String,
         weatherImage: Int,
         tempMin: String,
         tempMax: String,
@@ -89,10 +96,10 @@ class CitiesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mCityName?.text = cityName
         mTemp?.text = "min $tempMin - max $tempMax"
         mClearSky?.text = clearSky
+        mWindSpeed?.text = windSpeed
         mWeatherImage?.setBackgroundResource(weatherImage)
         itemView.setOnClickListener {
-            mainListener.replaceFragment(mCityName?.text.toString())
+            mainListener.replaceFragment(mCityName?.text.toString(), "", "")
         }
-
     }
 }

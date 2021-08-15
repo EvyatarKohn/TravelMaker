@@ -1,4 +1,4 @@
-package com.example.myweatherapp.ui
+package com.example.myweatherapp.ui.viewmodels
 
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
