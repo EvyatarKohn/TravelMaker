@@ -48,7 +48,7 @@ class CustomCityFragment : Fragment() {
         }
 
         mToCitiesListBtn.setOnClickListener {
-            mMainListener.replaceToCitiesListFragment()
+            mMainListener.replaceToCitiesListFragment("")
         }
 
         return v

@@ -23,12 +23,14 @@ class CitiesFragment : Fragment() {
     private lateinit var mCitiesList: List<CityData>
     private lateinit var mMainListener: MainListener
     private lateinit var mUnits: String
+    private lateinit var mBoundaryBox: String /*"34,29.5,34.9,36.5,200"*/
 
 
     companion object {
-        fun newInstance(units: String, mainListener: MainListener) = CitiesFragment().apply {
+        fun newInstance(units: String, boundaryBox: String, mainListener: MainListener) = CitiesFragment().apply {
             mUnits = units
             mMainListener = mainListener
+            mBoundaryBox = boundaryBox
         }
     }
 
@@ -37,8 +39,8 @@ class CitiesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.cities_fragment_layout, container, false)
-        mViewModel.getCitiesList(mUnits)
 
+        getCitiesList(mUnits, mBoundaryBox)
         mViewModel.citiesWeatherRepo.observe(viewLifecycleOwner, Observer { citiesWeather ->
             mCitiesList = citiesWeather.list
             mAdapter = CitiesAdapter(mCitiesList, mMainListener, mUnits)
@@ -48,6 +50,11 @@ class CitiesFragment : Fragment() {
         })
 
         return v
+    }
+
+    fun getCitiesList(units: String, boundaryBox: String) {
+        mUnits = units
+        mViewModel.getCitiesList(units, boundaryBox)
     }
 
 }

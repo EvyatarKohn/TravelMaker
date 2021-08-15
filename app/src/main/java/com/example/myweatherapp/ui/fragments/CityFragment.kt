@@ -49,20 +49,14 @@ class CityFragment: Fragment() {
         mCitiesListBtn = v.findViewById(R.id.to_cities_list_btn)
         mCustomCityBtn = v.findViewById(R.id.to_custom_city_btn)
 
-        var degreeUnit = "\u2103"
-        var windSpeedDgree =" m/s"
-        if (mUnits == "imperial") {
-            degreeUnit = "\u2109"
-            windSpeedDgree = " miles/hr"
-        }
         if (mLat.isNullOrEmpty() || mLong.isNullOrEmpty()) {
-            mViewModel.getWeather(mCityName, mUnits)
+            getWeather(mCityName, mUnits)
             mCitiesListBtn.visibility = View.GONE
             mCustomCityBtn.visibility = View.GONE
         } else {
-            mViewModel.getCityByLocation(mLat, mLong, mUnits)
+            getCityByLocation(mLat, mLong, mUnits)
             mCitiesListBtn.setOnClickListener {
-                mMainListener.replaceToCitiesListFragment()
+                mMainListener.showCitiesListDialog()
             }
             mCustomCityBtn.setOnClickListener {
                 mMainListener.replaceToCustomCityFragment()
@@ -73,6 +67,12 @@ class CityFragment: Fragment() {
             city_name.text = getString(R.string.city_name_country, weather.name, weather.sys.country)
             clear_sky.text = weather.weather[0].description
             humidity.text = getString(R.string.humidity, weather.main.humidity.toString() + "%")
+            var degreeUnit = "\u2103"
+            var windSpeedDgree =" m/s"
+            if (mUnits == "imperial") {
+                degreeUnit = "\u2109"
+                windSpeedDgree = " miles/hr"
+            }
             wind_speed.text = getString(R.string.wind_speed, weather.wind.speed.toString() + windSpeedDgree)
             current_temp.text = getString(R.string.right_now_temp, weather.main.temp.toInt().toString() + degreeUnit)
             feels_like.text = getString(R.string.feels_like_temp, weather.main.feels_like.toInt().toString() + degreeUnit)
@@ -81,6 +81,16 @@ class CityFragment: Fragment() {
         })
 
         return v
+    }
+
+    fun getCityByLocation(lat: String, long: String, units: String) {
+        mUnits = units
+        mViewModel.getCityByLocation(lat, long, units)
+    }
+
+    fun getWeather(cityName: String, units: String) {
+        mUnits = units
+        mViewModel.getWeather(cityName, units)
     }
 
     private fun sunRiseSunSetTime(sunRise: Int, sunSet: Int): String {

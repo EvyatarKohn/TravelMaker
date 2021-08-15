@@ -24,6 +24,8 @@ import android.content.Intent
 import android.R.attr.name
 import android.net.Uri
 import android.provider.Settings
+import android.view.View
+import com.example.myweatherapp.ui.dialogs.CustomCitiesListDialog
 
 
 @ExperimentalCoroutinesApi
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity(), MainListener {
     private var mCityName = "Tel-aviv"
     private var mLat: String = "32.083333"
     private var mLong: String = "34.7999968"
+    private var mBoundaryBox = "34,29.5,34.9,36.5,200"
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
 
@@ -162,39 +165,47 @@ class MainActivity : AppCompatActivity(), MainListener {
     private fun refreshBtn() {
         when {
             supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")?.isVisible != null -> {
-                supportFragmentManager.beginTransaction()
+/*                supportFragmentManager.beginTransaction()
                     .replace(
                         R.id.frame_layout,
                         CityFragment.newInstance("", "", mCityName, mUnits, this),
                         "CITY_FRAGMENT"
                     )
                     .addToBackStack(null)
-                    .commit()
+                    .commit()*/
+                val myFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")
+                (myFragment as CityFragment).getWeather(mCityName, mUnits)
             }
             supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")?.isVisible != null -> {
-                supportFragmentManager.beginTransaction()
+/*                supportFragmentManager.beginTransaction()
                     .replace(
                         R.id.frame_layout,
-                        CitiesFragment.newInstance(mUnits, this),
+                        CitiesFragment.newInstance(mUnits, mBoundaryBox, this),
                         "CITIES_FRAGMENT"
                     )
                     .addToBackStack(null)
-                    .commit()
+                    .commit()*/
+                val myFragment = supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")
+                (myFragment as CitiesFragment).getCitiesList(mUnits, mBoundaryBox)
             }
             supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")?.isVisible != null -> {
-                supportFragmentManager.beginTransaction()
+              /*  supportFragmentManager.beginTransaction()
                     .replace(
                         R.id.frame_layout,
                         CityFragment.newInstance(mLat, mLong, "", mUnits, this),
                         "CITY_FRAGMENT_LOCATION"
                     )
                     .addToBackStack(null)
-                    .commit()
+                    .commit()*/
+                val myFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
+                (myFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
             }
         }
     }
 
     override fun replaceFragment(cityName: String, lat: String, long: String) {
+        degree_units.visibility = View.VISIBLE
+        refresh_btn.visibility = View.VISIBLE
         mCityName = cityName
         supportFragmentManager.beginTransaction()
             .replace(
@@ -206,14 +217,21 @@ class MainActivity : AppCompatActivity(), MainListener {
             .commit()
     }
 
-    override fun replaceToCitiesListFragment() {
+    override fun replaceToCitiesListFragment(boundaryBox: String) {
+        degree_units.visibility = View.VISIBLE
+        refresh_btn.visibility = View.VISIBLE
+        if (!boundaryBox.isNullOrEmpty()) {
+            mBoundaryBox = boundaryBox
+        }
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_layout, CitiesFragment.newInstance(mUnits, this), "CITIES_FRAGMENT")
+            .replace(R.id.frame_layout, CitiesFragment.newInstance(mUnits, mBoundaryBox, this), "CITIES_FRAGMENT")
             .addToBackStack(null)
             .commit()
     }
 
     override fun replaceToCustomCityFragment() {
+        degree_units.visibility = View.GONE
+        refresh_btn.visibility = View.GONE
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.frame_layout,
@@ -224,11 +242,13 @@ class MainActivity : AppCompatActivity(), MainListener {
             .commit()
     }
 
+    override fun showCitiesListDialog() {
+        CustomCitiesListDialog().show(supportFragmentManager, "CUSTOM_CITIES_LIST_DIALOG")
+    }
+
     fun goToPermissionSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
-
-
 }

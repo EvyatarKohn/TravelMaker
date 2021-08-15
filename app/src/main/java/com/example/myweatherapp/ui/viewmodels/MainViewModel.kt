@@ -9,8 +9,7 @@ import com.example.myweatherapp.repository.WeatherRepository
 import kotlinx.coroutines.launch
 
 
-class MainViewModel @ViewModelInject constructor(private val repository: WeatherRepository) :
-    ViewModel() {
+class MainViewModel @ViewModelInject constructor(private val repository: WeatherRepository) : ViewModel() {
 
     private var mLiveData = MutableLiveData<Weather>()
     val weatherRepo: LiveData<Weather>
@@ -32,8 +31,8 @@ class MainViewModel @ViewModelInject constructor(private val repository: Weather
     }
 
 
-    fun getCitiesList(units: String) = viewModelScope.launch {
-        repository. getCitiesList(units).let { response ->
+    fun getCitiesList(units: String, boundaryBox: String) = viewModelScope.launch {
+        repository. getCitiesList(units, boundaryBox).let { response ->
             if (response.isSuccessful) {
                 mCitiesLiveData.postValue(response.body())
             } else {
