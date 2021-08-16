@@ -39,14 +39,14 @@
 
 
     <!-- Custom cities list dialog texts  -->
-    <string name="custom_cities_list_dialog_error">Did you forgot something?</string>
-    <string name="custom_cities_list_dialog_title">Please enter your boarder (Bounding box) of your country/area/n(lat - east &amp; west, long - north &amp; south)</string>
+    <string name="custom_cities_list_dialog_error">Please enter your four boarder of your country/area\n(lat  &amp; long)</string>
+    <string name="custom_cities_list_dialog_title">Please enter your boarder (Bounding box) of your country/area\n(lat - east &amp; west, long - north &amp; south)</string>
     <string name="custom_cities_list_dialog_continue_btn">Exit</string>
     <string name="custom_cities_list_dialog_default_btn">Approve</string>
-    <string name="longitude_west">Longitude West</string>
-    <string name="longitude_east">Longitude East</string>
-    <string name="latitude_north">Latitude North</string>
-    <string name="latitude_south">Latitude South</string>
+    <string name="latitude_west">Lat West</string>
+    <string name="latitude_east">Lat East</string>
+    <string name="longitude_north">Long North</string>
+    <string name="longitude_south">Long South</string>
     <string name="custom_cities_custom_btn">Continue</string>
     <string name="custom_cities_default_btn">To default List</string>
 

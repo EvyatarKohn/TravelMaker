@@ -21,8 +21,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import android.content.Intent
 
-import android.R.attr.name
 import android.net.Uri
+import android.os.Handler
 import android.provider.Settings
 import android.view.View
 import com.example.myweatherapp.ui.dialogs.CustomCitiesListDialog
@@ -139,8 +139,8 @@ class MainActivity : AppCompatActivity(), MainListener {
     }
 
     private fun checkPermissions(): Boolean {
-        return (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        return (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun requestPermissions() {
@@ -165,47 +165,21 @@ class MainActivity : AppCompatActivity(), MainListener {
     private fun refreshBtn() {
         when {
             supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")?.isVisible != null -> {
-/*                supportFragmentManager.beginTransaction()
-                    .replace(
-                        R.id.frame_layout,
-                        CityFragment.newInstance("", "", mCityName, mUnits, this),
-                        "CITY_FRAGMENT"
-                    )
-                    .addToBackStack(null)
-                    .commit()*/
-                val myFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")
-                (myFragment as CityFragment).getWeather(mCityName, mUnits)
+                val currentFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")
+                (currentFragment as CityFragment).getWeather(mCityName, mUnits)
             }
             supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")?.isVisible != null -> {
-/*                supportFragmentManager.beginTransaction()
-                    .replace(
-                        R.id.frame_layout,
-                        CitiesFragment.newInstance(mUnits, mBoundaryBox, this),
-                        "CITIES_FRAGMENT"
-                    )
-                    .addToBackStack(null)
-                    .commit()*/
-                val myFragment = supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")
-                (myFragment as CitiesFragment).getCitiesList(mUnits, mBoundaryBox)
+                val currentFragment = supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")
+                (currentFragment as CitiesFragment).getCitiesList(mUnits, mBoundaryBox)
             }
             supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")?.isVisible != null -> {
-              /*  supportFragmentManager.beginTransaction()
-                    .replace(
-                        R.id.frame_layout,
-                        CityFragment.newInstance(mLat, mLong, "", mUnits, this),
-                        "CITY_FRAGMENT_LOCATION"
-                    )
-                    .addToBackStack(null)
-                    .commit()*/
-                val myFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
-                (myFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
+                val currentFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
+                (currentFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
             }
         }
     }
 
     override fun replaceFragment(cityName: String, lat: String, long: String) {
-        degree_units.visibility = View.VISIBLE
-        refresh_btn.visibility = View.VISIBLE
         mCityName = cityName
         supportFragmentManager.beginTransaction()
             .replace(
@@ -218,8 +192,6 @@ class MainActivity : AppCompatActivity(), MainListener {
     }
 
     override fun replaceToCitiesListFragment(boundaryBox: String) {
-        degree_units.visibility = View.VISIBLE
-        refresh_btn.visibility = View.VISIBLE
         if (!boundaryBox.isNullOrEmpty()) {
             mBoundaryBox = boundaryBox
         }
@@ -230,8 +202,6 @@ class MainActivity : AppCompatActivity(), MainListener {
     }
 
     override fun replaceToCustomCityFragment() {
-        degree_units.visibility = View.GONE
-        refresh_btn.visibility = View.GONE
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.frame_layout,
@@ -243,7 +213,7 @@ class MainActivity : AppCompatActivity(), MainListener {
     }
 
     override fun showCitiesListDialog() {
-        CustomCitiesListDialog().show(supportFragmentManager, "CUSTOM_CITIES_LIST_DIALOG")
+        CustomCitiesListDialog().show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
     }
 
     fun goToPermissionSettings() {

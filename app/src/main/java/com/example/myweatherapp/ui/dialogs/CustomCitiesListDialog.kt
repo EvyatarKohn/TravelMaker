@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.myweatherapp.R
 import com.example.myweatherapp.ui.MainActivity
+import kotlin.math.PI
+import kotlin.math.sin
 
 class CustomCitiesListDialog: DialogFragment() {
 
@@ -21,6 +23,7 @@ class CustomCitiesListDialog: DialogFragment() {
     private lateinit var mError: TextView
     private var mBoundaryBox = ""
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.custom_cities_list_dialog_layout, container, false)
 
@@ -29,15 +32,9 @@ class CustomCitiesListDialog: DialogFragment() {
         mLongNorth = v.findViewById(R.id.latitude_north)
         mLongSouth = v.findViewById(R.id.latitude_south)
         mError = v.findViewById(R.id.custom_cities_list_dialog_error)
+        mError.visibility = View.INVISIBLE
 
 
-        if (mLatWest.text.isNullOrEmpty() && mLatEast.text.isNullOrEmpty() &&
-            mLongNorth.text.isNullOrEmpty() && mLongSouth.text.isNullOrEmpty()) {
-            mError.visibility = View.VISIBLE
-        } else {
-            mBoundaryBox = mLatWest.text.toString() + "," + mLatEast.text.toString() + "," +
-                            mLongNorth.text.toString() + "," + mLongSouth.text.toString()
-        }
 
         mDefaultBtn = v.findViewById(R.id.default_cities_list_btn)
         mDefaultBtn.setOnClickListener {
@@ -46,10 +43,18 @@ class CustomCitiesListDialog: DialogFragment() {
         }
         mCustomBtn = v.findViewById(R.id.custom_cities_list_dialog)
         mCustomBtn.setOnClickListener {
-            (activity as MainActivity).replaceToCitiesListFragment(mBoundaryBox)
-            dialog?.dismiss()
+            if (mLatWest.text.isNullOrEmpty() && mLatEast.text.isNullOrEmpty() &&
+                mLongNorth.text.isNullOrEmpty() && mLongSouth.text.isNullOrEmpty()) {
+                mError.visibility = View.VISIBLE
+            } else {
+                mBoundaryBox = mLatWest.text.toString() + "," + mLongSouth.text.toString() + "," +
+                        mLatEast.text.toString() + "," + mLongNorth.text.toString() + ",200"
+                (activity as MainActivity).replaceToCitiesListFragment(mBoundaryBox)
+                dialog?.dismiss()
+            }
         }
 
         return v
     }
+
 }

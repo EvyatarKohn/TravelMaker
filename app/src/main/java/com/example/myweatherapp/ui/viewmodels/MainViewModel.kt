@@ -1,6 +1,8 @@
 package com.example.myweatherapp.ui.viewmodels
 
+import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.example.myweatherapp.citiesmodel.CitiesWeather
@@ -9,7 +11,7 @@ import com.example.myweatherapp.repository.WeatherRepository
 import kotlinx.coroutines.launch
 
 
-class MainViewModel @ViewModelInject constructor(private val repository: WeatherRepository) : ViewModel() {
+class MainViewModel @ViewModelInject constructor(private val repository: WeatherRepository, application: Application) : AndroidViewModel(application) {
 
     private var mLiveData = MutableLiveData<Weather>()
     val weatherRepo: LiveData<Weather>
@@ -18,7 +20,6 @@ class MainViewModel @ViewModelInject constructor(private val repository: Weather
     private var mCitiesLiveData = MutableLiveData<CitiesWeather>()
     val citiesWeatherRepo: LiveData<CitiesWeather>
         get() = mCitiesLiveData
-
 
     fun getCityByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
         repository.getCityByLocation(lat, long, units).let { response ->
@@ -36,7 +37,7 @@ class MainViewModel @ViewModelInject constructor(private val repository: Weather
             if (response.isSuccessful) {
                 mCitiesLiveData.postValue(response.body())
             } else {
-                Log.d("TAG", "getCities Error Response: ${response.message()}")
+                Toast.makeText(getApplication<Application>().applicationContext, "The area you choose is to big, please go back and try again", Toast.LENGTH_LONG).show()
             }
         }
     }

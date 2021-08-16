@@ -23,8 +23,7 @@ class CitiesFragment : Fragment() {
     private lateinit var mCitiesList: List<CityData>
     private lateinit var mMainListener: MainListener
     private lateinit var mUnits: String
-    private lateinit var mBoundaryBox: String /*"34,29.5,34.9,36.5,200"*/
-
+    private lateinit var mBoundaryBox: String /*"west:34,south:29.5,east:34.9,north:36.5,200"*/
 
     companion object {
         fun newInstance(units: String, boundaryBox: String, mainListener: MainListener) = CitiesFragment().apply {
