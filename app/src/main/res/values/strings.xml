@@ -5,6 +5,14 @@
     <string name="degree_units_celsius">Celsius</string>
     <string name="degree_units_fahrenheit">Fahrenheit</string>
 
+
+    <!-- Gate Fragment texts  -->
+    <string name="icons_credit">Icons were downloaded:</string>
+    <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010</string>
+    <string name="lotties_credit">Lotties were downloaded:</string>
+    <string name="lotties_credit_url">https://lottiefiles.com/</string>
+    <string name="start_flow_btn">Start app</string>
+
     <!-- City Fragment texts  -->
     <string name="to_cities_list_btn">to cities list</string>
     <string name="to_custom_city_btn">to custom city</string>
@@ -39,7 +47,7 @@
 
 
     <!-- Custom cities list dialog texts  -->
-    <string name="custom_cities_list_dialog_error">Please enter your four boarder of your country/area\n(lat  &amp; long)</string>
+    <string name="custom_cities_list_dialog_error">Please fill all four fields</string>
     <string name="custom_cities_list_dialog_title">Please enter your boarder (Bounding box) of your country/area\n(lat - east &amp; west, long - north &amp; south)</string>
     <string name="custom_cities_list_dialog_continue_btn">Exit</string>
     <string name="custom_cities_list_dialog_default_btn">Approve</string>
@@ -50,5 +58,7 @@
     <string name="custom_cities_custom_btn">Continue</string>
     <string name="custom_cities_default_btn">To default List</string>
 
+    <string name="permissions_toast">Please Enable your location service</string>
+    <string name="area_to_big_toast">The area you chosen is too big, please try again with smaller area</string>
 
 </resources>

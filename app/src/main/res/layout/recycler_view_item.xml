@@ -31,28 +31,31 @@
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/amatic_bold"
             android:text="@string/adapter_city_name"
+            android:textColor="@color/white"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/white" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/clear_sky_rec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/adapter_city_name"
+            android:fontFamily="@font/amatic_regular"
+            android:text="@string/adapter_clear_sky"
+            android:textColor="@color/white"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/city_name"
-            android:textColor="@color/white" />
+            app:layout_constraintTop_toBottomOf="@+id/city_name" />
 
         <TextView
             android:id="@+id/adapter_wind_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/amatic_regular"
             android:text="@string/adapter_wind_speed"
+            android:textColor="@color/white"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clear_sky_rec"
-            android:textColor="@color/white" />
+            app:layout_constraintTop_toBottomOf="@+id/clear_sky_rec" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
