@@ -33,7 +33,7 @@ object AppModule {
     fun provideRetrofit(gson: Gson):MainApi =
         Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
             .create(MainApi::class.java)
