@@ -4,6 +4,7 @@
     <!-- Activity texts  -->
     <string name="degree_units_celsius">Celsius</string>
     <string name="degree_units_fahrenheit">Fahrenheit</string>
+    <string name="app_name_title">My WeatherApp</string>
 
 
     <!-- Gate Fragment texts  -->
@@ -57,8 +58,15 @@
     <string name="longitude_south">Long South</string>
     <string name="custom_cities_custom_btn">Continue</string>
     <string name="custom_cities_default_btn">To default List</string>
-
     <string name="permissions_toast">Please Enable your location service</string>
     <string name="area_to_big_toast">The area you chosen is too big, please try again with smaller area</string>
+    <string name="city_not_found">City not found</string>
+
+    <!-- Google maps strings -->
+    <string name="show_weather_btn">Show weather</string>
+
+    <!-- General strings -->
+    <string name="MAPS_API_KEY">AIzaSyDstpnXoJmuT4Sat_b-JHUFlwfJgeZciMw</string>
+    <string name="title_activity_maps">MapsActivity</string>
 
 </resources>

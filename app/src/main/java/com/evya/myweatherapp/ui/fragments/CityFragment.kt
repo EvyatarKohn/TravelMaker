@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.MainListener
 import com.evya.myweatherapp.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,6 +65,7 @@ class CityFragment: Fragment() {
 
         mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer {weather->
             city_name.text = getString(R.string.city_name_country, weather.name, weather.sys.country)
+            (activity as MainActivity).mCityName =  city_name.text.toString()
             clear_sky.text = weather.weather[0].description
             humidity.text = getString(R.string.humidity, weather.main.humidity.toString() + "%")
             var degreeUnit = "\u2103"

@@ -3,30 +3,31 @@ package com.evya.myweatherapp.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.ui.dialogs.CustomCitiesListDialog
+import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
-import com.evya.myweatherapp.ui.fragments.CitiesFragment
-import com.evya.myweatherapp.ui.fragments.CityFragment
-import com.evya.myweatherapp.ui.fragments.CustomCityFragment
+import com.evya.myweatherapp.ui.fragments.*
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import android.content.Intent
-
-import android.net.Uri
-import android.provider.Settings
-import android.view.View
-import androidx.appcompat.widget.Toolbar
-import com.evya.myweatherapp.ui.dialogs.CustomCitiesListDialog
-import com.evya.myweatherapp.ui.fragments.GateFragment
 
 
 @ExperimentalCoroutinesApi
@@ -34,7 +35,7 @@ import com.evya.myweatherapp.ui.fragments.GateFragment
 class MainActivity : AppCompatActivity(), MainListener {
 
     private var mUnits = METRIC
-    private var mCityName = "Tel-aviv"
+    var mCityName = "Tel-aviv"
     private var mLat: String = "32.083333"
     private var mLong: String = "34.7999968"
     private var mBoundaryBox = "34,29.5,34.9,36.5,200"
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity(), MainListener {
         private const val FAHRENHEIT = "Fahrenheit"
         private const val IMPERIAL = "imperial"
         private const val METRIC = "metric"
+        private const val FIVE_SEC = 5000L
 
         private val PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -59,20 +61,17 @@ class MainActivity : AppCompatActivity(), MainListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_main)
-
         mToolBar = findViewById(R.id.tool_bar)
         mToolBar.visibility = View.GONE
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frame_layout,
-                GateFragment.newInstance(this),
-                "CITY_FRAGMENT_LOCATION"
-            )
-            .addToBackStack(null)
-            .commit()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            getLastLocation()
+        }, FIVE_SEC)
 
         degree_units.setOnClickListener {
             if (degree_units.text.equals(CELSIUS)) {
@@ -89,6 +88,10 @@ class MainActivity : AppCompatActivity(), MainListener {
             refreshBtn()
         }
 
+        info_btn.setOnClickListener {
+            InfoDialog().show(supportFragmentManager, "INFO_DIALOG")
+        }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -101,14 +104,7 @@ class MainActivity : AppCompatActivity(), MainListener {
                         getNewLocation()
                     } else {
                         mToolBar.visibility = View.VISIBLE
-                        supportFragmentManager.beginTransaction()
-                            .replace(
-                                R.id.frame_layout,
-                                CityFragment.newInstance(mLat, mLong, "", mUnits, this),
-                                "CITY_FRAGMENT_LOCATION"
-                            )
-                            .addToBackStack(null)
-                            .commit()
+                        showFragment(CityFragment.newInstance(mLat, mLong, "", mUnits, this), "CITY_FRAGMENT_LOCATION")
                     }
                 }
             } else {
@@ -139,20 +135,20 @@ class MainActivity : AppCompatActivity(), MainListener {
             mToolBar.visibility = View.VISIBLE
             mLat = lastLocation.latitude.toString()
             mLong = lastLocation.longitude.toString()
-            supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.frame_layout,
-                    CityFragment.newInstance(mLat, mLong, "", mUnits, this@MainActivity),
-                    "CITY_FRAGMENT_LOCATION"
-                )
-                .addToBackStack(null)
-                .commit()
+            showFragment(CityFragment.newInstance(mLat, mLong, "", mUnits, this@MainActivity), "CITY_FRAGMENT_LOCATION"
+            )
         }
     }
 
     private fun checkPermissions(): Boolean {
-        return (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        return (ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun requestPermissions() {
@@ -165,7 +161,11 @@ class MainActivity : AppCompatActivity(), MainListener {
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getLastLocation()
@@ -185,56 +185,51 @@ class MainActivity : AppCompatActivity(), MainListener {
                 (currentFragment as CitiesFragment).getCitiesList(mUnits, mBoundaryBox)
             }
             supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")?.isVisible != null -> {
-                val currentFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
+                val currentFragment =
+                    supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
                 (currentFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
             }
         }
     }
 
-    override fun startFlow() {
-        getLastLocation()
-    }
-
     override fun replaceFragment(cityName: String, lat: String, long: String) {
+        mToolBar.visibility = View.VISIBLE
         mCityName = cityName
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frame_layout,
-                CityFragment.newInstance("", "", cityName, mUnits, this),
-                "CITY_FRAGMENT"
-            )
-            .addToBackStack(null)
-            .commit()
+        mLat = lat
+        mLong = long
+        showFragment(CityFragment.newInstance(lat, long, cityName, mUnits, this), "CITY_FRAGMENT")
     }
 
     override fun replaceToCitiesListFragment(boundaryBox: String) {
         if (!boundaryBox.isNullOrEmpty()) {
             mBoundaryBox = boundaryBox
         }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_layout, CitiesFragment.newInstance(mUnits, mBoundaryBox, this), "CITIES_FRAGMENT")
-            .addToBackStack(null)
-            .commit()
+        showFragment(CitiesFragment.newInstance(mUnits, mBoundaryBox, this), "CITIES_FRAGMENT")
     }
 
     override fun replaceToCustomCityFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frame_layout,
-                CustomCityFragment.newInstance(this),
-                "CUSTOM_CITY_FRAGMENT"
-            )
-            .addToBackStack(null)
-            .commit()
+        mToolBar.visibility = View.GONE
+        showFragment(GoogleMapsFragment.newInstance(mLat, mLong, this), "GOOGLE_MAPS_FRAGMENT")
     }
+
 
     override fun showCitiesListDialog() {
         CustomCitiesListDialog().show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
     }
 
     fun goToPermissionSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
+        )
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+    }
+
+    private fun showFragment(fragment: Fragment, tag: String) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frame_layout, fragment, tag)
+            .addToBackStack(null)
+            .commit()
     }
 }

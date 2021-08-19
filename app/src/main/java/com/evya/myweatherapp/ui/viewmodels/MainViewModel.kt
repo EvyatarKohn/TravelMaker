@@ -55,7 +55,10 @@ class MainViewModel @ViewModelInject constructor(private val repository: Weather
             if (response.isSuccessful) {
                 mLiveData.postValue(response.body())
             } else {
-                Log.d("TAG", "getWeather Error Response: ${response.message()}")
+                Toast.makeText(getApplication<Application>().applicationContext,
+                    getApplication<Application>().applicationContext.resources.getString(R.string.city_not_found),
+                    Toast.LENGTH_LONG).show()
+                mBackCLicked.postValue(true)
             }
         }
     }
