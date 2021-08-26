@@ -6,8 +6,8 @@ import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.citiesmodel.CitiesWeather
-import com.evya.myweatherapp.model.Weather
+import com.evya.myweatherapp.model.citiesweathermodel.CitiesWeather
+import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.repository.WeatherRepository
 import kotlinx.coroutines.launch
 
@@ -51,7 +51,11 @@ class MainViewModel @ViewModelInject constructor(private val repository: Weather
     }
 
     fun getWeather(cityName: String, units: String) = viewModelScope.launch {
-        repository.getWeather(cityName, units).let { response ->
+        var cityNameTemp = cityName
+        if (cityName.contains("(")) {
+            cityNameTemp = cityName.substring(0, cityName.length - 5)
+        }
+        repository.getWeather(cityNameTemp, units).let { response ->
             if (response.isSuccessful) {
                 mLiveData.postValue(response.body())
             } else {

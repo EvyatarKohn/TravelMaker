@@ -6,10 +6,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.citiesmodel.CityData
+import com.evya.myweatherapp.model.citiesweathermodel.CityData
 import com.evya.myweatherapp.ui.MainListener
-import kotlinx.android.synthetic.main.city_fragment_layout.*
-import kotlinx.android.synthetic.main.city_fragment_layout.view.*
 import kotlinx.android.synthetic.main.recycler_view_item.view.*
 import kotlinx.android.synthetic.main.recycler_view_item.view.city_name
 import kotlinx.android.synthetic.main.recycler_view_item.view.temp
@@ -59,8 +57,8 @@ class CitiesAdapter(
             citiesList[position].weather[0].description,
             "wind: " + String.format("%.2f", citiesList[position].wind.speed) + windSpeedDgree,
             weatherImage,
-            citiesList[position].main.temp_min.toInt().toString() + degreeUnit,
-            citiesList[position].main.temp_max.toInt().toString() + degreeUnit,
+            citiesList[position].main.tempMin.toInt().toString() + degreeUnit,
+            citiesList[position].main.tempMax.toInt().toString() + degreeUnit,
             mainListener
         )
     }

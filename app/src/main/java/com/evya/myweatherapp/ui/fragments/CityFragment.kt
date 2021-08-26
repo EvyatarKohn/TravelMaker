@@ -76,8 +76,8 @@ class CityFragment: Fragment() {
             }
             wind_speed.text = getString(R.string.wind_speed, weather.wind.speed.toString() + windSpeedDgree)
             current_temp.text = getString(R.string.right_now_temp, weather.main.temp.toInt().toString() + degreeUnit)
-            feels_like.text = getString(R.string.feels_like_temp, weather.main.feels_like.toInt().toString() + degreeUnit)
-            temp_var.text = getString(R.string.temp_var, weather.main.temp_min.toInt().toString() + degreeUnit, weather.main.temp_max.toInt().toString() + degreeUnit)
+            feels_like.text = getString(R.string.feels_like_temp, weather.main.feelsLike.toInt().toString() + degreeUnit)
+            temp_var.text = getString(R.string.temp_var, weather.main.tempMin.toInt().toString() + degreeUnit, weather.main.tempMax.toInt().toString() + degreeUnit)
             sunrise_sunset.text = sunRiseSunSetTime(weather.sys.sunrise, weather.sys.sunset)
         })
 

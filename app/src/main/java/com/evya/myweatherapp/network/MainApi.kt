@@ -1,7 +1,7 @@
 package com.evya.myweatherapp.network
 
-import com.evya.myweatherapp.citiesmodel.CitiesWeather
-import com.evya.myweatherapp.model.Weather
+import com.evya.myweatherapp.model.citiesweathermodel.CitiesWeather
+import com.evya.myweatherapp.model.weathermodel.Weather
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

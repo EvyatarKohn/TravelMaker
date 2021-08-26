@@ -10,7 +10,7 @@ import com.evya.myweatherapp.R
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.adapter.CitiesAdapter
-import com.evya.myweatherapp.citiesmodel.CityData
+import com.evya.myweatherapp.model.citiesweathermodel.CityData
 import com.evya.myweatherapp.ui.MainListener
 import com.evya.myweatherapp.ui.dialogs.CustomCitiesListDialog
 import com.evya.myweatherapp.ui.viewmodels.MainViewModel
