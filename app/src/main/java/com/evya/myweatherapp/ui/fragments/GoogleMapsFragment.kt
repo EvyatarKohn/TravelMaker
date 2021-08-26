@@ -43,34 +43,25 @@ class GoogleMapsFragment : Fragment() {
 
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
-            mGoogleMap.setOnMapClickListener { latLng ->
 
-                // when clicked on map initialized marker option
-                val markerOptions = MarkerOptions()
-                // set position of marker
-                markerOptions.position(latLng)
+            val markerOptions = MarkerOptions()
+            val myLocation = LatLng(mLat.toDouble(), mLong.toDouble())
+            markerOptions.position(myLocation)
+            mGoogleMap.addMarker(markerOptions)
+            val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            mGoogleMap.setOnMapLoadedCallback {
+                mShowWeatherBtn.visibility = View.VISIBLE
+            }
+            mGoogleMap.setOnMapClickListener { latLng ->
                 mLat = latLng.latitude.toString()
                 mLong = latLng.longitude.toString()
-                // set title of marker
-                markerOptions.title(latLng.latitude.toString() + " : " + latLng.longitude.toString())
-                // remove all marker
-                mGoogleMap.clear()
-                // animating to zoom the  marker
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10F))
-                // add marker on map
-                mGoogleMap.addMarker(markerOptions)
-
+                val myLocation = LatLng(latLng.latitude, latLng.longitude)
+                mGoogleMap.addMarker(
+                    MarkerOptions().position(myLocation).title("Marker Title")
+                        .snippet("Marker Description")
+                )
             }
-            val myLocation = LatLng(mLat.toDouble(), (mLong.toDouble()))
-            mGoogleMap.addMarker(
-                MarkerOptions().position(myLocation).title("Marker Title")
-                    .snippet("Marker Description")
-            )
-
-            // For zooming automatically to the location of the marker
-            val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(12f).build()
-            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-
         }
 
         mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
