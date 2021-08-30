@@ -10,6 +10,7 @@ import com.evya.myweatherapp.R
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.adapter.CitiesAdapter
+import com.evya.myweatherapp.adapter.MainCityAdapter
 import com.evya.myweatherapp.model.citiesweathermodel.CityData
 import com.evya.myweatherapp.ui.MainListener
 import com.evya.myweatherapp.ui.dialogs.CustomCitiesListDialog
@@ -34,10 +35,7 @@ class CitiesFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val v = inflater.inflate(R.layout.cities_fragment_layout, container, false)
 
         getCitiesList(mUnits, mBoundaryBox)

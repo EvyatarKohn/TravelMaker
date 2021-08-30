@@ -36,12 +36,12 @@ class MainActivity : AppCompatActivity(), MainListener {
 
     private var mUnits = METRIC
     var mCityName = "Tel-aviv"
+    var mCountryCode = "IL"
     private var mLat: String = "32.083333"
     private var mLong: String = "34.7999968"
     private var mBoundaryBox = "34,29.5,34.9,36.5,200"
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
-    private lateinit var mToolBar: Toolbar
 
     companion object {
         private const val CELSIUS = "Celsius"
@@ -64,8 +64,6 @@ class MainActivity : AppCompatActivity(), MainListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_main)
-        mToolBar = findViewById(R.id.tool_bar)
-        mToolBar.visibility = View.GONE
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity(), MainListener {
             getLastLocation()
         }, FIVE_SEC)
 
-        degree_units.setOnClickListener {
+/*        degree_units.setOnClickListener {
             if (degree_units.text.equals(CELSIUS)) {
                 degree_units.text = resources.getString(R.string.degree_units_fahrenheit)
                 mUnits = IMPERIAL
@@ -90,8 +88,7 @@ class MainActivity : AppCompatActivity(), MainListener {
 
         info_btn.setOnClickListener {
             InfoDialog().show(supportFragmentManager, "INFO_DIALOG")
-        }
-
+        }*/
     }
 
     @SuppressLint("MissingPermission")
@@ -103,7 +100,6 @@ class MainActivity : AppCompatActivity(), MainListener {
                     if (location == null) {
                         getNewLocation()
                     } else {
-                        mToolBar.visibility = View.VISIBLE
                         showFragment(CityFragment.newInstance(mLat, mLong, "", mUnits, this), "CITY_FRAGMENT_LOCATION")
                     }
                 }
@@ -132,7 +128,6 @@ class MainActivity : AppCompatActivity(), MainListener {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
-            mToolBar.visibility = View.VISIBLE
             mLat = lastLocation.latitude.toString()
             mLong = lastLocation.longitude.toString()
             showFragment(CityFragment.newInstance(mLat, mLong, "", mUnits, this@MainActivity), "CITY_FRAGMENT_LOCATION"
@@ -179,6 +174,7 @@ class MainActivity : AppCompatActivity(), MainListener {
             supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")?.isVisible != null -> {
                 val currentFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")
                 (currentFragment as CityFragment).getWeather(mCityName, mUnits)
+                 currentFragment.getDailyWeather(mCityName, mCountryCode, mUnits)
             }
             supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")?.isVisible != null -> {
                 val currentFragment = supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")
@@ -188,12 +184,12 @@ class MainActivity : AppCompatActivity(), MainListener {
                 val currentFragment =
                     supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
                 (currentFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
+               // currentFragment.getDailyWeatherByLocation(mLat, mLong, mUnits)
             }
         }
     }
 
     override fun replaceFragment(cityName: String, lat: String, long: String) {
-        mToolBar.visibility = View.VISIBLE
         mCityName = cityName
         mLat = lat
         mLong = long
@@ -208,7 +204,6 @@ class MainActivity : AppCompatActivity(), MainListener {
     }
 
     override fun replaceToCustomCityFragment() {
-        mToolBar.visibility = View.GONE
         showFragment(GoogleMapsFragment.newInstance(mLat, mLong, this), "GOOGLE_MAPS_FRAGMENT")
     }
 

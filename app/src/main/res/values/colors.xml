@@ -10,4 +10,6 @@
     <color name="transparent">#00000000</color>
     <color name="lite_blue">#87CEEB</color>
     <color name="red">#FF0000</color>
+    <color name="turquoise">#00c9c4</color>
+    <color name="grey">#f7f7f7</color>
 </resources>

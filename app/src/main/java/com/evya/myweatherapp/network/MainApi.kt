@@ -1,6 +1,7 @@
 package com.evya.myweatherapp.network
 
 import com.evya.myweatherapp.model.citiesweathermodel.CitiesWeather
+import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.evya.myweatherapp.model.weathermodel.Weather
 import retrofit2.Response
 import retrofit2.http.GET
@@ -29,4 +30,20 @@ interface MainApi {
         @Query("appid") appid: String,
         @Query("units") units: String
     ): Response<Weather>
+
+
+    @GET("forecast")
+    suspend fun getDailyWeather(
+        @Query("q") cityName: String,
+        @Query("appid") appid: String,
+        @Query("units") units: String
+    ): Response<DailyWeather>
+
+    @GET("forecast")
+    suspend fun getDailyWeatherByLocation(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("appid") appid: String,
+        @Query("units") units: String
+    ): Response<DailyWeather>
 }

@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/amatic_bold"
+        android:fontFamily="@font/product_sans_bold"
         android:gravity="center"
         android:text="@string/custom_cities_list_dialog_title"
         android:textSize="30dp"
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:digits="1234567890."
-            android:fontFamily="@font/amatic_regular"
+            android:fontFamily="@font/product_sans_regular"
             android:gravity="center"
             android:hint="@string/latitude_west"
             android:textSize="30dp"
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:digits="1234567890."
-            android:fontFamily="@font/amatic_regular"
+            android:fontFamily="@font/product_sans_regular"
             android:gravity="center"
             android:hint="@string/latitude_east"
             android:textSize="30dp"
@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:digits="1234567890."
-            android:fontFamily="@font/amatic_regular"
+            android:fontFamily="@font/product_sans_regular"
             android:gravity="center"
             android:hint="@string/longitude_north"
             android:textSize="30dp"
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
             android:digits="1234567890."
-            android:fontFamily="@font/amatic_regular"
+            android:fontFamily="@font/product_sans_regular"
             android:gravity="center"
             android:hint="@string/longitude_south"
             android:textSize="30dp"
@@ -118,7 +118,7 @@
             android:layout_height="50dp"
             android:layout_marginRight="25dp"
             android:layout_weight="0.5"
-            android:fontFamily="@font/amatic_regular"
+            android:fontFamily="@font/product_sans_regular"
             android:text="@string/custom_cities_custom_btn" />
 
         <Button
@@ -126,7 +126,7 @@
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_weight="0.5"
-            android:fontFamily="@font/amatic_regular"
+            android:fontFamily="@font/product_sans_regular"
             android:text="@string/custom_cities_default_btn" />
 
     </LinearLayout>
