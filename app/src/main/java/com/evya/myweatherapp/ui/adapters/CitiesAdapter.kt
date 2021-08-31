@@ -97,7 +97,7 @@ class CitiesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mWindSpeed?.text = windSpeed
         mWeatherImage?.setBackgroundResource(weatherImage)
         itemView.setOnClickListener {
-            mainListener.replaceFragment(mCityName?.text.toString(), "", "")
+            mainListener.showCityWeather(mCityName?.text.toString(), "", "")
         }
     }
 }
