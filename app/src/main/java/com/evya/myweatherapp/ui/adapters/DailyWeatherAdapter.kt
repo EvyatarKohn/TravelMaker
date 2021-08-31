@@ -1,4 +1,4 @@
-package com.evya.myweatherapp.adapter
+package com.evya.myweatherapp.ui.adapters
 
 import android.os.Build
 import android.view.LayoutInflater
@@ -28,23 +28,39 @@ class DailyWeatherAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: DailyWeatherViewHolder, position: Int) {
-        var sunImage = R.drawable.ic_sun
-        when {
-            dailyWeatherList[position].weather[0].description.equals("clear sky") -> {
-                sunImage = R.drawable.ic_sun
+        var weatherImage = R.drawable.ic_sun
+        when (dailyWeatherList[position].weather[0].description) {
+           "clear sky" -> {
+                weatherImage = R.drawable.ic_sun
             }
-            dailyWeatherList[position].weather[0].description.equals("few clouds") ||
-                    dailyWeatherList[position].weather[0].description.equals("scattered clouds") -> {
-                sunImage = R.drawable.ic_sun_cloud
+            "few clouds",
+            "scattered clouds",
+            "overcast clouds",
+            "broken clouds" -> {
+                weatherImage = R.drawable.ic_sun_cloud
+            }
+            "rain",
+            "light rain" -> {
+                weatherImage = R.drawable.ic_rain
+            }
+            "snow",
+            "light snow" -> {
+                weatherImage = R.drawable.ic_snowy
             }
         }
 
         holder.bind(
-            LocalDate.parse(dailyWeatherList[position].dtTxt.substring(0, 10), DateTimeFormatter.ISO_DATE).dayOfMonth.toString(),
-            LocalDate.parse(dailyWeatherList[position].dtTxt.substring(0, 10), DateTimeFormatter.ISO_DATE).monthValue.toString(),
-            sunImage,
+            LocalDate.parse(
+                dailyWeatherList[position].dtTxt.substring(0, 10),
+                DateTimeFormatter.ISO_DATE
+            ).dayOfMonth.toString(),
+            LocalDate.parse(
+                dailyWeatherList[position].dtTxt.substring(0, 10),
+                DateTimeFormatter.ISO_DATE
+            ).monthValue.toString(),
+            weatherImage,
             minTempArray[position],
-            maxTempArray[position]
+            maxTempArray[position].toString()
         )
     }
 
@@ -64,9 +80,13 @@ class DailyWeatherViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mTempVar = itemView.temp_var
     }
 
-    fun bind(day: String, month: String,  sunImage: Int, minTemp: Int?, maxTemp: Int?) {
+    fun bind(day: String, month: String, sunImage: Int, minTemp: Int, maxTemp: String) {
         mDate?.text = "$day/$month"
         mSunImage?.setBackgroundResource(sunImage)
-        mTempVar?.text = "$minTemp - $maxTemp"
+        var maxTempForMinus = maxTemp
+        if (maxTemp.toInt() < 0) {
+            maxTempForMinus = "($maxTemp)"
+        }
+        mTempVar?.text = "$minTemp - $maxTempForMinus"
     }
 }

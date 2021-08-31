@@ -60,8 +60,9 @@
     <string name="custom_cities_default_btn">To default List</string>
     <string name="permissions_toast">Please Enable your location service</string>
     <string name="area_to_big_toast">The area you chosen is too big, please try again with smaller area</string>
-    <string name="city_not_found">City not found</string>
-    <string name="daily_weather_error">Cant get Daily weather</string>
+    <string name="city_not_found">City not found, your location city will be shown</string>
+    <string name="city_not_found_error">City not found</string>
+    <string name="daily_weather_error">Can\'t get Daily weather</string>
 
     <!-- Google maps strings -->
     <string name="show_weather_btn">Show weather</string>
@@ -69,7 +70,9 @@
     <!-- General strings -->
     <string name="MAPS_API_KEY">AIzaSyDstpnXoJmuT4Sat_b-JHUFlwfJgeZciMw</string>
     <string name="title_activity_maps">MapsActivity</string>
-
+    <string name="you_have_to_enable_gps">Please enable your GPS and press OK</string>
+    <string name="Please_choose_city_toast">City not found</string>
+    <string name="ok">OK</string>
     <string name="sunrise_time">Sunrise\n%1$s</string>
     <string name="sunset_time">Sunset\n%1$s</string>
     <string name="humidity_new">Humidity\n%1$s</string>

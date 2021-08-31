@@ -138,9 +138,8 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TableRow
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginHorizontal="25dp"
                         android:gravity="center">
 
                         <TextView
@@ -149,13 +148,16 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
+                            android:layout_gravity="left"
                             android:textSize="14dp" />
 
                         <TextView
                             android:id="@+id/sunset"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="25dp"
+                            android:layout_gravity="center"
+                            android:paddingLeft="25dp"
+                            android:paddingRight="25dp"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
                             android:textSize="14dp" />
@@ -164,7 +166,7 @@
                             android:id="@+id/humidity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="25dp"
+                            android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
                             android:textSize="14dp" />
@@ -174,7 +176,6 @@
                     <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginHorizontal="25dp"
                         android:layout_marginTop="25dp"
                         android:gravity="center">
 
@@ -182,6 +183,7 @@
                             android:id="@+id/wind_speed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="left"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
                             android:textSize="14dp" />
@@ -190,16 +192,18 @@
                             android:id="@+id/description"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="25dp"
+                            android:layout_gravity="center"
+                            android:paddingLeft="25dp"
+                            android:paddingRight="25dp"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
                             android:textSize="14dp" />
 
                         <TextView
-                            android:id="@+id/visible"
+                            android:id="@+id/visibility"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="25dp"
+                            android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
                             android:textSize="14dp" />

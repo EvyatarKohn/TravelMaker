@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.ui.MainActivity
@@ -12,19 +13,37 @@ import com.evya.myweatherapp.ui.MainActivity
 
 class PermissionDeniedDialog: DialogFragment() {
 
+    private lateinit var mTitle: TextView
     private lateinit var mExitBtn: Button
     private lateinit var mPermissionsBtn: Button
+    private var mIsGpsEnabled = true
+
+    companion object {
+        fun newInstance(isGpsEnabled: Boolean) = PermissionDeniedDialog().apply {
+            mIsGpsEnabled = isGpsEnabled
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.permission_denied_dialog_layout, container, false)
-
+        dialog?.setCanceledOnTouchOutside(false);
+        mTitle = v.findViewById(R.id.title)
         mExitBtn = v.findViewById(R.id.exit_btn)
         mExitBtn.setOnClickListener {
             activity?.finish()
         }
         mPermissionsBtn = v.findViewById(R.id.approve_btn)
+
+        if (!mIsGpsEnabled) {
+            mTitle.text = resources.getString(R.string.you_have_to_enable_gps)
+            mPermissionsBtn.text = resources.getString(R.string.ok)
+        }
         mPermissionsBtn.setOnClickListener {
-            (activity as MainActivity).goToPermissionSettings()
+            if (mIsGpsEnabled) {
+                (activity as MainActivity).goToPermissionSettings()
+            } else {
+                (activity as MainActivity).getLastLocation()
+            }
             dialog?.dismiss()
         }
         return v

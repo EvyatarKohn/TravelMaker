@@ -9,11 +9,9 @@ import androidx.fragment.app.viewModels
 import com.evya.myweatherapp.R
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.evya.myweatherapp.adapter.CitiesAdapter
-import com.evya.myweatherapp.adapter.MainCityAdapter
+import com.evya.myweatherapp.ui.adapters.CitiesAdapter
 import com.evya.myweatherapp.model.citiesweathermodel.CityData
 import com.evya.myweatherapp.ui.MainListener
-import com.evya.myweatherapp.ui.dialogs.CustomCitiesListDialog
 import com.evya.myweatherapp.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.cities_fragment_layout.*
@@ -48,7 +46,7 @@ class CitiesFragment : Fragment() {
         })
 
         mViewModel.backClicked.observe(viewLifecycleOwner, Observer {
-            activity?.supportFragmentManager?.let { it1 -> CustomCitiesListDialog().show(it1, "PERMISSION_DENIED_DIALOG") }
+            mMainListener.replaceToCustomCityFragment()
 
         })
 

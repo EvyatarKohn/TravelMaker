@@ -10,8 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.adapter.DailyWeatherAdapter
-import com.evya.myweatherapp.adapter.MainCityAdapter
+import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
+import com.evya.myweatherapp.ui.adapters.MainCityAdapter
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.MainListener
@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.city_fragment_layout.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.min
 
 
 @AndroidEntryPoint
@@ -76,39 +75,45 @@ class CityFragment: Fragment() {
         }
 
         mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer { weather ->
-            mCountryCode = weather.sys.country
-            (activity as MainActivity).mCountryCode = weather.sys.country
-            city_name.text = getString(R.string.city_name_country, weather.name, weather.sys.country)
-            (activity as MainActivity).mCityName =  weather.name
-            temp.text = getString(R.string.temp,weather.main.temp.toInt().toString(), mDegreeUnit)
-            feels_like.text = getString(R.string.feels_like_temp, weather.main.feelsLike.toInt().toString() + mDegreeUnit)
-            humidity.text = getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
-            wind_speed.text =
-                getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
-            feels_like.text = getString(
-                R.string.feels_like_temp,
-                weather.main.feelsLike.toInt().toString() + mDegreeUnit
-            )
-//            temp_var.text = getString(R.string.temp_var, weather.main.tempMin.toInt().toString() + degreeUnit, weather.main.tempMax.toInt().toString() + degreeUnit)
-            sunrise.text = getString(R.string.sunrise_time, setTimeToHour(weather.sys.sunrise))
-            sunset.text = getString(R.string.sunset_time, setTimeToHour(weather.sys.sunset))
-           /* if (setTimeToHour(Calendar.getInstance().time.time.toInt()) > setTimeToHour(weather.sys.sunrise) &&
-               (setTimeToHour(Calendar.getInstance().time.time.toInt()) > setTimeToHour(weather.sys.sunset))) {
-                main_image.setBackgroundColor(R.drawable.ic_night)
-               }*/
+            if (weather.name.isEmpty() || weather.sys.country.isEmpty()) {
+                (activity as MainActivity).getLastLocation()
+            } else {
+                main_image.setImageResource(R.drawable.ic_summer)
+                if (weather.main.temp <= 10) {
+                    main_image.setImageResource(R.drawable.ic_winter)
+                }
+                mCountryCode = weather.sys.country
+                (activity as MainActivity).mCountryCode = weather.sys.country
+                city_name.text =
+                    getString(R.string.city_name_country, weather.name, weather.sys.country)
+                (activity as MainActivity).mCityName = weather.name
+                temp.text =
+                    getString(R.string.temp, weather.main.temp.toInt().toString(), mDegreeUnit)
+                feels_like.text = getString(
+                    R.string.feels_like_temp,
+                    weather.main.feelsLike.toInt().toString() + mDegreeUnit
+                )
+                humidity.text =
+                    getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
+                wind_speed.text =
+                    getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
+                feels_like.text = getString(
+                    R.string.feels_like_temp,
+                    weather.main.feelsLike.toInt().toString() + mDegreeUnit
+                )
+                sunrise.text = getString(R.string.sunrise_time, setTimeToHour(weather.sys.sunrise))
+                sunset.text = getString(R.string.sunset_time, setTimeToHour(weather.sys.sunset))
 
-            description.text = getString(R.string.description, weather.weather[0].description)
-            var distanceUnits = "m"
-            var visibility = weather.visibility
-            if (weather.visibility > 999) {
-                visibility = weather.visibility/1000
-                distanceUnits = "Km"
+                description.text = getString(R.string.description, weather.weather[0].description)
+                var distanceUnits = "m"
+                var visibilityValue = weather.visibility
+                if (weather.visibility > 999) {
+                    visibilityValue = weather.visibility / 1000
+                    distanceUnits = "Km"
+                }
+                visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
             }
-            visible.text = getString(R.string.visibility, visibility.toString(), distanceUnits)
-/*            temp_max.text = getString(R.string.temp_max, weather.main.tempMax.toInt().toString(), mDegreeUnit)
-            temp_min.text = getString(R.string.temp_min, weather.main.tempMin.toInt().toString(), mDegreeUnit)*/
         })
-
 
         mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, Observer {dailyWeather ->
             setDailyAdapter(dailyWeather.list)
@@ -155,11 +160,6 @@ class CityFragment: Fragment() {
 
     private fun setDailyAdapter(dailyWeatherList: List<DailyWeatherData>) {
 
-/*        val minMaxTempArray: ArrayList<Pair<Int,Int>> = ArrayList()
-        dailyWeatherList.forEach { dailyWeatherData ->
-            minMaxTempArray.add(Pair(dailyWeatherData.main.tempMin.toInt(), dailyWeatherData.main.tempMax.toInt()))
-        }*/
-
         val minTempRawArray: ArrayList<Int> = ArrayList()
         dailyWeatherList.forEach {
             minTempRawArray.add(it.main.tempMin.toInt())
@@ -172,7 +172,7 @@ class CityFragment: Fragment() {
         }
         val maxTempArray = maxTempRawArray.sortedDescending().take(5)
 
-        val newList = dailyWeatherList.filterIndexed { index, dailyWeatherData ->  index % 8 == 0}
+        val newList = dailyWeatherList.filterIndexed { index, _ ->  index % 8 == 0}
 
         mDailyAdapter = DailyWeatherAdapter(newList, minTempArray, maxTempArray)
         val layoutManager = LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)

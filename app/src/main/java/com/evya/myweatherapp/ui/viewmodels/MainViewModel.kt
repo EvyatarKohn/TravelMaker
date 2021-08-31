@@ -1,7 +1,6 @@
 package com.evya.myweatherapp.ui.viewmodels
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
@@ -21,9 +20,9 @@ class MainViewModel @ViewModelInject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private var mLiveData = MutableLiveData<Weather>()
+    private var mWeatherLiveData = MutableLiveData<Weather>()
     val weatherRepo: LiveData<Weather>
-        get() = mLiveData
+        get() = mWeatherLiveData
 
     private var mCitiesLiveData = MutableLiveData<CitiesWeather>()
     val citiesWeatherRepo: LiveData<CitiesWeather>
@@ -40,9 +39,21 @@ class MainViewModel @ViewModelInject constructor(
     fun getCityByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
         repository.getCityByLocation(lat, long, units).let { response ->
             if (response.isSuccessful) {
-                mLiveData.postValue(response.body())
+                if (response.body()?.name.isNullOrEmpty() || response.body()?.sys?.country.isNullOrEmpty()) {
+                    Toast.makeText(
+                        getApplication<Application>().applicationContext,
+                        getApplication<Application>().applicationContext.resources.getString(R.string.city_not_found),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                mWeatherLiveData.postValue(response.body())
+
             } else {
-                Log.d("TAG", "getCityByLocation Error Response: ${response.message()}")
+                Toast.makeText(
+                    getApplication<Application>().applicationContext,
+                    getApplication<Application>().applicationContext.resources.getString(R.string.city_not_found_error),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
@@ -70,11 +81,11 @@ class MainViewModel @ViewModelInject constructor(
         }
         repository.getWeather(cityNameTemp, units).let { response ->
             if (response.isSuccessful) {
-                mLiveData.postValue(response.body())
+                mWeatherLiveData.postValue(response.body())
             } else {
                 Toast.makeText(
                     getApplication<Application>().applicationContext,
-                    getApplication<Application>().applicationContext.resources.getString(R.string.city_not_found),
+                    getApplication<Application>().applicationContext.resources.getString(R.string.city_not_found_error),
                     Toast.LENGTH_LONG
                 ).show()
                 mBackCLicked.postValue(true)

@@ -11,17 +11,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.ui.dialogs.CustomCitiesListDialog
-import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
 import com.google.android.gms.location.*
@@ -42,6 +37,7 @@ class MainActivity : AppCompatActivity(), MainListener {
     private var mBoundaryBox = "34,29.5,34.9,36.5,200"
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
+    private var mFromTopAdapter = false
 
     companion object {
         private const val CELSIUS = "Celsius"
@@ -62,7 +58,10 @@ class MainActivity : AppCompatActivity(), MainListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         setContentView(R.layout.activity_main)
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -70,41 +69,28 @@ class MainActivity : AppCompatActivity(), MainListener {
         Handler(Looper.getMainLooper()).postDelayed({
             getLastLocation()
         }, FIVE_SEC)
-
-/*        degree_units.setOnClickListener {
-            if (degree_units.text.equals(CELSIUS)) {
-                degree_units.text = resources.getString(R.string.degree_units_fahrenheit)
-                mUnits = IMPERIAL
-            } else if (degree_units.text.equals(FAHRENHEIT)) {
-                degree_units.text = resources.getString(R.string.degree_units_celsius)
-                mUnits = METRIC
-            }
-            refreshBtn()
-        }
-
-        refresh_btn.setOnClickListener {
-            refreshBtn()
-        }
-
-        info_btn.setOnClickListener {
-            InfoDialog().show(supportFragmentManager, "INFO_DIALOG")
-        }*/
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLastLocation() {
+    fun getLastLocation() {
         if (checkPermissions()) {
             if (isLocationEnabled()) {
                 mFusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
-                    var location = task.result
+                    val location = task.result
                     if (location == null) {
                         getNewLocation()
                     } else {
-                        showFragment(CityFragment.newInstance(mLat, mLong, "", mUnits, this), "CITY_FRAGMENT_LOCATION")
+                        mLat = location.latitude.toString()
+                        mLong = location.longitude.toString()
+                        showFragment(
+                            CityFragment.newInstance(mLat, mLong, "", mUnits, this),
+                            "CITY_FRAGMENT_LOCATION"
+                        )
                     }
                 }
             } else {
-                Toast.makeText(this, resources.getString(R.string.permissions_toast), Toast.LENGTH_LONG).show()
+                PermissionDeniedDialog.newInstance(false)
+                    .show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
             }
         } else {
             requestPermissions()
@@ -130,7 +116,9 @@ class MainActivity : AppCompatActivity(), MainListener {
             val lastLocation = locationResult.lastLocation
             mLat = lastLocation.latitude.toString()
             mLong = lastLocation.longitude.toString()
-            showFragment(CityFragment.newInstance(mLat, mLong, "", mUnits, this@MainActivity), "CITY_FRAGMENT_LOCATION"
+            showFragment(
+                CityFragment.newInstance(mLat, mLong, "", mUnits, this@MainActivity),
+                "CITY_FRAGMENT_LOCATION"
             )
         }
     }
@@ -165,39 +153,55 @@ class MainActivity : AppCompatActivity(), MainListener {
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getLastLocation()
         } else {
-            PermissionDeniedDialog().show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
+            PermissionDeniedDialog.newInstance(true)
+                .show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
         }
     }
 
-    private fun refreshBtn() {
+    private fun refreshRelevantFragment() {
         when {
-            supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")?.isVisible != null -> {
+            supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")?.isVisible == true -> {
                 val currentFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")
                 (currentFragment as CityFragment).getWeather(mCityName, mUnits)
-                 currentFragment.getDailyWeather(mCityName, mCountryCode, mUnits)
+                currentFragment.getDailyWeather(mCityName, mCountryCode, mUnits)
             }
-            supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")?.isVisible != null -> {
+            supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")?.isVisible == true -> {
                 val currentFragment = supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")
                 (currentFragment as CitiesFragment).getCitiesList(mUnits, mBoundaryBox)
             }
-            supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")?.isVisible != null -> {
+            supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")?.isVisible == true -> {
                 val currentFragment =
                     supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
-                (currentFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
-               // currentFragment.getDailyWeatherByLocation(mLat, mLong, mUnits)
+                if (mFromTopAdapter) {
+                    (currentFragment as CityFragment).getWeather(mCityName, mUnits)
+                    currentFragment.getDailyWeather(mCityName, mCountryCode, mUnits)
+                    mFromTopAdapter = false
+                } else {
+                    (currentFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
+                    currentFragment.getDailyWeatherByLocation(mLat, mLong, mUnits)
+                }
+            }
+            supportFragmentManager.findFragmentByTag("GOOGLE_MAPS_FRAGMENT")?.isVisible == true -> {
+                showFragment(
+                    CityFragment.newInstance(mLat, mLong, "", mUnits, this),
+                    "CITY_FRAGMENT"
+                )
             }
         }
     }
 
-    override fun replaceFragment(cityName: String, lat: String, long: String) {
+    override fun showCityWeather(cityName: String, lat: String, long: String) {
         mCityName = cityName
-        mLat = lat
-        mLong = long
-        showFragment(CityFragment.newInstance(lat, long, cityName, mUnits, this), "CITY_FRAGMENT")
+        if (lat.isNotEmpty() && long.isNotEmpty()) {
+            mLat = lat
+            mLong = long
+        }
+        mFromTopAdapter = true
+        refreshRelevantFragment()
     }
 
     override fun replaceToCitiesListFragment(boundaryBox: String) {
-        if (!boundaryBox.isNullOrEmpty()) {
+        if (boundaryBox.isNotEmpty()) {
             mBoundaryBox = boundaryBox
         }
         showFragment(CitiesFragment.newInstance(mUnits, mBoundaryBox, this), "CITIES_FRAGMENT")
@@ -205,11 +209,6 @@ class MainActivity : AppCompatActivity(), MainListener {
 
     override fun replaceToCustomCityFragment() {
         showFragment(GoogleMapsFragment.newInstance(mLat, mLong, this), "GOOGLE_MAPS_FRAGMENT")
-    }
-
-
-    override fun showCitiesListDialog() {
-        CustomCitiesListDialog().show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
     }
 
     fun goToPermissionSettings() {

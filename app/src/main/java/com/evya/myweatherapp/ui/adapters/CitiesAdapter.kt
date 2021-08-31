@@ -1,4 +1,4 @@
-package com.evya.myweatherapp.adapter
+package com.evya.myweatherapp.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
