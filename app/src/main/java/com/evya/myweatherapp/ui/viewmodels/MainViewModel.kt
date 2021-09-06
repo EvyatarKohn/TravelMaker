@@ -12,10 +12,12 @@ import com.evya.myweatherapp.model.citiesweathermodel.CitiesWeather
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.repository.WeatherRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class MainViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val repository: WeatherRepository,
     application: Application
 ) : AndroidViewModel(application) {

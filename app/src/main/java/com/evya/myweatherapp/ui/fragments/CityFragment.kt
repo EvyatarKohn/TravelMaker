@@ -25,7 +25,7 @@ import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
-class CityFragment: Fragment() {
+class CityFragment : Fragment() {
     private val mViewModel: MainViewModel by viewModels()
     private var mCityName = "Tel-aviv"
     private var mCountryCode = "IL"
@@ -41,7 +41,13 @@ class CityFragment: Fragment() {
     private var mWindSpeed = " m/s"
 
     companion object {
-        fun newInstance(lat: String, long: String, cityName: String, units: String, mainListener: MainListener) = CityFragment().apply {
+        fun newInstance(
+            lat: String,
+            long: String,
+            cityName: String,
+            units: String,
+            mainListener: MainListener
+        ) = CityFragment().apply {
             mCityName = cityName
             mUnits = units
             mLat = lat
@@ -49,11 +55,13 @@ class CityFragment: Fragment() {
             mMainListener = mainListener
             mWeather = null
         }
-        fun newInstance(weather: Weather, units: String, mainListener: MainListener) = CityFragment().apply {
-            mWeather = weather
-            mUnits = units
-            mMainListener = mainListener
-        }
+
+        fun newInstance(weather: Weather, units: String, mainListener: MainListener) =
+            CityFragment().apply {
+                mWeather = weather
+                mUnits = units
+                mMainListener = mainListener
+            }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,7 +86,11 @@ class CityFragment: Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val v = inflater.inflate(R.layout.city_fragment_layout, container, false)
 
 
@@ -91,7 +103,7 @@ class CityFragment: Fragment() {
             showWeather(weather)
         })
 
-        mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, Observer {dailyWeather ->
+        mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, Observer { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
         })
 
@@ -107,11 +119,11 @@ class CityFragment: Fragment() {
                 main_image.setImageResource(R.drawable.ic_winter)
             }
             mCityName = weather.name
+            (activity as MainActivity).mCityName = weather.name
             mCountryCode = weather.sys.country
             (activity as MainActivity).mCountryCode = weather.sys.country
             city_name.text =
                 getString(R.string.city_name_country, weather.name, weather.sys.country)
-            (activity as MainActivity).mCityName = weather.name
             temp.text =
                 getString(R.string.temp, weather.main.temp.toInt().toString(), mDegreeUnit)
             feels_like.text = getString(
@@ -136,7 +148,8 @@ class CityFragment: Fragment() {
                 visibilityValue = weather.visibility / 1000
                 distanceUnits = "Km"
             }
-            visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+            visibility.text =
+                getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
         }
     }
 
@@ -169,9 +182,20 @@ class CityFragment: Fragment() {
     }
 
     private fun setTopAdapter() {
-        val citiesList = arrayListOf("Tel-Aviv", "Jerusalem", "Eilat", "Haifa", "Tiberias", "Ramat Gan", "Beersheba", "Mitzpe Ramon")
-        mMainCitiesAdapter = MainCityAdapter(activity?.applicationContext, citiesList, mMainListener)
-        val layoutManager = LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        val citiesList = arrayListOf(
+            "Tel-Aviv",
+            "Jerusalem",
+            "Eilat",
+            "Haifa",
+            "Tiberias",
+            "Ramat Gan",
+            "Beersheba",
+            "Mitzpe Ramon"
+        )
+        mMainCitiesAdapter =
+            MainCityAdapter(activity?.applicationContext, citiesList, mMainListener)
+        val layoutManager =
+            LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         main_cities_recycler_view.layoutManager = layoutManager
         main_cities_recycler_view.adapter = mMainCitiesAdapter
     }
@@ -190,10 +214,11 @@ class CityFragment: Fragment() {
         }
         val maxTempArray = maxTempRawArray.sortedDescending().take(5)
 
-        val newList = dailyWeatherList.filterIndexed { index, _ ->  index % 8 == 0}
+        val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
 
         mDailyAdapter = DailyWeatherAdapter(newList, minTempArray, maxTempArray)
-        val layoutManager = LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        val layoutManager =
+            LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         daily_weather_recycler_view.layoutManager = layoutManager
         daily_weather_recycler_view.adapter = mDailyAdapter
     }
