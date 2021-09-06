@@ -47,7 +47,6 @@ class CitiesFragment : Fragment() {
 
         mViewModel.backClicked.observe(viewLifecycleOwner, Observer {
             mMainListener.replaceToCustomCityFragment()
-
         })
 
         mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer { weather ->
