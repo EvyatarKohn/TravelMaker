@@ -71,7 +71,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="25dp"
                     android:fontFamily="@font/product_sans_bold"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/location_icon" />
 
@@ -82,7 +82,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/product_sans_regular"
-                    android:textSize="50dp"
+                    android:textSize="50sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/city_name" />
 
@@ -93,7 +93,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/product_sans_regular"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/temp" />
 
@@ -130,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="25dp"
-                    android:background="@color/grey"
+                    android:background="@color/grey_f7"
                     android:gravity="center"
                     android:paddingVertical="15dp"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -149,7 +149,7 @@
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
                             android:layout_gravity="left"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/sunset"
@@ -160,7 +160,7 @@
                             android:paddingRight="25dp"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/humidity"
@@ -169,7 +169,7 @@
                             android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
 
                     </TableRow>
 
@@ -186,7 +186,7 @@
                             android:layout_gravity="left"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/description"
@@ -197,7 +197,7 @@
                             android:paddingRight="25dp"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/visibility"
@@ -206,7 +206,7 @@
                             android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
 
                     </TableRow>
                 </TableLayout>

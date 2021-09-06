@@ -1,9 +1,11 @@
 package com.evya.myweatherapp.ui.dialogs
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -14,7 +16,7 @@ import com.evya.myweatherapp.ui.MainActivity
 class PermissionDeniedDialog: DialogFragment() {
 
     private lateinit var mTitle: TextView
-    private lateinit var mExitBtn: Button
+    private lateinit var mExitBtn: TextView
     private lateinit var mPermissionsBtn: Button
     private var mIsGpsEnabled = true
 
@@ -22,6 +24,19 @@ class PermissionDeniedDialog: DialogFragment() {
         fun newInstance(isGpsEnabled: Boolean) = PermissionDeniedDialog().apply {
             mIsGpsEnabled = isGpsEnabled
         }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
+
+        return dialog
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val window = dialog?.window
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -34,10 +49,10 @@ class PermissionDeniedDialog: DialogFragment() {
         }
         mPermissionsBtn = v.findViewById(R.id.approve_btn)
 
-        if (!mIsGpsEnabled) {
+       /* if (!mIsGpsEnabled) {
             mTitle.text = resources.getString(R.string.you_have_to_enable_gps)
             mPermissionsBtn.text = resources.getString(R.string.ok)
-        }
+        }*/
         mPermissionsBtn.setOnClickListener {
             if (mIsGpsEnabled) {
                 (activity as MainActivity).goToPermissionSettings()
@@ -47,5 +62,10 @@ class PermissionDeniedDialog: DialogFragment() {
             dialog?.dismiss()
         }
         return v
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 }

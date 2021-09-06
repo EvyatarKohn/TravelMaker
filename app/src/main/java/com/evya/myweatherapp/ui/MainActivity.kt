@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
 import com.google.android.gms.location.*
@@ -167,7 +168,7 @@ class MainActivity : AppCompatActivity(), MainListener {
             }
             supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")?.isVisible == true -> {
                 val currentFragment = supportFragmentManager.findFragmentByTag("CITIES_FRAGMENT")
-                (currentFragment as CitiesFragment).getCitiesList(mUnits, mBoundaryBox)
+                (currentFragment as CitiesFragment).getWeather(mCityName, mUnits)
             }
             supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")?.isVisible == true -> {
                 val currentFragment =
@@ -211,6 +212,10 @@ class MainActivity : AppCompatActivity(), MainListener {
         showFragment(GoogleMapsFragment.newInstance(mLat, mLong, this), "GOOGLE_MAPS_FRAGMENT")
     }
 
+    override fun showCityWeatherFromList(weather: Weather) {
+        showFragment(CityFragment.newInstance(weather, mUnits, this), "CITY_FRAGMENT")
+    }
+
     fun goToPermissionSettings() {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -224,6 +229,6 @@ class MainActivity : AppCompatActivity(), MainListener {
         supportFragmentManager.beginTransaction()
             .replace(R.id.frame_layout, fragment, tag)
             .addToBackStack(null)
-            .commit()
+            .commitAllowingStateLoss()
     }
 }

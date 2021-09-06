@@ -6,7 +6,6 @@
     <string name="degree_units_fahrenheit">Fahrenheit</string>
     <string name="app_name_title">My WeatherApp</string>
 
-
     <!-- Gate Fragment texts  -->
     <string name="icons_credit">Icons were downloaded:</string>
     <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010</string>
@@ -34,18 +33,16 @@
     <string name="feels_like_temp">Feels like %1$s</string>
     <string name="temp_var">min %1$s - max %2$s</string>
 
-
     <!-- Adapter strings  -->
     <string name="adapter_city_name">Tel-aviv</string>
     <string name="adapter_clear_sky">Sunny</string>
     <string name="adapter_wind_speed">2.5 m/s</string>
 
-
     <!-- Permission denied dialog texts  -->
-    <string name="you_have_to_approve_permissions">You Have to approve location permissions to use this app</string>
-    <string name="exit_btn">Exit</string>
-    <string name="approve_permissions">Approve</string>
-
+    <string name="you_have_to_approve_permissions_title">We would like to use\nyour current location</string>
+    <string name="you_have_to_approve_permissions_sub_title">To get the updated information for\ntour current location, we need you to\nenable the GPS service</string>
+    <string name="exit_btn">No Thanks</string>
+    <string name="approve_permissions">Enable GPS</string>
 
     <!-- Custom cities list dialog texts  -->
     <string name="custom_cities_list_dialog_error">Please fill all four fields</string>
@@ -65,14 +62,14 @@
     <string name="daily_weather_error">Can\'t get Daily weather</string>
 
     <!-- Google maps strings -->
+    <string name="choose_location_title">Choose desire city</string>
     <string name="show_weather_btn">Show weather</string>
+    <string name="show_radius_btn">Draw circle</string>
+    <string name="show_cities_list">Show cities list</string>
 
     <!-- General strings -->
     <string name="MAPS_API_KEY">AIzaSyDstpnXoJmuT4Sat_b-JHUFlwfJgeZciMw</string>
-    <string name="title_activity_maps">MapsActivity</string>
-    <string name="you_have_to_enable_gps">Please enable your GPS and press OK</string>
     <string name="Please_choose_city_toast">City not found</string>
-    <string name="ok">OK</string>
     <string name="sunrise_time">Sunrise\n%1$s</string>
     <string name="sunset_time">Sunset\n%1$s</string>
     <string name="humidity_new">Humidity\n%1$s</string>

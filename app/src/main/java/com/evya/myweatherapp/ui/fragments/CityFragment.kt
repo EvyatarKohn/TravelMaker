@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.adapters.MainCityAdapter
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
@@ -35,6 +36,7 @@ class CityFragment: Fragment() {
     private lateinit var mMainCitiesAdapter: MainCityAdapter
     private lateinit var mDailyAdapter: DailyWeatherAdapter
     private lateinit var mLocationBtn: TextView
+    private var mWeather: Weather? = null
     private var mDegreeUnit = "\u2103"
     private var mWindSpeed = " m/s"
 
@@ -45,29 +47,40 @@ class CityFragment: Fragment() {
             mLat = lat
             mLong = long
             mMainListener = mainListener
+            mWeather = null
+        }
+        fun newInstance(weather: Weather, units: String, mainListener: MainListener) = CityFragment().apply {
+            mWeather = weather
+            mUnits = units
+            mMainListener = mainListener
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setTopAdapter()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val v = inflater.inflate(R.layout.city_fragment_layout, container, false)
-
         if (mUnits == "imperial") {
             mDegreeUnit = "\u2109"
             mWindSpeed = " miles/hr"
         }
 
-        if (mLat.isEmpty() || mLong.isEmpty()) {
-            getWeather(mCityName, mUnits)
-            getDailyWeather(mCityName, mCountryCode,  mUnits)
+        if (mWeather != null) {
+            showWeather(mWeather!!)
+            getDailyWeather(mCityName, mCountryCode, mUnits)
         } else {
-            getCityByLocation(mLat, mLong, mUnits)
-            getDailyWeatherByLocation(mLat, mLong, mUnits)
+            if (mLat.isEmpty() || mLong.isEmpty()) {
+                getWeather(mCityName, mUnits)
+                getDailyWeather(mCityName, mCountryCode, mUnits)
+            } else {
+                getCityByLocation(mLat, mLong, mUnits)
+                getDailyWeatherByLocation(mLat, mLong, mUnits)
+            }
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val v = inflater.inflate(R.layout.city_fragment_layout, container, false)
+
 
         mLocationBtn = v.findViewById(R.id.location_icon)
         mLocationBtn.setOnClickListener {
@@ -75,44 +88,7 @@ class CityFragment: Fragment() {
         }
 
         mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer { weather ->
-            if (weather.name.isEmpty() || weather.sys.country.isEmpty()) {
-                (activity as MainActivity).getLastLocation()
-            } else {
-                main_image.setImageResource(R.drawable.ic_summer)
-                if (weather.main.temp <= 10) {
-                    main_image.setImageResource(R.drawable.ic_winter)
-                }
-                mCountryCode = weather.sys.country
-                (activity as MainActivity).mCountryCode = weather.sys.country
-                city_name.text =
-                    getString(R.string.city_name_country, weather.name, weather.sys.country)
-                (activity as MainActivity).mCityName = weather.name
-                temp.text =
-                    getString(R.string.temp, weather.main.temp.toInt().toString(), mDegreeUnit)
-                feels_like.text = getString(
-                    R.string.feels_like_temp,
-                    weather.main.feelsLike.toInt().toString() + mDegreeUnit
-                )
-                humidity.text =
-                    getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
-                wind_speed.text =
-                    getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
-                feels_like.text = getString(
-                    R.string.feels_like_temp,
-                    weather.main.feelsLike.toInt().toString() + mDegreeUnit
-                )
-                sunrise.text = getString(R.string.sunrise_time, setTimeToHour(weather.sys.sunrise))
-                sunset.text = getString(R.string.sunset_time, setTimeToHour(weather.sys.sunset))
-
-                description.text = getString(R.string.description, weather.weather[0].description)
-                var distanceUnits = "m"
-                var visibilityValue = weather.visibility
-                if (weather.visibility > 999) {
-                    visibilityValue = weather.visibility / 1000
-                    distanceUnits = "Km"
-                }
-                visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
-            }
+            showWeather(weather)
         })
 
         mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, Observer {dailyWeather ->
@@ -120,6 +96,48 @@ class CityFragment: Fragment() {
         })
 
         return v
+    }
+
+    private fun showWeather(weather: Weather) {
+        if (weather.name.isEmpty() || weather.sys.country.isEmpty()) {
+            (activity as MainActivity).getLastLocation()
+        } else {
+            main_image.setImageResource(R.drawable.ic_summer)
+            if (weather.main.temp <= 10) {
+                main_image.setImageResource(R.drawable.ic_winter)
+            }
+            mCityName = weather.name
+            mCountryCode = weather.sys.country
+            (activity as MainActivity).mCountryCode = weather.sys.country
+            city_name.text =
+                getString(R.string.city_name_country, weather.name, weather.sys.country)
+            (activity as MainActivity).mCityName = weather.name
+            temp.text =
+                getString(R.string.temp, weather.main.temp.toInt().toString(), mDegreeUnit)
+            feels_like.text = getString(
+                R.string.feels_like_temp,
+                weather.main.feelsLike.toInt().toString() + mDegreeUnit
+            )
+            humidity.text =
+                getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
+            wind_speed.text =
+                getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
+            feels_like.text = getString(
+                R.string.feels_like_temp,
+                weather.main.feelsLike.toInt().toString() + mDegreeUnit
+            )
+            sunrise.text = getString(R.string.sunrise_time, setTimeToHour(weather.sys.sunrise))
+            sunset.text = getString(R.string.sunset_time, setTimeToHour(weather.sys.sunset))
+
+            description.text = getString(R.string.description, weather.weather[0].description)
+            var distanceUnits = "m"
+            var visibilityValue = weather.visibility
+            if (weather.visibility > 999) {
+                visibilityValue = weather.visibility / 1000
+                distanceUnits = "Km"
+            }
+            visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+        }
     }
 
     fun getCityByLocation(lat: String, long: String, units: String) {

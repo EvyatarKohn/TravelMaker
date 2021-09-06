@@ -24,7 +24,7 @@
         android:layout_marginTop="25dp"
         android:fontFamily="@font/product_sans_regular"
         android:text="@string/icons_credit"
-        android:textSize="35dp"
+        android:textSize="35sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/exit_btn" />
 
@@ -36,7 +36,7 @@
         android:layout_marginTop="5dp"
         android:fontFamily="@font/product_sans_regular"
         android:text="@string/icons_credit_url"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icons_credit" />
 
@@ -49,7 +49,7 @@
         android:layout_marginTop="30dp"
         android:fontFamily="@font/product_sans_regular"
         android:text="@string/lotties_credit"
-        android:textSize="35dp"
+        android:textSize="35sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icons_credit_url" />
 
@@ -61,7 +61,7 @@
         android:layout_marginTop="5dp"
         android:fontFamily="@font/product_sans_regular"
         android:text="@string/lotties_credit_url"
-        android:textSize="25dp"
+        android:textSize="25sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lotties_credit" />
 

@@ -50,12 +50,21 @@ class CitiesFragment : Fragment() {
 
         })
 
+        mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer { weather ->
+            mMainListener.showCityWeatherFromList(weather)
+        })
+
         return v
     }
 
-    fun getCitiesList(units: String, boundaryBox: String) {
+    private fun getCitiesList(units: String, boundaryBox: String) {
         mUnits = units
         mViewModel.getCitiesList(units, boundaryBox)
+    }
+
+    fun getWeather(cityName: String , units: String) {
+        mUnits = units
+        mViewModel.getWeather(cityName, mUnits)
     }
 
 }

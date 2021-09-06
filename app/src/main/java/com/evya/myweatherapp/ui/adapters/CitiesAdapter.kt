@@ -95,7 +95,7 @@ class CitiesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mTemp?.text = "min $tempMin - max $tempMax"
         mClearSky?.text = clearSky
         mWindSpeed?.text = windSpeed
-        mWeatherImage?.setBackgroundResource(weatherImage)
+        mWeatherImage?.setImageResource(weatherImage)
         itemView.setOnClickListener {
             mainListener.showCityWeather(mCityName?.text.toString(), "", "")
         }
