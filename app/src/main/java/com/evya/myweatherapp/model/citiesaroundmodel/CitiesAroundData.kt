@@ -1,9 +1,9 @@
-package com.evya.myweatherapp.model.citiesweathermodel
+package com.evya.myweatherapp.model.citiesaroundmodel
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class CityData(
+data class CitiesAroundData(
     @SerializedName("clouds")
     @Expose
     val clouds: Clouds,
@@ -36,9 +36,9 @@ data class CityData(
     @Expose
     val snow: Any,
 
-    @SerializedName("visibility")
+    @SerializedName("sys")
     @Expose
-    val visibility: Int,
+    val sys: Sys,
 
     @SerializedName("weather")
     @Expose

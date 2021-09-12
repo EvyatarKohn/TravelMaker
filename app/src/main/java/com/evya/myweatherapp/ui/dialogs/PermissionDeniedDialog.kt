@@ -49,17 +49,16 @@ class PermissionDeniedDialog: DialogFragment() {
         }
         mPermissionsBtn = v.findViewById(R.id.approve_btn)
 
-       /* if (!mIsGpsEnabled) {
-            mTitle.text = resources.getString(R.string.you_have_to_enable_gps)
-            mPermissionsBtn.text = resources.getString(R.string.ok)
-        }*/
+        if (mIsGpsEnabled) {
+            mPermissionsBtn.text = resources.getString(R.string.approve_permissions)
+        }
         mPermissionsBtn.setOnClickListener {
+            dialog?.dismiss()
             if (mIsGpsEnabled) {
                 (activity as MainActivity).goToPermissionSettings()
             } else {
-                (activity as MainActivity).getLastLocation()
+                (activity as MainActivity).turnGPSOn()
             }
-            dialog?.dismiss()
         }
         return v
     }

@@ -1,13 +1,13 @@
 package com.evya.myweatherapp.ui.fragments
 
-import android.graphics.Color
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.ui.MainListener
@@ -15,7 +15,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,16 +27,9 @@ class GoogleMapsFragment : Fragment() {
     private lateinit var mLat: String
     private lateinit var mLong: String
     private lateinit var mShowWeatherBtn: Button
-    private lateinit var mRadiusBtn: Button
-    private lateinit var mBtnLayout: LinearLayout
-    private lateinit var mTitle: TextView
-    private var mBoundaryBox = "34,29.5,34.9,36.5,200" /*"west:34,south:29.5,east:34.9,north:36.5,200"*/
-
-
+    private lateinit var mSearch: SearchView
 
     companion object {
-        private const val CIRCLE_RADIUS = 277000.0
-
         fun newInstance(lat: String, long: String, mainListener: MainListener) =
             GoogleMapsFragment().apply {
                 mLat = lat
@@ -55,8 +47,31 @@ class GoogleMapsFragment : Fragment() {
         val mapView: SupportMapFragment =
             (childFragmentManager.findFragmentById(R.id.map_layout)) as SupportMapFragment
 
-        mBtnLayout = v.findViewById(R.id.btn_layout)
-        mTitle = v.findViewById(R.id.google_maps_title)
+        mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
+        mSearch = v.findViewById(R.id.search_Bar)
+
+        mSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                mGoogleMap.clear()
+                val location = mSearch.query.toString()
+                val geocoder = Geocoder(activity?.applicationContext)
+                val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
+                if (list.size > 0) {
+                    val address = list[0]
+                    mLat = address.latitude.toString()
+                    mLong =address.longitude.toString()
+                    val latLang = LatLng(address.latitude, address.longitude)
+                    mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 10f))
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                return false
+            }
+
+        })
 
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
@@ -67,23 +82,16 @@ class GoogleMapsFragment : Fragment() {
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             mGoogleMap.setOnMapLoadedCallback {
-                mBtnLayout.visibility = View.VISIBLE
-                mTitle.visibility = View.VISIBLE
+                mShowWeatherBtn.visibility = View.VISIBLE
+                mSearch.visibility = View.VISIBLE
             }
             mGoogleMap.setOnMapClickListener { latLng ->
                 mGoogleMap.clear()
                 mLat = latLng.latitude.toString()
                 mLong = latLng.longitude.toString()
-                val myLocation = LatLng(latLng.latitude, latLng.longitude)
                 mGoogleMap.addMarker(
-                    MarkerOptions().position(myLocation).title("lat:$mLat, long: $mLong")
+                    MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude)).title("lat:$mLat, long: $mLong")
                 )
-                mRadiusBtn = v.findViewById(R.id.show_area_radius)
-                mRadiusBtn.setOnClickListener {
-                    mRadiusBtn.text = resources.getString(R.string.show_cities_list)
-                    drawCircleAndGetCitiesList(latLng)
-                }
-
             }
 
             mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
@@ -94,30 +102,4 @@ class GoogleMapsFragment : Fragment() {
         }
         return v
     }
-
-    private fun drawCircleAndGetCitiesList(latLng: LatLng) {
-        mGoogleMap.addCircle(
-            CircleOptions()
-                .center(LatLng(mLat.toDouble(), mLong.toDouble()))
-                .radius(CIRCLE_RADIUS)
-                .strokeWidth(3f)
-                .strokeColor(Color.BLUE)
-                .clickable(true)
-        )
-        //West
-        val westLocation = LatLng(latLng.latitude, latLng.longitude - 2.5)
-        //North
-        val northLocation = LatLng(latLng.latitude + 2.5, latLng.longitude)
-        //East
-        val eastLocation = LatLng(latLng.latitude, latLng.longitude + 2.5)
-        //South
-        val southLocation = LatLng(latLng.latitude - 2.5, latLng.longitude)
-
-
-        mBoundaryBox = westLocation.longitude.toString() + "," + southLocation.latitude + "," + eastLocation.longitude + "," + northLocation.latitude + ",200"
-        mRadiusBtn.setOnClickListener {
-            mMainListener.replaceToCitiesListFragment(mBoundaryBox)
-        }
-    }
-
 }

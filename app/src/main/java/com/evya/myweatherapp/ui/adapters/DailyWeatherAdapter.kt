@@ -45,7 +45,7 @@ class DailyWeatherAdapter(
             }
             "snow",
             "light snow" -> {
-                weatherImage = R.drawable.ic_snowy
+                weatherImage = R.drawable.ic_snow
             }
         }
 

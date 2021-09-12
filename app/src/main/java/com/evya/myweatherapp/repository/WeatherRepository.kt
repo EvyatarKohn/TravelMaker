@@ -13,11 +13,14 @@ class WeatherRepository @Inject constructor(private val mainApi: MainApi) {
             units
         )
 
-    suspend fun getCitiesList(units: String, boundaryBox: String) = mainApi.getCitiesList(
-        boundaryBox,
+    suspend fun getCitiesAround(lat: String, long: String, units: String) = mainApi.getCitiesAround(
+        lat,
+        long,
+        "8",
         "b2baa3886c9bf495a13704d6ce1523a5",
         units
     )
+
 
     suspend fun getWeather(cityName: String, units: String) =
         mainApi.getWeather(

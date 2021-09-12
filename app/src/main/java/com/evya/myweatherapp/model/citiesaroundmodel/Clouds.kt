@@ -1,11 +1,11 @@
-package com.evya.myweatherapp.model.citiesweathermodel
+package com.evya.myweatherapp.model.citiesaroundmodel
 
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class Clouds(
-    @SerializedName("today")
+    @SerializedName("all")
     @Expose
-    val today: Int
+    val all: Int
 )

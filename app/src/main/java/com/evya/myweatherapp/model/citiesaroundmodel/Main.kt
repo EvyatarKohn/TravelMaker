@@ -1,4 +1,4 @@
-package com.evya.myweatherapp.model.citiesweathermodel
+package com.evya.myweatherapp.model.citiesaroundmodel
 
 
 import com.google.gson.annotations.Expose
@@ -9,10 +9,6 @@ data class Main(
     @Expose
     val feelsLike: Double,
 
-    @SerializedName("grnd_level")
-    @Expose
-    val grndLevel: Int,
-
     @SerializedName("humidity")
     @Expose
     val humidity: Int,
@@ -20,10 +16,6 @@ data class Main(
     @SerializedName("pressure")
     @Expose
     val pressure: Int,
-
-    @SerializedName("sea_level")
-    @Expose
-    val seaLevel: Int,
 
     @SerializedName("temp")
     @Expose

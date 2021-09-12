@@ -42,7 +42,8 @@
     <string name="you_have_to_approve_permissions_title">We would like to use\nyour current location</string>
     <string name="you_have_to_approve_permissions_sub_title">To get the updated information for\ntour current location, we need you to\nenable the GPS service</string>
     <string name="exit_btn">No Thanks</string>
-    <string name="approve_permissions">Enable GPS</string>
+    <string name="enable_gps">Enable GPS</string>
+    <string name="approve_permissions">Give permissions</string>
 
     <!-- Custom cities list dialog texts  -->
     <string name="custom_cities_list_dialog_error">Please fill all four fields</string>
@@ -66,6 +67,7 @@
     <string name="show_weather_btn">Show weather</string>
     <string name="show_radius_btn">Draw circle</string>
     <string name="show_cities_list">Show cities list</string>
+    <string name="search_bar">Enter Address, City Or Zip Code</string>
 
     <!-- General strings -->
     <string name="MAPS_API_KEY">AIzaSyDstpnXoJmuT4Sat_b-JHUFlwfJgeZciMw</string>
@@ -79,5 +81,6 @@
     <string name="temp_min">Temp min\n%1$s %2$s</string>
     <string name="description">Weather\n%1$s</string>
     <string name="visibility">Visibility\n%1$s %2$s</string>
+    <string name="general_error">There been some error, please try again</string>
 
 </resources>

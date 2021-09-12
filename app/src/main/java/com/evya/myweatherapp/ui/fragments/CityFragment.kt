@@ -3,19 +3,20 @@ package com.evya.myweatherapp.ui.fragments
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.Observer
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.model.weathermodel.Weather
-import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
-import com.evya.myweatherapp.ui.adapters.MainCityAdapter
+import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
+import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.MainListener
+import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
+import com.evya.myweatherapp.ui.adapters.MainCityAdapter
 import com.evya.myweatherapp.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.city_fragment_layout.*
@@ -66,7 +67,6 @@ class CityFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setTopAdapter()
         if (mUnits == "imperial") {
             mDegreeUnit = "\u2109"
             mWindSpeed = " miles/hr"
@@ -83,7 +83,9 @@ class CityFragment : Fragment() {
                 getCityByLocation(mLat, mLong, mUnits)
                 getDailyWeatherByLocation(mLat, mLong, mUnits)
             }
+            mViewModel.getCitiesAround(mLat, mLong, mUnits)
         }
+
     }
 
     override fun onCreateView(
@@ -105,6 +107,11 @@ class CityFragment : Fragment() {
 
         mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, Observer { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
+        })
+
+        mViewModel.citiesAroundRepo.observe(viewLifecycleOwner, Observer { citiesWeather ->
+            setTopAdapter(citiesWeather.list)
+
         })
 
         return v
@@ -181,19 +188,8 @@ class CityFragment : Fragment() {
         return sdf.format(Date(time.toLong() * 1000))
     }
 
-    private fun setTopAdapter() {
-        val citiesList = arrayListOf(
-            "Tel-Aviv",
-            "Jerusalem",
-            "Eilat",
-            "Haifa",
-            "Tiberias",
-            "Ramat Gan",
-            "Beersheba",
-            "Mitzpe Ramon"
-        )
-        mMainCitiesAdapter =
-            MainCityAdapter(activity?.applicationContext, citiesList, mMainListener)
+    private fun setTopAdapter(list: List<CitiesAroundData>) {
+        mMainCitiesAdapter = MainCityAdapter(activity?.applicationContext, list, mMainListener)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         main_cities_recycler_view.layoutManager = layoutManager

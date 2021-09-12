@@ -71,6 +71,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="25dp"
                     android:fontFamily="@font/product_sans_bold"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/location_icon" />
@@ -82,6 +83,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/product_sans_regular"
+                    android:textColor="@color/black"
                     android:textSize="50sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/city_name" />
@@ -93,6 +95,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="5dp"
                     android:fontFamily="@font/product_sans_regular"
+                    android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/temp" />
@@ -113,16 +116,16 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/daily_weather_recycler_view"
                     android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
             </ScrollView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/more_details_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="25dp"
                 android:paddingHorizontal="15dp"
+                android:paddingBottom="25dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/daily_weather_list">
 
@@ -146,9 +149,10 @@
                             android:id="@+id/sunrise"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="left"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
-                            android:layout_gravity="left"
+                            android:textColor="@color/black"
                             android:textSize="14sp" />
 
                         <TextView
@@ -156,10 +160,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:paddingLeft="25dp"
-                            android:paddingRight="25dp"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
+                            android:paddingLeft="25dp"
+                            android:paddingRight="25dp"
+                            android:textColor="@color/black"
                             android:textSize="14sp" />
 
                         <TextView
@@ -169,6 +174,7 @@
                             android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
+                            android:textColor="@color/black"
                             android:textSize="14sp" />
 
                     </TableRow>
@@ -186,6 +192,7 @@
                             android:layout_gravity="left"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
+                            android:textColor="@color/black"
                             android:textSize="14sp" />
 
                         <TextView
@@ -193,10 +200,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:paddingLeft="25dp"
-                            android:paddingRight="25dp"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
+                            android:paddingLeft="25dp"
+                            android:paddingRight="25dp"
+                            android:textColor="@color/black"
                             android:textSize="14sp" />
 
                         <TextView
@@ -206,6 +214,7 @@
                             android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
                             android:gravity="center"
+                            android:textColor="@color/black"
                             android:textSize="14sp" />
 
                     </TableRow>

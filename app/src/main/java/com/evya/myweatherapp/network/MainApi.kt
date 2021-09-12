@@ -1,6 +1,6 @@
 package com.evya.myweatherapp.network
 
-import com.evya.myweatherapp.model.citiesweathermodel.CitiesWeather
+import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAround
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.evya.myweatherapp.model.weathermodel.Weather
 import retrofit2.Response
@@ -17,12 +17,14 @@ interface MainApi {
         @Query("units") units: String
     ): Response<Weather>
 
-    @GET("box/city")
-    suspend fun getCitiesList(
-        @Query("bbox") bbox: String,
+    @GET("find")
+    suspend fun getCitiesAround(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("cnt") cnt: String,
         @Query("appid") appid: String,
         @Query("units") units: String
-    ): Response<CitiesWeather>
+    ): Response<CitiesAround>
 
     @GET("weather")
     suspend fun getWeather(

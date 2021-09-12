@@ -7,13 +7,15 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.ui.MainListener
 import kotlinx.android.synthetic.main.main_cities_item_layout.view.*
 
+ var selectedPos = RecyclerView.NO_POSITION
 
 class MainCityAdapter(
     private val context: Context?,
-    private var citiesList: List<String>,
+    private var citiesList: List<CitiesAroundData>,
     private val mainListener: MainListener
 ) : RecyclerView.Adapter<MainCitiesViewHolder>() {
 
@@ -24,7 +26,7 @@ class MainCityAdapter(
     }
 
     override fun onBindViewHolder(holder: MainCitiesViewHolder, position: Int) {
-        holder.bind(context, citiesList[position], mainListener)
+        holder.bind(context, citiesList[position].name, mainListener)
     }
 
     override fun getItemCount() = citiesList.size
@@ -40,9 +42,10 @@ class MainCitiesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
 
     fun bind(context: Context?, cityName: String, mainListener: MainListener) {
-        mCityName?.text = cityName
+        mCityName?.text = cityName.trim()
+
         itemView.setOnClickListener {
-            val typeFace = ResourcesCompat.getFont(context!!, R.font.product_sans_bold)
+            val typeFace = context?.let { ResourcesCompat.getFont(it, R.font.product_sans_bold) }
             mCityName?.typeface = typeFace
             mainListener.showCityWeather(mCityName?.text.toString(), "", "")
         }
