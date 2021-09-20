@@ -50,7 +50,7 @@ class GoogleMapsFragment : Fragment() {
         mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
         mSearch = v.findViewById(R.id.search_Bar)
 
-        mSearch.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+        mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 mGoogleMap.clear()
                 val location = mSearch.query.toString()
@@ -59,7 +59,7 @@ class GoogleMapsFragment : Fragment() {
                 if (list.size > 0) {
                     val address = list[0]
                     mLat = address.latitude.toString()
-                    mLong =address.longitude.toString()
+                    mLong = address.longitude.toString()
                     val latLang = LatLng(address.latitude, address.longitude)
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 10f))
@@ -90,7 +90,8 @@ class GoogleMapsFragment : Fragment() {
                 mLat = latLng.latitude.toString()
                 mLong = latLng.longitude.toString()
                 mGoogleMap.addMarker(
-                    MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude)).title("lat:$mLat, long: $mLong")
+                    MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
+                        .title("lat:$mLat, long: $mLong")
                 )
             }
 

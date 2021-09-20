@@ -70,7 +70,6 @@
     <string name="search_bar">Enter Address, City Or Zip Code</string>
 
     <!-- General strings -->
-    <string name="MAPS_API_KEY">AIzaSyDstpnXoJmuT4Sat_b-JHUFlwfJgeZciMw</string>
     <string name="Please_choose_city_toast">City not found</string>
     <string name="sunrise_time">Sunrise\n%1$s</string>
     <string name="sunset_time">Sunset\n%1$s</string>

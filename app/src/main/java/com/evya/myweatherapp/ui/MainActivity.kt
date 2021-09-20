@@ -265,7 +265,10 @@ class MainActivity : AppCompatActivity(), MainListener {
                     }
                 }
             }
-            getLastLocation()
+            Handler(Looper.getMainLooper()).postDelayed({
+                getLastLocation()
+            }, THREE_SEC)
         }
+
     }
 }

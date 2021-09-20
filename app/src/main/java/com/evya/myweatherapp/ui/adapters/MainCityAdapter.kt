@@ -11,8 +11,6 @@ import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.ui.MainListener
 import kotlinx.android.synthetic.main.main_cities_item_layout.view.*
 
- var selectedPos = RecyclerView.NO_POSITION
-
 class MainCityAdapter(
     private val context: Context?,
     private var citiesList: List<CitiesAroundData>,
