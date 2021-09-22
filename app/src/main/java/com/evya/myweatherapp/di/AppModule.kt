@@ -1,8 +1,9 @@
 package com.evya.myweatherapp.di
 
+import com.evya.myweatherapp.network.PlacesApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.evya.myweatherapp.network.MainApi
+import com.evya.myweatherapp.network.WeatherApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,11 +31,22 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(gson: Gson):MainApi =
+    fun provideWeatherRetrofit(gson: Gson):WeatherApi =
         Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
-            .create(MainApi::class.java)
+            .create(WeatherApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideTripRetrofit(gson: Gson):PlacesApi =
+        Retrofit.Builder()
+            .baseUrl("https://app.ticketmaster.com/discovery/v2/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(client)
+            .build()
+            .create(PlacesApi::class.java)
+
 }

@@ -7,7 +7,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface MainApi {
+interface WeatherApi {
 
     @GET("weather")
     suspend fun getCityByLocation(

@@ -1,13 +1,16 @@
 package com.evya.myweatherapp.ui.fragments
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
@@ -17,17 +20,19 @@ import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.MainListener
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.adapters.MainCityAdapter
-import com.evya.myweatherapp.ui.viewmodels.MainViewModel
+import com.evya.myweatherapp.ui.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.city_fragment_layout.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class CityFragment : Fragment() {
-    private val mViewModel: MainViewModel by viewModels()
+    private val mViewModel: WeatherViewModel by viewModels()
     private var mCityName = "Tel-aviv"
     private var mCountryCode = "IL"
     private lateinit var mUnits: String
@@ -40,6 +45,8 @@ class CityFragment : Fragment() {
     private var mWeather: Weather? = null
     private var mDegreeUnit = "\u2103"
     private var mWindSpeed = " m/s"
+    private lateinit var mUnitsText: TextView
+    private var mCelsius: Boolean = true
 
     companion object {
         fun newInstance(
@@ -72,6 +79,7 @@ class CityFragment : Fragment() {
             mWindSpeed = " miles/hr"
         }
 
+
         if (mWeather != null) {
             showWeather(mWeather!!)
             getDailyWeather(mCityName, mCountryCode, mUnits)
@@ -95,21 +103,46 @@ class CityFragment : Fragment() {
     ): View {
         val v = inflater.inflate(R.layout.city_fragment_layout, container, false)
 
+        mUnitsText = v.findViewById(R.id.units)
+        setSpan(0, 1)
+        mUnitsText.setOnClickListener {
+            val start: Int
+            val end: Int
+            if (mCelsius) {
+                start = mUnitsText.text.length - 1
+                end = mUnitsText.text.length
+                mUnits = "imperial"
+                mDegreeUnit = "\u2109"
+                mWindSpeed = " miles/hr"
+                mCelsius = false
+            } else {
+                start = 0
+                end = 1
+                mUnits = "metric"
+                mDegreeUnit = "\u2103"
+                mWindSpeed = " m/s"
+                mCelsius = true
+            }
+
+            setSpan(start, end)
+            getWeather(mCityName, mUnits)
+            getDailyWeather(mCityName, mCountryCode, mUnits)
+        }
 
         mLocationBtn = v.findViewById(R.id.location_icon)
         mLocationBtn.setOnClickListener {
             mMainListener.replaceToCustomCityFragment()
         }
 
-        mViewModel.weatherRepo.observe(viewLifecycleOwner, Observer { weather ->
+        mViewModel.weatherRepo.observe(viewLifecycleOwner, { weather ->
             showWeather(weather)
         })
 
-        mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, Observer { dailyWeather ->
+        mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
         })
 
-        mViewModel.citiesAroundRepo.observe(viewLifecycleOwner, Observer { citiesWeather ->
+        mViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
             setTopAdapter(citiesWeather.list)
 
         })
@@ -117,12 +150,18 @@ class CityFragment : Fragment() {
         return v
     }
 
+    private fun setSpan(start: Int, end: Int) {
+        val span = SpannableString(resources.getString(R.string.units))
+        span.setSpan(ForegroundColorSpan(ContextCompat.getColor(activity?.applicationContext!!, R.color.turquoise)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        mUnitsText.text = span
+    }
+
     private fun showWeather(weather: Weather) {
         if (weather.name.isEmpty() || weather.sys.country.isEmpty()) {
             (activity as MainActivity).getLastLocation()
         } else {
             main_image.setImageResource(R.drawable.ic_summer)
-            if (weather.main.temp <= 10) {
+            if ((weather.main.temp <= 10 && mUnits == "metric") || (weather.main.temp <= 50 && mUnits == "imperial")) {
                 main_image.setImageResource(R.drawable.ic_winter)
             }
             mCityName = weather.name
@@ -132,7 +171,7 @@ class CityFragment : Fragment() {
             city_name.text =
                 getString(R.string.city_name_country, weather.name, weather.sys.country)
             temp.text =
-                getString(R.string.temp, weather.main.temp.toInt().toString(), mDegreeUnit)
+                getString(R.string.temp, weather.main.temp.toInt().toString())
             feels_like.text = getString(
                 R.string.feels_like_temp,
                 weather.main.feelsLike.toInt().toString() + mDegreeUnit

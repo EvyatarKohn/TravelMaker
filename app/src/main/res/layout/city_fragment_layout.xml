@@ -49,7 +49,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
 
                 <TextView
                     android:id="@+id/location_icon"
@@ -57,12 +58,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="25dp"
-                    android:drawableLeft="@drawable/ic_location"
                     android:drawablePadding="5dp"
-                    android:text="Different destination"
+                    android:text="@string/different_destination"
                     android:textColor="@color/turquoise"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:drawableLeftCompat="@drawable/ic_location" />
 
                 <TextView
                     android:id="@+id/city_name"
@@ -86,6 +87,18 @@
                     android:textColor="@color/black"
                     android:textSize="50sp"
                     app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/city_name" />
+
+                <TextView
+                    android:id="@+id/units"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:textColor="@color/grey_54"
+                    android:textSize="16sp"
+                    android:text="@string/units"
+                    app:layout_constraintLeft_toRightOf="@id/temp"
                     app:layout_constraintTop_toBottomOf="@+id/city_name" />
 
                 <TextView

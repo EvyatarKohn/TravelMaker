@@ -16,6 +16,8 @@
     <!-- City Fragment texts  -->
     <string name="to_cities_list_btn">to cities list</string>
     <string name="to_custom_city_btn">to custom city</string>
+    <string name="different_destination">Different destination</string>
+    <string name="units">℃ | F</string>
 
     <!-- Custom City Fragment texts  -->
     <string name="choose_city_error_message_no_fields">You forgot something!</string>
@@ -75,7 +77,7 @@
     <string name="sunset_time">Sunset\n%1$s</string>
     <string name="humidity_new">Humidity\n%1$s</string>
     <string name="wind_speed_new">Wind speed\n%1$s</string>
-    <string name="temp">%1$s %2$s</string>
+    <string name="temp">%1$s</string>
     <string name="temp_max">Temp max\n%1$s %2$s</string>
     <string name="temp_min">Temp min\n%1$s %2$s</string>
     <string name="description">Weather\n%1$s</string>
