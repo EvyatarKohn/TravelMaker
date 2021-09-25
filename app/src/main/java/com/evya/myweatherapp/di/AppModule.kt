@@ -43,7 +43,7 @@ object AppModule {
     @Provides
     fun provideTripRetrofit(gson: Gson):PlacesApi =
         Retrofit.Builder()
-            .baseUrl("https://app.ticketmaster.com/discovery/v2/")
+            .baseUrl("https://api.opentripmap.com/0.1/en/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()

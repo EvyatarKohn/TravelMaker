@@ -20,7 +20,9 @@ import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.MainListener
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.adapters.MainCityAdapter
+import com.evya.myweatherapp.ui.viewmodels.PlacesViewModel
 import com.evya.myweatherapp.ui.viewmodels.WeatherViewModel
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.city_fragment_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +34,8 @@ import kotlin.collections.ArrayList
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class CityFragment : Fragment() {
-    private val mViewModel: WeatherViewModel by viewModels()
+    private val mWeatherViewModel: WeatherViewModel by viewModels()
+    private val mPlacesViewModel: PlacesViewModel by viewModels()
     private var mCityName = "Tel-aviv"
     private var mCountryCode = "IL"
     private lateinit var mUnits: String
@@ -79,7 +82,6 @@ class CityFragment : Fragment() {
             mWindSpeed = " miles/hr"
         }
 
-
         if (mWeather != null) {
             showWeather(mWeather!!)
             getDailyWeather(mCityName, mCountryCode, mUnits)
@@ -91,8 +93,19 @@ class CityFragment : Fragment() {
                 getCityByLocation(mLat, mLong, mUnits)
                 getDailyWeatherByLocation(mLat, mLong, mUnits)
             }
-            mViewModel.getCitiesAround(mLat, mLong, mUnits)
+            mWeatherViewModel.getCitiesAround(mLat, mLong, mUnits)
         }
+
+        attractionsInfoButtons()
+
+        mPlacesViewModel.placesRepo.observe(viewLifecycleOwner, { places ->
+            val latLong: ArrayList<LatLng> = ArrayList()
+            places.features.forEach {
+                latLong.add(LatLng(it.geometry.coordinates[0], it.geometry.coordinates[1]))
+            }
+            mMainListener.showAttractionMap(LatLng(mLat.toDouble(), mLong.toDouble()), places)
+//            mPlacesViewModel.placesRepo.removeObservers(viewLifecycleOwner)
+        })
 
     }
 
@@ -134,15 +147,15 @@ class CityFragment : Fragment() {
             mMainListener.replaceToCustomCityFragment()
         }
 
-        mViewModel.weatherRepo.observe(viewLifecycleOwner, { weather ->
+        mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner, { weather ->
             showWeather(weather)
         })
 
-        mViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
+        mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
         })
 
-        mViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
+        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
             setTopAdapter(citiesWeather.list)
 
         })
@@ -152,7 +165,14 @@ class CityFragment : Fragment() {
 
     private fun setSpan(start: Int, end: Int) {
         val span = SpannableString(resources.getString(R.string.units))
-        span.setSpan(ForegroundColorSpan(ContextCompat.getColor(activity?.applicationContext!!, R.color.turquoise)), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(
+            ForegroundColorSpan(
+                ContextCompat.getColor(
+                    activity?.applicationContext!!,
+                    R.color.turquoise
+                )
+            ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
         mUnitsText.text = span
     }
 
@@ -196,27 +216,33 @@ class CityFragment : Fragment() {
             }
             visibility.text =
                 getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+
+//            probability_of_precipitation.text = getString(R.string.probability_of_precipitation, weather.pop.toString())
+//            rain_3h.text = getString(R.string.probability_of_precipitation, weather.rain.threeHours)
+//            wind_direction.text = getString(R.string.wind_direction, weather.wind.deg.toString())
         }
+
+
     }
 
     fun getCityByLocation(lat: String, long: String, units: String) {
         mUnits = units
-        mViewModel.getCityByLocation(lat, long, units)
+        mWeatherViewModel.getCityByLocation(lat, long, units)
     }
 
     fun getWeather(cityName: String, units: String) {
         mUnits = units
-        mViewModel.getWeather(cityName, units)
+        mWeatherViewModel.getWeather(cityName, units)
     }
 
     fun getDailyWeatherByLocation(lat: String, long: String, units: String) {
         mUnits = units
-        mViewModel.getDailyWeatherByLocation(lat, long, units)
+        mWeatherViewModel.getDailyWeatherByLocation(lat, long, units)
     }
 
     fun getDailyWeather(cityName: String, countryCode: String, units: String) {
         mUnits = units
-        mViewModel.getDailyWeather(cityName, countryCode, units)
+        mWeatherViewModel.getDailyWeather(cityName, countryCode, units)
     }
 
     private fun setTimeToHour(time: Int): String {
@@ -257,4 +283,53 @@ class CityFragment : Fragment() {
         daily_weather_recycler_view.layoutManager = layoutManager
         daily_weather_recycler_view.adapter = mDailyAdapter
     }
+
+    private fun attractionsInfoButtons() {
+        get_museums_btn.setOnClickListener {
+            mPlacesViewModel.getMuseum(mLong, mLat, "museums")
+
+        }
+
+        get_cinemas_btn.setOnClickListener {
+            mPlacesViewModel.getCinemas(mLong, mLat, "cinemas")
+        }
+
+        get_accommodations_btn.setOnClickListener {
+            mPlacesViewModel.getAccommodations(mLong, mLat, "accomodations")
+        }
+
+        get_adult_btn.setOnClickListener {
+            mPlacesViewModel.getAdults(mLong, mLat, "adult")
+        }
+
+        get_amusements_btn.setOnClickListener {
+            mPlacesViewModel.getAmusements(mLong, mLat, "amusements")
+        }
+
+        get_sports_btn.setOnClickListener {
+            mPlacesViewModel.getSports(mLong, mLat, "sports")
+        }
+
+        get_banks_btn.setOnClickListener {
+            mPlacesViewModel.getBanks(mLong, mLat, "banks")
+        }
+
+        get_foods_btn.setOnClickListener {
+            mPlacesViewModel.getFood(mLong, mLat, "foods")
+
+        }
+
+        get_foods_btn.setOnClickListener {
+            mPlacesViewModel.getFood(mLong, mLat, "foods")
+
+        }
+
+        get_shops_btn.setOnClickListener {
+            mPlacesViewModel.getShops(mLong, mLat, "shops")
+        }
+
+        get_transport_btn.setOnClickListener {
+            mPlacesViewModel.getTransports(mLong, mLat, "transport")
+        }    }
+
 }

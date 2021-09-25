@@ -71,6 +71,28 @@
     <string name="show_cities_list">Show cities list</string>
     <string name="search_bar">Enter Address, City Or Zip Code</string>
 
+    <!--  Places Api strings  -->
+    <string name="museum_request_error">Museum request error</string>
+    <string name="cinemas_request_error">Cinemas request error</string>
+    <string name="accommodations_request_error">Accommodations request error</string>
+    <string name="adults_request_error">Adults request error</string>
+    <string name="amusements_request_error">Amusements request error</string>
+    <string name="sports_request_error">Sports request error</string>
+    <string name="banks_request_error">Banks request error</string>
+    <string name="food_request_error">Food request error</string>
+    <string name="shops_request_error">Shops request error</string>
+    <string name="transports_request_error">Transports request error</string>
+    <string name="get_museums_btn">Get Museums</string>
+    <string name="get_cinemas_btn">Get Cinemas</string>
+    <string name="get_accommodations_btn">Get Accommodations</string>
+    <string name="get_adult_btn">Get Adult</string>
+    <string name="get_amusements_btn">Get Amusements</string>
+    <string name="get_sports_btn">Get Sports</string>
+    <string name="get_banks_btn">Get Banks</string>
+    <string name="get_food_btn">Get Food</string>
+    <string name="get_shops_btn">Get Shops</string>
+    <string name="get_transport_btn">Get Transport</string>
+
     <!-- General strings -->
     <string name="Please_choose_city_toast">City not found</string>
     <string name="sunrise_time">Sunrise\n%1$s</string>
@@ -82,6 +104,8 @@
     <string name="temp_min">Temp min\n%1$s %2$s</string>
     <string name="description">Weather\n%1$s</string>
     <string name="visibility">Visibility\n%1$s %2$s</string>
+    <string name="probability_of_precipitation">Pop\n%1$s</string>
+    <string name="wind_direction">Wind direc\n%1$s</string>
     <string name="general_error">There been some error, please try again</string>
 
 </resources>

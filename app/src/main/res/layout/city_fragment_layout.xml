@@ -49,8 +49,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/location_icon"
@@ -61,9 +60,9 @@
                     android:drawablePadding="5dp"
                     android:text="@string/different_destination"
                     android:textColor="@color/turquoise"
+                    app:drawableLeftCompat="@drawable/ic_location"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:drawableLeftCompat="@drawable/ic_location" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/city_name"
@@ -95,9 +94,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/product_sans_regular"
+                    android:text="@string/units"
                     android:textColor="@color/grey_54"
                     android:textSize="16sp"
-                    android:text="@string/units"
                     app:layout_constraintLeft_toRightOf="@id/temp"
                     app:layout_constraintTop_toBottomOf="@+id/city_name" />
 
@@ -190,6 +189,7 @@
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
+
                     </TableRow>
 
                     <TableRow
@@ -231,10 +231,227 @@
                             android:textSize="14sp" />
 
                     </TableRow>
+<!--                    <TableRow-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:layout_marginTop="25dp"-->
+<!--                        android:gravity="center">-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/probability_of_precipitation"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="left"-->
+<!--                            android:fontFamily="@font/product_sans_regular"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="14sp" />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/rain_3h"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:fontFamily="@font/product_sans_regular"-->
+<!--                            android:gravity="center"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="14sp" />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/wind_direction"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_gravity="right"-->
+<!--                            android:fontFamily="@font/product_sans_regular"-->
+<!--                            android:gravity="center"-->
+<!--                            android:paddingLeft="25dp"-->
+<!--                            android:paddingRight="25dp"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="14sp" />-->
+
+<!--                    </TableRow>-->
                 </TableLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/more_details_layout">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/attractions_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="15dp"
+                    android:paddingBottom="25dp">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="25dp"
+                        android:background="@color/grey_f7"
+                        android:gravity="center"
+                        android:paddingVertical="15dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+
+                        <TableRow
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+
+                            <Button
+                                android:id="@+id/get_museums_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_museums_btn" />
+
+                            <Button
+                                android:id="@+id/get_cinemas_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_cinemas_btn" />
+
+
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center">
+
+                            <Button
+                                android:id="@+id/get_adult_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_adult_btn" />
+
+
+                            <Button
+                                android:id="@+id/get_accommodations_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_accommodations_btn" />
+
+
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center">
+
+
+                            <Button
+                                android:id="@+id/get_amusements_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_amusements_btn" />
+
+                            <Button
+                                android:id="@+id/get_sports_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_sports_btn" />
+
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center">
+
+                            <Button
+                                android:id="@+id/get_banks_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_banks_btn" />
+
+                            <Button
+                                android:id="@+id/get_foods_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_food_btn" />
+
+                        </TableRow>
+
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center">
+
+
+                            <Button
+                                android:id="@+id/get_shops_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_shops_btn" />
+
+
+                            <Button
+                                android:id="@+id/get_transport_btn"
+                                android:layout_width="150dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:background="@drawable/button_shape"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="center"
+                                android:text="@string/get_transport_btn" />
+
+                        </TableRow>
+                    </TableLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

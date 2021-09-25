@@ -28,6 +28,7 @@ class GoogleMapsFragment : Fragment() {
     private lateinit var mLong: String
     private lateinit var mShowWeatherBtn: Button
     private lateinit var mSearch: SearchView
+//    private lateinit var mPlaceAutoCompleteAdapter: PlaceAutocompleteAdapter
 
     companion object {
         fun newInstance(lat: String, long: String, mainListener: MainListener) =
@@ -70,7 +71,6 @@ class GoogleMapsFragment : Fragment() {
             override fun onQueryTextChange(p0: String?): Boolean {
                 return false
             }
-
         })
 
         mapView.getMapAsync { googleMap ->
@@ -99,7 +99,6 @@ class GoogleMapsFragment : Fragment() {
             mShowWeatherBtn.setOnClickListener {
                 mMainListener.showCityWeather("", mLat, mLong)
             }
-
         }
         return v
     }

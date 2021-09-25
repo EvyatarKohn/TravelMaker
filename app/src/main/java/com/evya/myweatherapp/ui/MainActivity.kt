@@ -20,15 +20,18 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.model.placesmodel.Places
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.ArrayList
 
 
 @ExperimentalCoroutinesApi
@@ -206,6 +209,15 @@ class MainActivity : AppCompatActivity(), MainListener {
 
     override fun showCityWeatherFromList(weather: Weather) {
         showFragment(CityFragment.newInstance(weather, mUnits, this), "CITY_FRAGMENT")
+    }
+
+    override fun showAttractionMap(
+        localLatLng: LatLng, places: Places
+    ) {
+        showFragment(
+            GoogleMapsAttractionFragment.newInstance(localLatLng, places, this),
+            "GOOGLE_MAPS_ATTRACTION_FRAGMENT"
+        )
     }
 
     fun goToPermissionSettings() {
