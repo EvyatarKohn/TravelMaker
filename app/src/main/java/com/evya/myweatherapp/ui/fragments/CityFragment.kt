@@ -153,6 +153,13 @@ class CityFragment : Fragment() {
 
         mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
+            probability_of_precipitation.text = getString(R.string.probability_of_precipitation, (dailyWeather.list[0].pop * 100).toString() + " %")
+            var rainHeight = "0"
+            if (dailyWeather.list[0].rain != null) {
+                rainHeight = dailyWeather.list[0].rain.h.toString()
+            }
+            rain_3h.text = getString(R.string.rain_last_3h, "$rainHeight mm")
+            wind_direction.text = getString(R.string.wind_direction, dailyWeather.list[0].wind.deg.toString() + " deg")
         })
 
         mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
@@ -216,10 +223,6 @@ class CityFragment : Fragment() {
             }
             visibility.text =
                 getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
-
-//            probability_of_precipitation.text = getString(R.string.probability_of_precipitation, weather.pop.toString())
-//            rain_3h.text = getString(R.string.probability_of_precipitation, weather.rain.threeHours)
-//            wind_direction.text = getString(R.string.wind_direction, weather.wind.deg.toString())
         }
 
 

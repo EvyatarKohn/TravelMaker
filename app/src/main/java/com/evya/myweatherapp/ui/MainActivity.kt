@@ -31,7 +31,6 @@ import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.util.ArrayList
 
 
 @ExperimentalCoroutinesApi

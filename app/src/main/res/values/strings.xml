@@ -104,8 +104,9 @@
     <string name="temp_min">Temp min\n%1$s %2$s</string>
     <string name="description">Weather\n%1$s</string>
     <string name="visibility">Visibility\n%1$s %2$s</string>
-    <string name="probability_of_precipitation">Pop\n%1$s</string>
-    <string name="wind_direction">Wind direc\n%1$s</string>
+    <string name="probability_of_precipitation">Precipitation\nprobability\n%1$s</string>
+    <string name="rain_last_3h">Rain last\n3h\n%1$s</string>
+    <string name="wind_direction">Wind\ndirection\n%1$s</string>
     <string name="general_error">There been some error, please try again</string>
 
 </resources>

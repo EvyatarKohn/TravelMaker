@@ -1,13 +1,17 @@
 package com.evya.myweatherapp.model.dailyweathermodel
 
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.google.gson.annotations.Expose
 
 data class Main(
+    @SerializedName("feels_like")
+    @Expose
+    val feelsLike: Double,
+
     @SerializedName("grnd_level")
     @Expose
-    val grndLevel: Double,
+    val grndLevel: Int,
 
     @SerializedName("humidity")
     @Expose
@@ -15,11 +19,11 @@ data class Main(
 
     @SerializedName("pressure")
     @Expose
-    val pressure: Double,
+    val pressure: Int,
 
     @SerializedName("sea_level")
     @Expose
-    val seaLevel: Double,
+    val seaLevel: Int,
 
     @SerializedName("temp")
     @Expose

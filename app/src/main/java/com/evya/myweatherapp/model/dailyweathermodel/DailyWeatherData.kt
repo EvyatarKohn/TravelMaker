@@ -1,7 +1,7 @@
 package com.evya.myweatherapp.model.dailyweathermodel
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.google.gson.annotations.Expose
 
 data class DailyWeatherData(
     @SerializedName("clouds")
@@ -20,17 +20,21 @@ data class DailyWeatherData(
     @Expose
     val main: Main,
 
+    @SerializedName("pop")
+    @Expose
+    val pop: Double,
+
     @SerializedName("rain")
     @Expose
     val rain: Rain,
 
-    @SerializedName("snow")
-    @Expose
-    val snow: Snow,
-
     @SerializedName("sys")
     @Expose
     val sys: Sys,
+
+    @SerializedName("visibility")
+    @Expose
+    val visibility: Int,
 
     @SerializedName("weather")
     @Expose

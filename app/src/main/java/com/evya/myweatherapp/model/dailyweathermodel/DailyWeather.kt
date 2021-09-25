@@ -1,8 +1,8 @@
 package com.evya.myweatherapp.model.dailyweathermodel
 
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.google.gson.annotations.Expose
 
 data class DailyWeather(
     @SerializedName("city")
@@ -21,7 +21,7 @@ data class DailyWeather(
     @Expose
     val list: List<DailyWeatherData>,
 
-    @SerializedName("message")
     @Expose
-    val message: Double
+    @SerializedName("message")
+    val message: Int
 )
