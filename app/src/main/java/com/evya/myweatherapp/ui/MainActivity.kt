@@ -13,6 +13,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
@@ -35,7 +36,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), MainListener {
+class MainActivity : AppCompatActivity() {
 
     var mUnits = METRIC
     var mCityName = "Tel-aviv"
@@ -44,8 +45,9 @@ class MainActivity : AppCompatActivity(), MainListener {
     private var mLong: String = "34.7999968"
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
-    private var mFromTopAdapter = false
     private var mApprovePermissions = false
+    private var mFirsTimeBack = true
+
 
     companion object {
         const val IMPERIAL = "imperial"
@@ -87,10 +89,6 @@ class MainActivity : AppCompatActivity(), MainListener {
                     } else {
                         mLat = location.latitude.toString()
                         mLong = location.longitude.toString()
-                        showFragment(
-                            CityFragment.newInstance(mLat, mLong, "", mUnits, this),
-                            "CITY_FRAGMENT_LOCATION"
-                        )
                     }
                 }
             } else {
@@ -122,10 +120,10 @@ class MainActivity : AppCompatActivity(), MainListener {
             val lastLocation = locationResult.lastLocation
             mLat = lastLocation.latitude.toString()
             mLong = lastLocation.longitude.toString()
-            showFragment(
+           /* showFragment(
                 CityFragment.newInstance(mLat, mLong, "", mUnits, this@MainActivity),
                 "CITY_FRAGMENT_LOCATION"
-            )
+            )*/
         }
     }
 
@@ -164,61 +162,6 @@ class MainActivity : AppCompatActivity(), MainListener {
         }
     }
 
-    private fun refreshRelevantFragment() {
-        when {
-            supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")?.isVisible == true -> {
-                val currentFragment = supportFragmentManager.findFragmentByTag("CITY_FRAGMENT")
-                (currentFragment as CityFragment).getWeather(mCityName, mUnits)
-                currentFragment.getDailyWeather(mCityName, mCountryCode, mUnits)
-            }
-            supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")?.isVisible == true -> {
-                val currentFragment =
-                    supportFragmentManager.findFragmentByTag("CITY_FRAGMENT_LOCATION")
-                if (mFromTopAdapter) {
-                    (currentFragment as CityFragment).getWeather(mCityName, mUnits)
-                    currentFragment.getDailyWeather(mCityName, mCountryCode, mUnits)
-                    mFromTopAdapter = false
-                } else {
-                    (currentFragment as CityFragment).getCityByLocation(mLat, mLong, mUnits)
-                    currentFragment.getDailyWeatherByLocation(mLat, mLong, mUnits)
-                }
-            }
-            supportFragmentManager.findFragmentByTag("GOOGLE_MAPS_FRAGMENT")?.isVisible == true -> {
-                showFragment(
-                    CityFragment.newInstance(mLat, mLong, "", mUnits, this),
-                    "CITY_FRAGMENT"
-                )
-            }
-        }
-    }
-
-    override fun showCityWeather(cityName: String, lat: String, long: String) {
-        mCityName = cityName
-        if (lat.isNotEmpty() && long.isNotEmpty()) {
-            mLat = lat
-            mLong = long
-        }
-        mFromTopAdapter = true
-        refreshRelevantFragment()
-    }
-
-    override fun replaceToCustomCityFragment() {
-        showFragment(GoogleMapsFragment.newInstance(mLat, mLong, this), "GOOGLE_MAPS_FRAGMENT")
-    }
-
-    override fun showCityWeatherFromList(weather: Weather) {
-        showFragment(CityFragment.newInstance(weather, mUnits, this), "CITY_FRAGMENT")
-    }
-
-    override fun showAttractionMap(
-        localLatLng: LatLng, places: Places
-    ) {
-        showFragment(
-            GoogleMapsAttractionFragment.newInstance(localLatLng, places, this),
-            "GOOGLE_MAPS_ATTRACTION_FRAGMENT"
-        )
-    }
-
     fun goToPermissionSettings() {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -229,16 +172,18 @@ class MainActivity : AppCompatActivity(), MainListener {
         mApprovePermissions = true
     }
 
-    private fun showFragment(fragment: Fragment, tag: String) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_layout, fragment, tag)
-            .addToBackStack(null)
-            .commitAllowingStateLoss()
-    }
+
 
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 1) {
             super.onBackPressed()
+        } else {
+            if (mFirsTimeBack) {
+                Toast.makeText(applicationContext, resources.getString(R.string.press_again_to_exit), Toast.LENGTH_LONG).show()
+                mFirsTimeBack = false
+            } else {
+                finish()
+            }
         }
     }
 

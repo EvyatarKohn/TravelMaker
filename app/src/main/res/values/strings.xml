@@ -60,9 +60,9 @@
     <string name="custom_cities_default_btn">To default List</string>
     <string name="permissions_toast">Please Enable your location service</string>
     <string name="area_to_big_toast">The area you chosen is too big, please try again with smaller area</string>
-    <string name="city_not_found">City not found, your location city will be shown</string>
-    <string name="city_not_found_error">City not found</string>
-    <string name="daily_weather_error">Can\'t get Daily weather</string>
+    <string name="city_not_found_error">City not found, your location city will be shown</string>
+    <string name="daily_weather_error">Can\'t get Daily weather, your location daily weather will be shown</string>
+    <string name="cities_around_error">Can\'t find cities around you</string>
 
     <!-- Google maps strings -->
     <string name="choose_location_title">Choose desire city</string>
@@ -108,5 +108,6 @@
     <string name="rain_last_3h">Rain last\n3h\n%1$s</string>
     <string name="wind_direction">Wind\ndirection\n%1$s</string>
     <string name="general_error">There been some error, please try again</string>
+    <string name="press_again_to_exit">"press again to exit"</string>
 
 </resources>

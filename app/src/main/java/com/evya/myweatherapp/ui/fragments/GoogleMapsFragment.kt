@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.ui.MainListener
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -22,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class GoogleMapsFragment : Fragment() {
 
-    private lateinit var mMainListener: MainListener
+    private lateinit var mNavController: NavController
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mLat: String
     private lateinit var mLong: String
@@ -30,13 +32,10 @@ class GoogleMapsFragment : Fragment() {
     private lateinit var mSearch: SearchView
 //    private lateinit var mPlaceAutoCompleteAdapter: PlaceAutocompleteAdapter
 
-    companion object {
-        fun newInstance(lat: String, long: String, mainListener: MainListener) =
-            GoogleMapsFragment().apply {
-                mLat = lat
-                mLong = long
-                mMainListener = mainListener
-            }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mNavController = Navigation.findNavController(view)
     }
 
     override fun onCreateView(
@@ -45,8 +44,14 @@ class GoogleMapsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.google_maps_fragment_layout, container, false)
+
+
         val mapView: SupportMapFragment =
             (childFragmentManager.findFragmentById(R.id.map_layout)) as SupportMapFragment
+
+
+        mLat = arguments?.get("lat").toString()
+        mLong = arguments?.get("long").toString()
 
         mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
         mSearch = v.findViewById(R.id.search_Bar)
@@ -76,6 +81,7 @@ class GoogleMapsFragment : Fragment() {
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
             val markerOptions = MarkerOptions()
+
             val myLocation = LatLng(mLat.toDouble(), mLong.toDouble())
             markerOptions.position(myLocation)
             mGoogleMap.addMarker(markerOptions)
@@ -97,7 +103,8 @@ class GoogleMapsFragment : Fragment() {
 
             mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
             mShowWeatherBtn.setOnClickListener {
-                mMainListener.showCityWeather("", mLat, mLong)
+                val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat(), "fromMaps" to true)
+                mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
             }
         }
         return v

@@ -1,9 +1,12 @@
 package com.evya.myweatherapp.model.placesmodel
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Geometry(
     @SerializedName("coordinates")
     @Expose
@@ -12,4 +15,4 @@ data class Geometry(
     @SerializedName("type")
     @Expose
     val type: String
-)
+) : Parcelable

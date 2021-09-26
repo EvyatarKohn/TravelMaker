@@ -9,32 +9,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.placesmodel.Places
-import com.evya.myweatherapp.ui.MainListener
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class GoogleMapsAttractionFragment : Fragment(){
-
-    private lateinit var mMainListener: MainListener
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mPlaces: Places
     private lateinit var mMyLatLong: LatLng
-
-    companion object {
-        fun newInstance(myLatLong: LatLng, places: Places, mainListener: MainListener) =
-            GoogleMapsAttractionFragment().apply {
-                mMyLatLong = myLatLong
-                mPlaces = places
-                mMainListener = mainListener
-            }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +34,10 @@ class GoogleMapsAttractionFragment : Fragment(){
 
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
+
+            mMyLatLong = LatLng(arguments?.getString("lat")?.toDouble()!!, arguments?.getString("long")?.toDouble()!!)
+            mPlaces = arguments?.getParcelable("places")!!
+
             val markerOptions = MarkerOptions()
             mPlaces.features.forEach {
                 markerOptions.position(
@@ -69,6 +60,7 @@ class GoogleMapsAttractionFragment : Fragment(){
                 startActivity(googleIntent)
             }
         }
+
         return v
     }
 }
