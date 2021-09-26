@@ -37,7 +37,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), MainListener {
 
-    private var mUnits = METRIC
+    var mUnits = METRIC
     var mCityName = "Tel-aviv"
     var mCountryCode = "IL"
     private var mLat: String = "32.083333"
@@ -48,10 +48,10 @@ class MainActivity : AppCompatActivity(), MainListener {
     private var mApprovePermissions = false
 
     companion object {
-        private const val CELSIUS = "Celsius"
-        private const val FAHRENHEIT = "Fahrenheit"
-        private const val IMPERIAL = "imperial"
-        private const val METRIC = "metric"
+        const val IMPERIAL = "imperial"
+        const val METRIC = "metric"
+        const val IMPERIAL_DEGREE = " miles/hr"
+        const val METRIC_DEGREE = " m/s"
         private const val THREE_SEC = 3000L
 
         private val PERMISSIONS = arrayOf(
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity(), MainListener {
         mFusedLocationProviderClient.requestLocationUpdates(
             mLocationRequest,
             locationCallback,
-            Looper.myLooper()
+            Looper.myLooper()!!
         )
     }
 

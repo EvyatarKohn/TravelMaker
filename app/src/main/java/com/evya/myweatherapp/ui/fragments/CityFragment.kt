@@ -17,6 +17,10 @@ import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
+import com.evya.myweatherapp.ui.MainActivity.Companion.IMPERIAL
+import com.evya.myweatherapp.ui.MainActivity.Companion.IMPERIAL_DEGREE
+import com.evya.myweatherapp.ui.MainActivity.Companion.METRIC
+import com.evya.myweatherapp.ui.MainActivity.Companion.METRIC_DEGREE
 import com.evya.myweatherapp.ui.MainListener
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.adapters.MainCityAdapter
@@ -124,16 +128,18 @@ class CityFragment : Fragment() {
             if (mCelsius) {
                 start = mUnitsText.text.length - 1
                 end = mUnitsText.text.length
-                mUnits = "imperial"
+                mUnits = IMPERIAL
+                (activity as MainActivity).mUnits = IMPERIAL
                 mDegreeUnit = "\u2109"
-                mWindSpeed = " miles/hr"
+                mWindSpeed = IMPERIAL_DEGREE
                 mCelsius = false
             } else {
                 start = 0
                 end = 1
-                mUnits = "metric"
+                mUnits = METRIC
+                (activity as MainActivity).mUnits = METRIC
                 mDegreeUnit = "\u2103"
-                mWindSpeed = " m/s"
+                mWindSpeed = METRIC_DEGREE
                 mCelsius = true
             }
 
