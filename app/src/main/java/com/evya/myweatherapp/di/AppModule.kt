@@ -1,6 +1,6 @@
 package com.evya.myweatherapp.di
 
-import com.evya.myweatherapp.network.PlacesApi
+import com.evya.myweatherapp.network.TripApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.evya.myweatherapp.network.WeatherApi
@@ -41,12 +41,12 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTripRetrofit(gson: Gson):PlacesApi =
+    fun provideTripRetrofit(gson: Gson):TripApi =
         Retrofit.Builder()
             .baseUrl("https://api.opentripmap.com/0.1/en/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
-            .create(PlacesApi::class.java)
+            .create(TripApi::class.java)
 
 }

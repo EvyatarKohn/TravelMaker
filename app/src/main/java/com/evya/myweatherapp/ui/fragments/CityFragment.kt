@@ -26,10 +26,7 @@ import com.evya.myweatherapp.ui.MainActivity.Companion.METRIC
 import com.evya.myweatherapp.ui.MainActivity.Companion.METRIC_DEGREE
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.adapters.MainCityAdapter
-import com.evya.myweatherapp.ui.viewmodels.PlacesViewModel
 import com.evya.myweatherapp.ui.viewmodels.WeatherViewModel
-import com.evya.myweatherapp.util.AttractionFragmentUtil
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.city_fragment_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,7 +39,6 @@ import kotlin.collections.ArrayList
 @AndroidEntryPoint
 class CityFragment : Fragment() {
     private val mWeatherViewModel: WeatherViewModel by viewModels()
-    private val mPlacesViewModel: PlacesViewModel by viewModels()
     private var mCityName = "Tel-aviv"
     private var mCountryCode = "IL"
     private var mUnits: String = METRIC
@@ -94,15 +90,6 @@ class CityFragment : Fragment() {
                 mWeatherViewModel.getCitiesAround(mLat, mLong, mUnits)
             }
         }
-
-        mPlacesViewModel.placesRepo.observe(viewLifecycleOwner, { places ->
-            val latLong: ArrayList<LatLng> = ArrayList()
-            places.features.forEach {
-                latLong.add(LatLng(it.geometry.coordinates[0], it.geometry.coordinates[1]))
-            }
-            val bundle = bundleOf("lat" to mLat, "long" to mLong, "places" to places)
-            mNavController.navigate(R.id.action_cityFragment_to_googleMapsAttractionFragment, bundle)
-        })
     }
 
     override fun onCreateView(
@@ -145,7 +132,6 @@ class CityFragment : Fragment() {
 
         mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
             setTopAdapter(citiesWeather.list)
-
         })
     }
 
@@ -165,10 +151,6 @@ class CityFragment : Fragment() {
         })
 
         mWeatherViewModel.repoCitiesAroundError.observe(viewLifecycleOwner, {
-            showToast(it)
-        })
-
-        mPlacesViewModel.placesRepoError.observe(viewLifecycleOwner, {
             showToast(it)
         })
     }
@@ -233,7 +215,7 @@ class CityFragment : Fragment() {
 
         val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
 
-        mDailyAdapter = DailyWeatherAdapter(newList, minTempArray, maxTempArray)
+        mDailyAdapter = DailyWeatherAdapter(newList, minTempArray, maxTempArray, activity?.applicationContext)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         daily_weather_recycler_view.layoutManager = layoutManager
@@ -308,54 +290,14 @@ class CityFragment : Fragment() {
             getDailyWeather(mCityName, mCountryCode, mUnits)
         }
 
+        val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat())
 
         location_icon.setOnClickListener {
-            val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat())
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
         }
 
-        get_museums_btn.setOnClickListener {
-            mPlacesViewModel.getMuseum(mLong, mLat, "museums")
-        }
-
-        get_cinemas_btn.setOnClickListener {
-            mPlacesViewModel.getCinemas(mLong, mLat, "cinemas")
-        }
-
-        get_accommodations_btn.setOnClickListener {
-            mPlacesViewModel.getAccommodations(mLong, mLat, "accomodations")
-        }
-
-        get_adult_btn.setOnClickListener {
-            mPlacesViewModel.getAdults(mLong, mLat, "adult")
-        }
-
-        get_amusements_btn.setOnClickListener {
-            mPlacesViewModel.getAmusements(mLong, mLat, "amusements")
-        }
-
-        get_sports_btn.setOnClickListener {
-            mPlacesViewModel.getSports(mLong, mLat, "sports")
-        }
-
-        get_banks_btn.setOnClickListener {
-            mPlacesViewModel.getBanks(mLong, mLat, "banks")
-        }
-
-        get_foods_btn.setOnClickListener {
-            mPlacesViewModel.getFood(mLong, mLat, "foods")
-        }
-
-        get_foods_btn.setOnClickListener {
-            mPlacesViewModel.getFood(mLong, mLat, "foods")
-        }
-
-        get_shops_btn.setOnClickListener {
-            mPlacesViewModel.getShops(mLong, mLat, "shops")
-        }
-
-        get_transport_btn.setOnClickListener {
-            mPlacesViewModel.getTransports(mLong, mLat, "transport")
+        show_attractions.setOnClickListener {
+            mNavController.navigate(R.id.action_cityFragment_to_chooseAttractionFragment, bundle)
         }
     }
 

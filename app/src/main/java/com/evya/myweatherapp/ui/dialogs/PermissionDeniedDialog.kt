@@ -11,8 +11,10 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.ui.MainActivity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@ExperimentalCoroutinesApi
 class PermissionDeniedDialog: DialogFragment() {
 
     private lateinit var mTitle: TextView
@@ -41,7 +43,7 @@ class PermissionDeniedDialog: DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.permission_denied_dialog_layout, container, false)
-        dialog?.setCanceledOnTouchOutside(false);
+        dialog?.setCanceledOnTouchOutside(false)
         mTitle = v.findViewById(R.id.title)
         mExitBtn = v.findViewById(R.id.exit_btn)
         mExitBtn.setOnClickListener {

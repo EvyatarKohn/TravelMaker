@@ -1,5 +1,6 @@
 package com.evya.myweatherapp.ui.adapters
 
+import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -16,7 +17,8 @@ import java.time.format.DateTimeFormatter
 class DailyWeatherAdapter(
     private var dailyWeatherList: List<DailyWeatherData>,
     private var minTempArray: List<Int>,
-    private var maxTempArray: List<Int>
+    private var maxTempArray: List<Int>,
+    private var context: Context?
 ) :
     RecyclerView.Adapter<DailyWeatherViewHolder>() {
 
@@ -60,7 +62,8 @@ class DailyWeatherAdapter(
             ).monthValue.toString(),
             weatherImage,
             minTempArray[position],
-            maxTempArray[position].toString()
+            maxTempArray[position].toString(),
+            context
         )
     }
 
@@ -80,13 +83,20 @@ class DailyWeatherViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         mTempVar = itemView.temp_var
     }
 
-    fun bind(day: String, month: String, sunImage: Int, minTemp: Int, maxTemp: String) {
-        mDate?.text = "$day/$month"
+    fun bind(
+        day: String,
+        month: String,
+        sunImage: Int,
+        minTemp: Int,
+        maxTemp: String,
+        context: Context?
+    ) {
+        mDate?.text = context?.getString(R.string.date,day, month)
         mSunImage?.setBackgroundResource(sunImage)
         var maxTempForMinus = maxTemp
         if (maxTemp.toInt() < 0) {
             maxTempForMinus = "($maxTemp)"
         }
-        mTempVar?.text = "$minTemp - $maxTempForMinus"
+        mTempVar?.text = context?.getString(R.string.temp_var_2, minTemp, maxTempForMinus)
     }
 }

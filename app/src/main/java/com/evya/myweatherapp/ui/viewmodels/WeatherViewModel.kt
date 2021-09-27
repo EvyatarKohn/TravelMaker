@@ -49,7 +49,7 @@ class WeatherViewModel @Inject constructor(
             if (response.isSuccessful) {
                 mWeatherLiveData.postValue(response.body())
             } else {
-                mWeatherError.postValue(Pair(R.string.city_not_found_error, false))
+                mWeatherError.postValue(Pair(R.string.city_not_found_error, true))
             }
         }
     }
@@ -78,7 +78,7 @@ class WeatherViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     mDailyWeatherLiveData.postValue(response.body())
                 } else {
-                    mDailyWeatherError.postValue(Pair(R.string.daily_weather_error, false))
+                    mDailyWeatherError.postValue(Pair(R.string.daily_weather_error, true))
                 }
             }
         }

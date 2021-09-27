@@ -13,22 +13,17 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.Fragment
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.model.placesmodel.Places
-import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,8 +41,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
     private var mApprovePermissions = false
-    private var mFirsTimeBack = true
-
 
     companion object {
         const val IMPERIAL = "imperial"
@@ -60,9 +53,7 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
-
         private const val PERMISSIONS_REQUEST_ID = 1000
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,10 +111,6 @@ class MainActivity : AppCompatActivity() {
             val lastLocation = locationResult.lastLocation
             mLat = lastLocation.latitude.toString()
             mLong = lastLocation.longitude.toString()
-           /* showFragment(
-                CityFragment.newInstance(mLat, mLong, "", mUnits, this@MainActivity),
-                "CITY_FRAGMENT_LOCATION"
-            )*/
         }
     }
 
@@ -172,21 +159,6 @@ class MainActivity : AppCompatActivity() {
         mApprovePermissions = true
     }
 
-
-
-    override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            super.onBackPressed()
-        } else {
-            if (mFirsTimeBack) {
-                Toast.makeText(applicationContext, resources.getString(R.string.press_again_to_exit), Toast.LENGTH_LONG).show()
-                mFirsTimeBack = false
-            } else {
-                finish()
-            }
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         if (mApprovePermissions) {
@@ -225,6 +197,5 @@ class MainActivity : AppCompatActivity() {
                 getLastLocation()
             }, THREE_SEC)
         }
-
     }
 }

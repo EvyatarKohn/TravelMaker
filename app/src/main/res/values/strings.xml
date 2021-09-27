@@ -34,11 +34,20 @@
     <string name="right_now_temp">Right now: %1$s</string>
     <string name="feels_like_temp">Feels like %1$s</string>
     <string name="temp_var">min %1$s - max %2$s</string>
+    <string name="main_image_view_desc">Main image</string>
+    <string name="sun_image_view_desc">Sun image</string>
+    <string name="back_arrow_image_view_desc">Back arrow image</string>
+    <string name="exit_image_view_desc">Exit image</string>
+    <string name="sky_image_view_desc">Sky image</string>
+    <string name="ground_image_view_desc">Ground image</string>
+    <string name="show_attractions">Show attractions</string>
 
     <!-- Adapter strings  -->
     <string name="adapter_city_name">Tel-aviv</string>
     <string name="adapter_clear_sky">Sunny</string>
     <string name="adapter_wind_speed">2.5 m/s</string>
+    <string name="date">%1$s/%2$s</string>
+    <string name="temp_var_2">%1$d - %2$s</string>
 
     <!-- Permission denied dialog texts  -->
     <string name="you_have_to_approve_permissions_title">We would like to use\nyour current location</string>
@@ -69,7 +78,7 @@
     <string name="show_weather_btn">Show weather</string>
     <string name="show_radius_btn">Draw circle</string>
     <string name="show_cities_list">Show cities list</string>
-    <string name="search_bar">Enter Address, City Or Zip Code</string>
+    <string name="search_bar_hint">Enter Address, City Or Zip Code</string>
 
     <!--  Places Api strings  -->
     <string name="museum_request_error">Museum request error</string>
@@ -82,6 +91,11 @@
     <string name="food_request_error">Food request error</string>
     <string name="shops_request_error">Shops request error</string>
     <string name="transports_request_error">Transports request error</string>
+    <string name="religion_request_error">Religion request error</string>
+    <string name="natural_request_error">Nature request error</string>
+    <string name="historic_request_error">History request error</string>
+    <string name="cultural_request_error">Cultural request error</string>
+    <string name="architecture_request_error">Architecture request error</string>
     <string name="get_museums_btn">Get Museums</string>
     <string name="get_cinemas_btn">Get Cinemas</string>
     <string name="get_accommodations_btn">Get Accommodations</string>
@@ -92,6 +106,11 @@
     <string name="get_food_btn">Get Food</string>
     <string name="get_shops_btn">Get Shops</string>
     <string name="get_transport_btn">Get Transport</string>
+    <string name="get_religion_btn">Get Religion</string>
+    <string name="get_natural_btn">Get Nature</string>
+    <string name="get_historic_btn">Get Historic</string>
+    <string name="get_cultural_btn">Get Cultural</string>
+    <string name="get_architecture_btn">Get Architecture</string>
 
     <!-- General strings -->
     <string name="Please_choose_city_toast">City not found</string>

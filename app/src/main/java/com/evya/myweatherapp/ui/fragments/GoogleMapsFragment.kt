@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.google_maps_fragment_layout.*
 
 @AndroidEntryPoint
 class GoogleMapsFragment : Fragment() {
@@ -28,38 +29,17 @@ class GoogleMapsFragment : Fragment() {
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mLat: String
     private lateinit var mLong: String
-    private lateinit var mShowWeatherBtn: Button
-    private lateinit var mSearch: SearchView
 //    private lateinit var mPlaceAutoCompleteAdapter: PlaceAutocompleteAdapter
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mNavController = Navigation.findNavController(view)
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val v = inflater.inflate(R.layout.google_maps_fragment_layout, container, false)
-
-
-        val mapView: SupportMapFragment =
-            (childFragmentManager.findFragmentById(R.id.map_layout)) as SupportMapFragment
-
-
-        mLat = arguments?.get("lat").toString()
-        mLong = arguments?.get("long").toString()
-
-        mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
-        mSearch = v.findViewById(R.id.search_Bar)
-
-        mSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        search_bar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 mGoogleMap.clear()
-                val location = mSearch.query.toString()
+                val location = search_bar.query.toString()
                 val geocoder = Geocoder(activity?.applicationContext)
                 val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
                 if (list.size > 0) {
@@ -78,6 +58,26 @@ class GoogleMapsFragment : Fragment() {
             }
         })
 
+        show_weather_btn.setOnClickListener {
+            val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat(), "fromMaps" to true)
+            mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val v = inflater.inflate(R.layout.google_maps_fragment_layout, container, false)
+
+
+        val mapView: SupportMapFragment =
+            (childFragmentManager.findFragmentById(R.id.map_layout)) as SupportMapFragment
+
+        mLat = arguments?.get("lat").toString()
+        mLong = arguments?.get("long").toString()
+
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
             val markerOptions = MarkerOptions()
@@ -88,8 +88,8 @@ class GoogleMapsFragment : Fragment() {
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             mGoogleMap.setOnMapLoadedCallback {
-                mShowWeatherBtn.visibility = View.VISIBLE
-                mSearch.visibility = View.VISIBLE
+                show_weather_btn.visibility = View.VISIBLE
+                search_bar.visibility = View.VISIBLE
             }
             mGoogleMap.setOnMapClickListener { latLng ->
                 mGoogleMap.clear()
@@ -99,12 +99,6 @@ class GoogleMapsFragment : Fragment() {
                     MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
                         .title("lat:$mLat, long: $mLong")
                 )
-            }
-
-            mShowWeatherBtn = v.findViewById(R.id.show_weather_btn)
-            mShowWeatherBtn.setOnClickListener {
-                val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat(), "fromMaps" to true)
-                mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
             }
         }
         return v

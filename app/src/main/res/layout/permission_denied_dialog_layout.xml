@@ -21,7 +21,8 @@
             android:layout_marginRight="35dp"
             android:src="@drawable/ic_sky"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/sky_image_view_desc" />
 
         <TextView
             android:id="@+id/title"
@@ -84,7 +85,8 @@
             android:src="@drawable/ic_ground_location"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/exit_btn" />
+            app:layout_constraintTop_toBottomOf="@+id/exit_btn"
+            android:contentDescription="@string/ground_image_view_desc" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
