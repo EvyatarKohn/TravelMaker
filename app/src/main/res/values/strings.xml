@@ -79,6 +79,7 @@
     <string name="show_radius_btn">Draw circle</string>
     <string name="show_cities_list">Show cities list</string>
     <string name="search_bar_hint">Enter Address, City Or Zip Code</string>
+    <string name="google_search_error">Error in search request</string>
 
     <!--  Places Api strings  -->
     <string name="museum_request_error">Museum request error</string>

@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -61,7 +62,7 @@ class GoogleMapsFragment : Fragment() {
                 // TODO: Get info about the selected place.
                 Log.i("GoogleMapsFragment", "Place: ${place.name}, ${place.id}")
                 mGoogleMap.clear()
-                val location = place.toString()
+                val location = place.name
                 val geocoder = Geocoder(activity?.applicationContext)
                 val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
                 if (list.size > 0) {
@@ -75,8 +76,7 @@ class GoogleMapsFragment : Fragment() {
             }
 
             override fun onError(status: Status) {
-                // TODO: Handle the error.
-                Log.i("GoogleMapsFragment", "An error occurred: $status")
+                showToast(R.string.google_search_error)
             }
         })
 
@@ -124,5 +124,13 @@ class GoogleMapsFragment : Fragment() {
             }
         }
         return v
+    }
+
+    private fun showToast(error: Int) {
+        Toast.makeText(
+            activity?.applicationContext,
+            activity?.applicationContext?.resources?.getString(error),
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
