@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
@@ -18,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
@@ -33,28 +33,20 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    var mUnits = METRIC
-    var mCityName = "Tel-aviv"
-    var mCountryCode = "IL"
-    private var mLat: String = "32.083333"
-    private var mLong: String = "34.7999968"
+    var mLat: String = ""//"32.083333"
+    var mLong: String = ""// "34.7999968
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
-    private var mApprovePermissions = false
+    var mApprovePermissions = false
 
     companion object {
-        const val IMPERIAL = "imperial"
-        const val METRIC = "metric"
-        const val IMPERIAL_DEGREE = " miles/hr"
-        const val METRIC_DEGREE = " m/s"
-        private const val THREE_SEC = 3000L
-
         private val PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
         private const val PERMISSIONS_REQUEST_ID = 1000
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            getLastLocation()
-        }, THREE_SEC)
+        getLastLocation()
     }
 
     @SuppressLint("MissingPermission")
@@ -78,8 +68,15 @@ class MainActivity : AppCompatActivity() {
                     if (location == null) {
                         getNewLocation()
                     } else {
+                        mApprovePermissions = true
                         mLat = location.latitude.toString()
                         mLong = location.longitude.toString()
+                        val navHostFragment =
+                            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
+                        val inflater = navHostFragment.navController.navInflater
+                        val graph = inflater.inflate(R.navigation.nav_graph)
+                        graph.startDestination = R.id.cityFragment
+                        navHostFragment.navController.graph = graph
                     }
                 }
             } else {
@@ -111,6 +108,7 @@ class MainActivity : AppCompatActivity() {
             val lastLocation = locationResult.lastLocation
             mLat = lastLocation.latitude.toString()
             mLong = lastLocation.longitude.toString()
+            getLastLocation()
         }
     }
 
@@ -178,12 +176,14 @@ class MainActivity : AppCompatActivity() {
             .setAlwaysShow(true)
 
         val result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
+
         result.addOnCompleteListener { task ->
             try {
                 task.getResult(ApiException::class.java)
             } catch (exception: ApiException) {
                 when (exception.statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
+                        mApprovePermissions = true
                         val resolvable = exception as ResolvableApiException
                         resolvable.startResolutionForResult(this@MainActivity, 100)
                     } catch (e: SendIntentException) {
@@ -193,9 +193,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            Handler(Looper.getMainLooper()).postDelayed({
-                getLastLocation()
-            }, THREE_SEC)
         }
     }
 }
