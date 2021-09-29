@@ -21,7 +21,7 @@ import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
-import com.evya.myweatherapp.ui.adapters.MainCityAdapter
+import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.city_fragment_layout.*
@@ -40,7 +40,7 @@ class CityFragment : Fragment() {
     private var mUnits: String = METRIC
     private var mLat: String = "" //"32.083333"
     private var mLong: String = "" //"34.7999968"
-    private lateinit var mMainCitiesAdapter: MainCityAdapter
+    private lateinit var mMainCitiesAdapter: CitiesAroundAdapter
     private lateinit var mDailyAdapter: DailyWeatherAdapter
     private var mWeather: Weather? = null
     private var mDegreeUnit = "\u2103"
@@ -62,14 +62,21 @@ class CityFragment : Fragment() {
         setOnClickListener()
         setSpan(0, 1)
 
-        if (arguments?.get("fromMaps") == true) {
-            mLat = arguments?.get("lat").toString()
-            mLong = arguments?.get("long").toString()
-        }
-
         if (mUnits == "imperial") {
             mDegreeUnit = "\u2109"
             mWindSpeed = " miles/hr"
+        }
+
+        if (arguments?.get("fromMaps") == true) {
+            mLat = arguments?.get("lat").toString()
+            mLong = arguments?.get("long").toString()
+            getWeatherData()
+        }
+
+        if (arguments?.get("fromTopAdapter") == true) {
+            mCityName = arguments?.get("cityName").toString()
+            getWeather(mCityName, mUnits)
+            getDailyWeather(mCityName, mCountryCode, mUnits)
         }
     }
 
@@ -77,11 +84,6 @@ class CityFragment : Fragment() {
         when {
             mWeather != null -> {
                 showWeather(mWeather!!)
-                getDailyWeather(mCityName, mCountryCode, mUnits)
-            }
-            arguments?.get("fromTopAdapter") == true -> {
-                mCityName = arguments?.get("cityName").toString()
-                getWeather(mCityName, mUnits)
                 getDailyWeather(mCityName, mCountryCode, mUnits)
             }
             else -> {
@@ -197,7 +199,7 @@ class CityFragment : Fragment() {
     }
 
     private fun setTopAdapter(list: List<CitiesAroundData>) {
-        mMainCitiesAdapter = MainCityAdapter(activity?.applicationContext, list, mNavController)
+        mMainCitiesAdapter = CitiesAroundAdapter(activity?.applicationContext, list, mNavController)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         main_cities_recycler_view.layoutManager = layoutManager
@@ -326,6 +328,7 @@ class CityFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if ((activity as MainActivity).mApprovePermissions) {
+            (activity as MainActivity).mApprovePermissions = false
             mLat = (activity as MainActivity).mLat
             mLong = (activity as MainActivity).mLong
             getWeatherData()

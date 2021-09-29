@@ -12,7 +12,7 @@ import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import kotlinx.android.synthetic.main.main_cities_item_layout.view.*
 
-class MainCityAdapter(
+class CitiesAroundAdapter(
     private val context: Context?,
     private var citiesList: List<CitiesAroundData>,
     private val navController: NavController
