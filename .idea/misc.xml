@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/EVyat/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/select_dialog_item.xml" value="0.3546875" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/drawable/button_sahpe.xml" value="0.21510416666666668" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/drawable/button_shape.xml" value="0.37083333333333335" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/drawable/card_background.xml" value="0.2140625" />
@@ -43,9 +44,11 @@
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/google_maps_fragment_layout.xml" value="0.19791666666666666" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/home_fragment_layout.xml" value="0.264" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/info_dialog_layout.xml" value="0.2171875" />
+        <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/info_dialog_layout_new.xml" value="0.3546875" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/main_activity.xml" value="0.19270833333333334" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/main_cities_item_layout.xml" value="0.159375" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/main_fragment.xml" value="0.3546875" />
+        <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/no_attraction_dialog_layout.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/permission_denid_dialog_layout.xml" value="0.23550724637681159" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/permission_denied_dialog_layout.xml" value="0.19791666666666666" />
         <entry key="..\:/Users/EVyat/StudioProjects/myWeatherApp/app/src/main/res/layout/recycler_view_item.xml" value="0.19791666666666666" />

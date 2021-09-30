@@ -4,20 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.ui.AttractionEnum
+import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
 import com.evya.myweatherapp.ui.viewmodels.PlacesViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.choose_attraction_fragment_layout.*
 
 @AndroidEntryPoint
-class ChooseAttractionFragment: Fragment() {
+class ChooseAttractionFragment : Fragment() {
 
     private val mPlacesViewModel: PlacesViewModel by viewModels()
     private var mLat: String = "32.083333"
@@ -29,6 +34,13 @@ class ChooseAttractionFragment: Fragment() {
 
         mNavController = Navigation.findNavController(view)
         setOnClickListener()
+
+        val adapter = ArrayAdapter(activity?.applicationContext!!, android.R.layout.select_dialog_item, Constants.replacedList())
+        auto_complete_textview.threshold = 1
+        auto_complete_textview.setAdapter(adapter)
+        auto_complete_textview.setOnItemClickListener { adapterView, view, i, l ->
+            whatToDo(auto_complete_textview.text.toString().replace(" ", "_"), R.string.general_error)
+        }
     }
 
     override fun onCreateView(
@@ -38,14 +50,24 @@ class ChooseAttractionFragment: Fragment() {
     ): View {
         val v = inflater.inflate(R.layout.choose_attraction_fragment_layout, container, false)
 
-
         mPlacesViewModel.placesRepo.observe(viewLifecycleOwner, { places ->
             val latLong: ArrayList<LatLng> = ArrayList()
             places.features.forEach {
                 latLong.add(LatLng(it.geometry.coordinates[0], it.geometry.coordinates[1]))
             }
-            val bundle = bundleOf("lat" to mLat, "long" to mLong, "places" to places)
-            mNavController.navigate(R.id.action_chooseAttractionFragment_to_googleMapsAttractionFragment, bundle)
+            if (latLong.size > 0) {
+                val bundle = bundleOf("lat" to mLat, "long" to mLong, "places" to places)
+                mNavController.navigate(
+                    R.id.action_chooseAttractionFragment_to_googleMapsAttractionFragment,
+                    bundle
+                )
+            } else {
+                lottie.visibility = View.GONE
+                activity?.supportFragmentManager?.let {
+                    NoAttractionFoundDialog.newInstance(auto_complete_textview.text.toString()).show(
+                        it, " NO_ATTRACTION_DIALOG")
+                }
+            }
         })
         mPlacesViewModel.placesRepoError.observe(viewLifecycleOwner, {
             showToast(it)

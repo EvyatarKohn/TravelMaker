@@ -278,7 +278,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-         <!--   <Button
+            <Button
                 android:id="@+id/show_attractions"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="150dp"
@@ -290,7 +290,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/more_details_layout"
-                android:text="@string/show_attractions" />-->
+                android:text="@string/show_attractions" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

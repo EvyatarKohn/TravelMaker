@@ -97,6 +97,10 @@
     <string name="historic_request_error">History request error</string>
     <string name="cultural_request_error">Cultural request error</string>
     <string name="architecture_request_error">Architecture request error</string>
+    <string name="attraction_general_request_error">Request error</string>
+
+    <!--  Attraction Fragment Strings  -->
+    <string name="search_attraction">Search attraction</string>
     <string name="get_museums_btn">Get Museums</string>
     <string name="get_cinemas_btn">Get Cinemas</string>
     <string name="get_accommodations_btn">Get Accommodations</string>
@@ -112,6 +116,9 @@
     <string name="get_historic_btn">Get Historic</string>
     <string name="get_cultural_btn">Get Cultural</string>
     <string name="get_architecture_btn">Get Architecture</string>
+
+    <!-- No attraction dialog  -->
+    <string name="There_is_no_attraction_in_your_area">There is no\n%1$s\nin your area</string>
 
     <!-- General strings -->
     <string name="Please_choose_city_toast">City not found</string>

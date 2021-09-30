@@ -299,9 +299,10 @@ class CityFragment : Fragment() {
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
         }
 
-/*        show_attractions.setOnClickListener {
+        show_attractions.setOnClickListener {
+            val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat())
             mNavController.navigate(R.id.action_cityFragment_to_chooseAttractionFragment, bundle)
-        }*/
+        }
     }
 
     private fun setSpan(start: Int, end: Int) {
