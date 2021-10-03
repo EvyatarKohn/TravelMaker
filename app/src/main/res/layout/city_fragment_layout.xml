@@ -61,6 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="25dp"
+                    android:fontFamily="@font/product_sans_regular"
                     android:drawablePadding="5dp"
                     android:text="@string/different_destination"
                     android:textColor="@color/turquoise"
@@ -166,9 +167,8 @@
                             android:id="@+id/sunrise"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="left"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -176,9 +176,8 @@
                             android:id="@+id/sunset"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:paddingLeft="25dp"
                             android:paddingRight="25dp"
                             android:textColor="@color/black"
@@ -188,9 +187,8 @@
                             android:id="@+id/humidity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -207,9 +205,8 @@
                             android:id="@+id/wind_speed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="left"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -217,9 +214,8 @@
                             android:id="@+id/description"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:paddingLeft="25dp"
                             android:paddingRight="25dp"
                             android:textColor="@color/black"
@@ -229,9 +225,8 @@
                             android:id="@+id/visibility"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -247,9 +242,8 @@
                             android:id="@+id/probability_of_precipitation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="left"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -257,9 +251,10 @@
                             android:id="@+id/rain_3h"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
+                            android:paddingLeft="25dp"
+                            android:paddingRight="25dp"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -267,9 +262,8 @@
                             android:id="@+id/wind_direction"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="right"
                             android:fontFamily="@font/product_sans_regular"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
 
@@ -277,21 +271,6 @@
                 </TableLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <Button
-                android:id="@+id/show_attractions"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:background="@drawable/button_shape"
-                android:fontFamily="@font/product_sans_regular"
-                android:gravity="center"
-                android:layout_marginTop="25dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/more_details_layout"
-                android:text="@string/show_attractions" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

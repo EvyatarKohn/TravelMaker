@@ -1,5 +1,6 @@
 package com.evya.myweatherapp.ui.fragments
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -29,6 +30,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import android.text.Spanned
+import android.widget.TextView
+import com.evya.myweatherapp.util.CustomTypeFaceSpan
 
 
 @ExperimentalCoroutinesApi
@@ -126,15 +130,15 @@ class CityFragment : Fragment() {
                 R.string.probability_of_precipitation,
                 (dailyWeather.list[0].pop * 100).toString() + " %"
             )
+            setBold(0, 26, probability_of_precipitation)
             var rainHeight = "0"
             if (dailyWeather.list[0].rain != null) {
                 rainHeight = dailyWeather.list[0].rain.h.toString()
             }
             rain_3h.text = getString(R.string.rain_last_3h, "$rainHeight mm")
-            wind_direction.text = getString(
-                R.string.wind_direction,
-                dailyWeather.list[0].wind.deg.toString() + " deg"
-            )
+            setBold(0, 13, rain_3h)
+            wind_direction.text = getString(R.string.wind_direction, dailyWeather.list[0].wind.deg.toString() + " deg")
+            setBold(0, 15, wind_direction)
         })
 
         mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
@@ -238,38 +242,39 @@ class CityFragment : Fragment() {
         }
         mCityName = weather.name
         mCountryCode = weather.sys.country
-        city_name.text =
-            getString(R.string.city_name_country, weather.name, weather.sys.country)
-        temp.text =
-            getString(R.string.temp, weather.main.temp.toInt().toString())
+        city_name.text = getString(R.string.city_name_country, weather.name, weather.sys.country)
+        temp.text = getString(R.string.temp, weather.main.temp.toInt().toString())
         feels_like.text = getString(
             R.string.feels_like_temp,
             weather.main.feelsLike.toInt().toString() + mDegreeUnit
         )
-        humidity.text =
-            getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
-        wind_speed.text =
-            getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
+        humidity.text = getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
+        setBold(0, 8, humidity)
+        wind_speed.text = getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
+        setBold(0, 11, wind_speed)
         feels_like.text = getString(
             R.string.feels_like_temp,
             weather.main.feelsLike.toInt().toString() + mDegreeUnit
         )
         sunrise.text = getString(R.string.sunrise_time, setTimeToHour(weather.sys.sunrise))
+        setBold(0, 7, sunrise)
         sunset.text = getString(R.string.sunset_time, setTimeToHour(weather.sys.sunset))
+        setBold(0, 6, sunset)
 
         description.text = getString(R.string.description, weather.weather[0].description)
+        setBold(0, 7, description)
         var distanceUnits = "m"
         var visibilityValue = weather.visibility
         if (weather.visibility > 999) {
             visibilityValue = weather.visibility / 1000
             distanceUnits = "Km"
         }
-        visibility.text =
-            getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+        visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+        setBold(0, 10, visibility)
+
     }
 
     private fun setOnClickListener() {
-
         units.setOnClickListener {
             val start: Int
             val end: Int
@@ -299,10 +304,10 @@ class CityFragment : Fragment() {
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
         }
 
-        show_attractions.setOnClickListener {
+/*        show_attractions.setOnClickListener {
             val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat())
             mNavController.navigate(R.id.action_cityFragment_to_chooseAttractionFragment, bundle)
-        }
+        }*/
     }
 
     private fun setSpan(start: Int, end: Int) {
@@ -316,6 +321,13 @@ class CityFragment : Fragment() {
             ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         units.text = span
+    }
+
+    private fun setBold(start: Int, end: Int, textView: TextView) {
+        val span = SpannableString(textView.text.toString())
+        val font = Typeface.createFromAsset(context?.assets, "font/product_sans_bold.ttf")
+        span.setSpan(CustomTypeFaceSpan("", font), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+        textView.text = span
     }
 
     private fun showToast(error: Int) {

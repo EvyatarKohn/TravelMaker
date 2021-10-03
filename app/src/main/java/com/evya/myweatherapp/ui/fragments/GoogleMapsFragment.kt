@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.ui.MainActivity
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -69,6 +70,8 @@ class GoogleMapsFragment : Fragment() {
                     val address = list[0]
                     mLat = address.latitude.toString()
                     mLong = address.longitude.toString()
+                    (activity as MainActivity).mLat = mLat
+                    (activity as MainActivity).mLong = mLong
                     val latLang = LatLng(address.latitude, address.longitude)
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))

@@ -2,11 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr">
 
     <ScrollView
         android:id="@+id/main_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="true"
         android:visibility="visible"
@@ -17,14 +18,13 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/attractions_layout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="25dp"
-                android:background="@color/grey_f7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:paddingVertical="15dp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -34,231 +34,294 @@
 
                 <TableRow
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center">
 
-                    <Button
-                        android:id="@+id/get_museums_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_museums_btn" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/get_hotel_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <Button
+                        <ImageView
+                            android:id="@+id/hotel_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/hotels"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_hotels_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/hotel_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/get_cinemas_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_cinemas_btn" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/cinemas_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/cinemas"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_cinemas_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/cinemas_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/get_transport_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/transport_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/transports"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_transport_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/transport_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </TableRow>
 
                 <TableRow
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
+                    android:layout_height="wrap_content"
                     android:gravity="center">
 
-                    <Button
-                        android:id="@+id/get_adult_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_adult_btn" />
-
-                    <Button
-                        android:id="@+id/get_accommodations_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_accommodations_btn" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:gravity="center">
-
-                    <Button
-                        android:id="@+id/get_amusements_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_amusements_btn" />
-
-                    <Button
-                        android:id="@+id/get_sports_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_sports_btn" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:gravity="center">
-
-                    <Button
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/get_banks_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_banks_btn" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <Button
-                        android:id="@+id/get_foods_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_food_btn" />
+                        <ImageView
+                            android:id="@+id/bank_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/banks"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_banks_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/bank_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/get_food_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginVertical="25dp">
+
+                        <ImageView
+                            android:id="@+id/food_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/food"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_food_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/food_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/get_museums_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/museums_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/museums"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_museums_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/museums_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </TableRow>
 
                 <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center">
 
-                    <Button
-                        android:id="@+id/get_shops_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_shops_btn" />
-
-                    <Button
-                        android:id="@+id/get_transport_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_transport_btn" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:gravity="center">
-
-
-                    <Button
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/get_religion_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_religion_btn" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <Button
-                        android:id="@+id/get_natural_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_natural_btn" />
+                        <ImageView
+                            android:id="@+id/religion_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/religion"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_religion_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/religion_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/get_culture_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/culture_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/culture"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_cultural_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/culture_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/get_nature_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/nature_img"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_marginTop="4dp"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:src="@drawable/nature"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text="@string/get_natural_btn"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/nature_img" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </TableRow>
 
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:gravity="center">
-
-
-                    <Button
-                        android:id="@+id/get_historic_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_historic_btn" />
-
-                    <Button
-                        android:id="@+id/get_cultural_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_cultural_btn" />
-
-                </TableRow>
-
-                <TableRow>
-
-                    <Button
-                        android:id="@+id/get_architecture_btn"
-                        style="?android:attr/buttonBarButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/button_shape"
-                        android:fontFamily="@font/product_sans_regular"
-                        android:gravity="center"
-                        android:text="@string/get_architecture_btn" />
-
-                </TableRow>
-                
             </TableLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
@@ -268,8 +331,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
-        android:hint="@string/search_attraction"
         android:gravity="center"
+        android:hint="@string/search_activities"
+        app:layout_constraintBottom_toTopOf="@+id/main_layout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

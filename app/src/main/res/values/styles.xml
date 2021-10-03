@@ -7,4 +7,10 @@
         <item name="colorAccent">@color/colorAccent</item>-->
     </style>
 
+    <style name="BottomNavigationTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+
+    </style>
+
+
+
 </resources>

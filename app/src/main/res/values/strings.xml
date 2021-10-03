@@ -1,17 +1,16 @@
 <resources>
-    <string name="app_name">Evya Weather App</string>
+    <string name="app_name">Travelmaker</string>
 
     <!-- Activity texts  -->
     <string name="degree_units_celsius">Celsius</string>
     <string name="degree_units_fahrenheit">Fahrenheit</string>
-    <string name="app_name_title">My WeatherApp</string>
+    <string name="app_name_title">Travelmaker</string>
 
     <!-- Gate Fragment texts  -->
-    <string name="icons_credit">Icons were downloaded:</string>
+    <string name="icons_credit">Icons and images:</string>
     <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010</string>
-    <string name="lotties_credit">Lotties were downloaded:</string>
+    <string name="lotties_credit">Lotties:</string>
     <string name="lotties_credit_url">https://lottiefiles.com/</string>
-    <string name="start_flow_btn">Start app</string>
 
     <!-- City Fragment texts  -->
     <string name="to_cities_list_btn">to cities list</string>
@@ -100,32 +99,43 @@
     <string name="attraction_general_request_error">Request error</string>
 
     <!--  Attraction Fragment Strings  -->
-    <string name="search_attraction">Search attraction</string>
-    <string name="get_museums_btn">Get Museums</string>
-    <string name="get_cinemas_btn">Get Cinemas</string>
-    <string name="get_accommodations_btn">Get Accommodations</string>
-    <string name="get_adult_btn">Get Adult</string>
-    <string name="get_amusements_btn">Get Amusements</string>
-    <string name="get_sports_btn">Get Sports</string>
-    <string name="get_banks_btn">Get Banks</string>
-    <string name="get_food_btn">Get Food</string>
-    <string name="get_shops_btn">Get Shops</string>
-    <string name="get_transport_btn">Get Transport</string>
-    <string name="get_religion_btn">Get Religion</string>
-    <string name="get_natural_btn">Get Nature</string>
-    <string name="get_historic_btn">Get Historic</string>
-    <string name="get_cultural_btn">Get Cultural</string>
-    <string name="get_architecture_btn">Get Architecture</string>
+    <string name="search_activities">Search Activities</string>
+    <string name="get_museums_btn">Museums</string>
+    <string name="get_cinemas_btn">Cinemas</string>
+    <string name="get_hotels_btn">Hotels</string>
+    <string name="get_adult_btn">Adult</string>
+    <string name="get_amusements_btn">Amusements</string>
+    <string name="get_sports_btn">Sports</string>
+    <string name="get_banks_btn">Banks</string>
+    <string name="get_food_btn">Food</string>
+    <string name="get_shops_btn">Shops</string>
+    <string name="get_transport_btn">Transport</string>
+    <string name="get_religion_btn">Religion</string>
+    <string name="get_natural_btn">Nature</string>
+    <string name="get_historic_btn">Historic</string>
+    <string name="get_cultural_btn">Cultural</string>
+    <string name="get_architecture_btn">Architecture</string>
+
+    <!-- Google maps Attraction Fragment Strings  -->
+    <string name="more_details">Long press on marker for more details</string>
 
     <!-- No attraction dialog  -->
     <string name="There_is_no_attraction_in_your_area">There is no\n%1$s\nin your area</string>
+
+
+    <!-- Bottom navigation strings  -->
+    <string name="bottom_navigation_weather">Weather</string>
+    <string name="bottom_navigation_maps">Maps</string>
+    <string name="bottom_navigation_attractions">Attractions</string>
+    <string name="bottom_navigation_info">Info</string>
+
 
     <!-- General strings -->
     <string name="Please_choose_city_toast">City not found</string>
     <string name="sunrise_time">Sunrise\n%1$s</string>
     <string name="sunset_time">Sunset\n%1$s</string>
     <string name="humidity_new">Humidity\n%1$s</string>
-    <string name="wind_speed_new">Wind speed\n%1$s</string>
+    <string name="wind_speed_new">Wind\nspeed\n%1$s</string>
     <string name="temp">%1$s</string>
     <string name="temp_max">Temp max\n%1$s %2$s</string>
     <string name="temp_min">Temp min\n%1$s %2$s</string>
