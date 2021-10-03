@@ -6,14 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.evya.myweatherapp.R
 
-class InfoDialog: DialogFragment() {
-
-    private lateinit var mCloseDialog: ImageButton
+class InfoDialog : DialogFragment() {
 
     companion object {
         fun newInstance() = InfoDialog()
@@ -26,21 +22,19 @@ class InfoDialog: DialogFragment() {
         return dialog
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.info_dialog_layout, container, false)
 
-        val v = inflater.inflate(R.layout.info_dialog_layout, container, false)
-
-        mCloseDialog = v.findViewById(R.id.exit_btn)
-        mCloseDialog.setOnClickListener {
-            dismiss()
-        }
-
-        return v
-    }
 
     override fun onResume() {
         super.onResume()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
     }
 
     override fun onStart() {

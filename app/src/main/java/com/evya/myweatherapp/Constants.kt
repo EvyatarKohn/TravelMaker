@@ -11,7 +11,7 @@ object Constants {
         return list
     }
 
-    val attractionList = arrayListOf(
+    private val attractionList = arrayListOf(
         "alpine_hut",
         "apartments",
         "campsites",
