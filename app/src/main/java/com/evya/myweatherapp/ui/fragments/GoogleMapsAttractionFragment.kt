@@ -71,6 +71,7 @@ class GoogleMapsAttractionFragment : Fragment() {
                         it.geometry.coordinates[0]
                     )
                 ).title(it.properties.name)
+                    .snippet(resources.getString(R.string.more_details))
                 mGoogleMap.addMarker(markerOptions)
             }
 
