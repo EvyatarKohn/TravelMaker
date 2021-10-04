@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.databinding.DailyWeatherItemBinding
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
-import kotlinx.android.synthetic.main.daily_weather_item.view.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -23,16 +23,15 @@ class DailyWeatherAdapter(
     RecyclerView.Adapter<DailyWeatherViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyWeatherViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-
-        return DailyWeatherViewHolder(inflater, parent)
+        val itemBinding = DailyWeatherItemBinding.inflate(LayoutInflater.from(parent.context))
+        return DailyWeatherViewHolder(itemBinding)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: DailyWeatherViewHolder, position: Int) {
         var weatherImage = R.drawable.ic_sun
         when (dailyWeatherList[position].weather[0].description) {
-           "clear sky" -> {
+            "clear sky" -> {
                 weatherImage = R.drawable.ic_sun
             }
             "few clouds",
@@ -67,20 +66,19 @@ class DailyWeatherAdapter(
         )
     }
 
-
     override fun getItemCount() = dailyWeatherList.size
 }
 
-class DailyWeatherViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
-    RecyclerView.ViewHolder(inflater.inflate(R.layout.daily_weather_item, parent, false)) {
+class DailyWeatherViewHolder(itemBinding: DailyWeatherItemBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
     private var mDate: TextView? = null
     private var mSunImage: ImageView? = null
     private var mTempVar: TextView? = null
 
     init {
-        mDate = itemView.date
-        mSunImage = itemView.sun_image
-        mTempVar = itemView.temp_var
+        mDate = itemBinding.date
+        mSunImage = itemBinding.sunImage
+        mTempVar = itemBinding.tempVar
     }
 
     fun bind(
@@ -91,7 +89,7 @@ class DailyWeatherViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         maxTemp: String,
         context: Context?
     ) {
-        mDate?.text = context?.getString(R.string.date,day, month)
+        mDate?.text = context?.getString(R.string.date, day, month)
         mSunImage?.setBackgroundResource(sunImage)
         var maxTempForMinus = maxTemp
         if (maxTemp.toInt() < 0) {

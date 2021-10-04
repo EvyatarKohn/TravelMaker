@@ -4,15 +4,14 @@ import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.databinding.GoogleMapsFragmentLayoutBinding
 import com.evya.myweatherapp.ui.MainActivity
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -26,20 +25,53 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.google_maps_fragment_layout.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class GoogleMapsFragment : Fragment() {
+class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
     private lateinit var mNavController: NavController
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mLat: String
     private lateinit var mLong: String
+    private lateinit var mBinding: GoogleMapsFragmentLayoutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mNavController = Navigation.findNavController(view)
+        mBinding = GoogleMapsFragmentLayoutBinding.bind(view)
+
+        val mapView: SupportMapFragment =
+            (childFragmentManager.findFragmentById(mBinding.mapLayout.id) as SupportMapFragment)
+
+        mLat = arguments?.get("lat").toString()
+        mLong = arguments?.get("long").toString()
+
+        mapView.getMapAsync { googleMap ->
+            mGoogleMap = googleMap
+            val markerOptions = MarkerOptions()
+
+            val myLocation = LatLng(mLat.toDouble(), mLong.toDouble())
+            markerOptions.position(myLocation)
+            mGoogleMap.addMarker(markerOptions)
+            val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            mGoogleMap.setOnMapLoadedCallback {
+                mBinding.showWeatherBtn.visibility = View.VISIBLE
+            }
+            mGoogleMap.setOnMapClickListener { latLng ->
+                mGoogleMap.clear()
+                mLat = latLng.latitude.toString()
+                mLong = latLng.longitude.toString()
+                mGoogleMap.addMarker(
+                    MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
+                        .title("lat:$mLat, long: $mLong")
+                )
+            }
+        }
+
         if (!Places.isInitialized()) {
             activity?.applicationContext?.let {
                 Places.initialize(
@@ -51,7 +83,7 @@ class GoogleMapsFragment : Fragment() {
         }
 
         // Initialize the AutocompleteSupportFragment.
-        val autocompleteFragment = childFragmentManager.findFragmentById(R.id.autocomplete_fragment)
+        val autocompleteFragment = childFragmentManager.findFragmentById(mBinding.autocompleteFragment.id)
                 as AutocompleteSupportFragment
 
         // Specify the types of place data to return.
@@ -83,50 +115,11 @@ class GoogleMapsFragment : Fragment() {
             }
         })
 
-        show_weather_btn.setOnClickListener {
+        mBinding.showWeatherBtn.setOnClickListener {
             val bundle =
                 bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat(), "fromMaps" to true)
             mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val v = inflater.inflate(R.layout.google_maps_fragment_layout, container, false)
-
-
-        val mapView: SupportMapFragment =
-            (childFragmentManager.findFragmentById(R.id.map_layout) as SupportMapFragment)
-
-        mLat = arguments?.get("lat").toString()
-        mLong = arguments?.get("long").toString()
-
-        mapView.getMapAsync { googleMap ->
-            mGoogleMap = googleMap
-            val markerOptions = MarkerOptions()
-
-            val myLocation = LatLng(mLat.toDouble(), mLong.toDouble())
-            markerOptions.position(myLocation)
-            mGoogleMap.addMarker(markerOptions)
-            val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
-            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-            mGoogleMap.setOnMapLoadedCallback {
-                show_weather_btn.visibility = View.VISIBLE
-            }
-            mGoogleMap.setOnMapClickListener { latLng ->
-                mGoogleMap.clear()
-                mLat = latLng.latitude.toString()
-                mLong = latLng.longitude.toString()
-                mGoogleMap.addMarker(
-                    MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
-                        .title("lat:$mLat, long: $mLong")
-                )
-            }
-        }
-        return v
     }
 
     private fun showToast(error: Int) {

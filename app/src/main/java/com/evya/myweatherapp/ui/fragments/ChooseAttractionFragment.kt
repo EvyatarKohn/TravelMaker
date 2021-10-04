@@ -1,9 +1,7 @@
 package com.evya.myweatherapp.ui.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -13,25 +11,28 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
 import com.evya.myweatherapp.ui.viewmodels.PlacesViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.choose_attraction_fragment_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class ChooseAttractionFragment : Fragment() {
+class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_layout) {
 
     private val mPlacesViewModel: PlacesViewModel by viewModels()
     private var mLat: String = "" //"32.083333"
     private var mLong: String = "" //"34.7999968"
     private lateinit var mNavController: NavController
+    private lateinit var mBinding: ChooseAttractionFragmentLayoutBinding
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mBinding = ChooseAttractionFragmentLayoutBinding.bind(view)
 
         mNavController = Navigation.findNavController(view)
         setOnClickListener()
@@ -44,22 +45,14 @@ class ChooseAttractionFragment : Fragment() {
             android.R.layout.select_dialog_item,
             Constants.replacedList()
         )
-        auto_complete_textview.threshold = 1
-        auto_complete_textview.setAdapter(adapter)
-        auto_complete_textview.setOnItemClickListener { adapterView, view, i, l ->
+        mBinding.autoCompleteTextview.threshold = 1
+        mBinding.autoCompleteTextview.setAdapter(adapter)
+        mBinding.autoCompleteTextview.setOnItemClickListener { adapterView, view, i, l ->
             whatToDo(
-                auto_complete_textview.text.toString().replace(" ", "_"),
+                mBinding.autoCompleteTextview.text.toString().replace(" ", "_"),
                 R.string.general_error
             )
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val v = inflater.inflate(R.layout.choose_attraction_fragment_layout, container, false)
 
         mPlacesViewModel.placesRepo.observe(viewLifecycleOwner, { places ->
             val latLong: ArrayList<LatLng> = ArrayList()
@@ -73,9 +66,9 @@ class ChooseAttractionFragment : Fragment() {
                     bundle
                 )
             } else {
-                lottie.visibility = View.GONE
+                mBinding.lottie.visibility = View.GONE
                 activity?.supportFragmentManager?.let {
-                    NoAttractionFoundDialog.newInstance(auto_complete_textview.text.toString())
+                    NoAttractionFoundDialog.newInstance(mBinding.autoCompleteTextview.text.toString())
                         .show(
                             it, " NO_ATTRACTION_DIALOG"
                         )
@@ -86,44 +79,43 @@ class ChooseAttractionFragment : Fragment() {
             showToast(it)
         })
 
-        return v
     }
 
     private fun setOnClickListener() {
 
-        get_hotel_btn.setOnClickListener {
+        mBinding.getHotelBtn.setOnClickListener {
             whatToDo("accomodations", R.string.accommodations_request_error)
         }
 
-        get_cinemas_btn.setOnClickListener {
+        mBinding.getCinemasBtn.setOnClickListener {
             whatToDo("cinemas", R.string.cinemas_request_error)
         }
 
-        get_transport_btn.setOnClickListener {
+        mBinding.getTransportBtn.setOnClickListener {
             whatToDo("transport", R.string.transports_request_error)
         }
 
-        get_banks_btn.setOnClickListener {
+        mBinding.getBanksBtn.setOnClickListener {
             whatToDo("banks", R.string.banks_request_error)
         }
 
-        get_food_btn.setOnClickListener {
+        mBinding.getFoodBtn.setOnClickListener {
             whatToDo("foods", R.string.food_request_error)
         }
 
-        get_museums_btn.setOnClickListener {
+        mBinding.getMuseumsBtn.setOnClickListener {
             whatToDo("museums", R.string.museum_request_error)
         }
 
-        get_religion_btn.setOnClickListener {
+        mBinding.getReligionBtn.setOnClickListener {
             whatToDo("religion", R.string.religion_request_error)
         }
 
-        get_culture_btn.setOnClickListener {
+        mBinding.getCultureBtn.setOnClickListener {
             whatToDo("cultural", R.string.natural_request_error)
         }
 
-        get_nature_btn.setOnClickListener {
+        mBinding.getNatureBtn.setOnClickListener {
             whatToDo("natural", R.string.natural_request_error)
         }
     }
@@ -137,9 +129,9 @@ class ChooseAttractionFragment : Fragment() {
     }
 
     private fun whatToDo(kind: String, error: Int) {
-        main_layout.visibility = View.GONE
-        lottie.visibility = View.VISIBLE
-        auto_complete_textview.visibility = View.GONE
+        mBinding.mainLayout.visibility = View.GONE
+        mBinding.lottie.visibility = View.VISIBLE
+        mBinding.autoCompleteTextview.visibility = View.GONE
         mPlacesViewModel.getWhatToDo(mLong, mLat, kind, error)
     }
 }

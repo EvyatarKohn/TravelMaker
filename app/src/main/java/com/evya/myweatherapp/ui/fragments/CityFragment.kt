@@ -4,10 +4,10 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.style.ForegroundColorSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -17,27 +17,25 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
-import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
+import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.viewmodels.WeatherViewModel
+import com.evya.myweatherapp.util.CustomTypeFaceSpan
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.city_fragment_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import android.text.Spanned
-import android.widget.TextView
-import com.evya.myweatherapp.util.CustomTypeFaceSpan
 
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class CityFragment : Fragment() {
+class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private val mWeatherViewModel: WeatherViewModel by viewModels()
     private var mCityName = ""
     private var mCountryCode = "IL"
@@ -51,6 +49,8 @@ class CityFragment : Fragment() {
     private var mWindSpeed = " m/s"
     private var mCelsius: Boolean = true
     private lateinit var mNavController: NavController
+    private lateinit var mBinding: CityFragmentLayoutBinding
+
 
     companion object {
         const val IMPERIAL = "imperial"
@@ -61,6 +61,10 @@ class CityFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mBinding = CityFragmentLayoutBinding.bind(view)
+
+        successObservers()
+        errorObservers()
 
         mNavController = Navigation.findNavController(view)
         setOnClickListener()
@@ -102,20 +106,7 @@ class CityFragment : Fragment() {
             }
         }
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val v = inflater.inflate(R.layout.city_fragment_layout, container, false)
-
-        successObservers()
-        errorObservers()
-
-        return v
-    }
-
+    
     private fun successObservers() {
         mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner, { weather ->
             mLat = weather.coord.lat.toString()
@@ -126,23 +117,28 @@ class CityFragment : Fragment() {
 
         mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
-            probability_of_precipitation.text = getString(
+            mBinding.probabilityOfPrecipitation.text = getString(
                 R.string.probability_of_precipitation,
                 (dailyWeather.list[0].pop * 100).toString() + " %"
             )
-            setBold(0, 26, probability_of_precipitation)
+            setBold(0, 26, mBinding.probabilityOfPrecipitation)
             var rainHeight = "0"
             if (dailyWeather.list[0].rain != null) {
                 rainHeight = dailyWeather.list[0].rain.h.toString()
             }
-            rain_3h.text = getString(R.string.rain_last_3h, "$rainHeight mm")
-            setBold(0, 13, rain_3h)
-            wind_direction.text = getString(R.string.wind_direction, dailyWeather.list[0].wind.deg.toString() + " deg")
-            setBold(0, 15, wind_direction)
+            mBinding.rain3h.text = getString(R.string.rain_last_3h, "$rainHeight mm")
+            setBold(0, 13, mBinding.rain3h)
+            mBinding.windDirection.text = getString(
+                R.string.wind_direction,
+                dailyWeather.list[0].wind.deg.toString() + " deg"
+            )
+            setBold(0, 15, mBinding.windDirection)
         })
 
         mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
-            setTopAdapter(citiesWeather.list)
+            setTopAdapter(citiesWeather.list.distinctBy {
+                it.name
+            })
         })
     }
 
@@ -206,8 +202,8 @@ class CityFragment : Fragment() {
         mMainCitiesAdapter = CitiesAroundAdapter(activity?.applicationContext, list, mNavController)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        main_cities_recycler_view.layoutManager = layoutManager
-        main_cities_recycler_view.adapter = mMainCitiesAdapter
+        mBinding.mainCitiesRecyclerView.layoutManager = layoutManager
+        mBinding.mainCitiesRecyclerView.adapter = mMainCitiesAdapter
     }
 
     private fun setDailyAdapter(dailyWeatherList: List<DailyWeatherData>) {
@@ -230,57 +226,58 @@ class CityFragment : Fragment() {
             DailyWeatherAdapter(newList, minTempArray, maxTempArray, activity?.applicationContext)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        daily_weather_recycler_view.layoutManager = layoutManager
-        daily_weather_recycler_view.adapter = mDailyAdapter
+        mBinding.dailyWeatherRecyclerView.layoutManager = layoutManager
+        mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
     }
 
 
     private fun setWeatherDataInTextViews(weather: Weather) {
-        main_image.setImageResource(R.drawable.ic_summer)
+        mBinding.mainImage.setImageResource(R.drawable.ic_summer)
         if ((weather.main.temp <= 10 && mUnits == "metric") || (weather.main.temp <= 50 && mUnits == "imperial")) {
-            main_image.setImageResource(R.drawable.ic_winter)
+            mBinding.mainImage.setImageResource(R.drawable.ic_winter)
         }
         mCityName = weather.name
         mCountryCode = weather.sys.country
-        city_name.text = getString(R.string.city_name_country, weather.name, weather.sys.country)
-        temp.text = getString(R.string.temp, weather.main.temp.toInt().toString())
-        feels_like.text = getString(
+        mBinding.cityName.text = getString(R.string.city_name_country, weather.name, weather.sys.country)
+        mBinding.temp.text = getString(R.string.temp, weather.main.temp.toInt().toString())
+        mBinding.feelsLike.text = getString(
             R.string.feels_like_temp,
             weather.main.feelsLike.toInt().toString() + mDegreeUnit
         )
-        humidity.text = getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
-        setBold(0, 8, humidity)
-        wind_speed.text = getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
-        setBold(0, 11, wind_speed)
-        feels_like.text = getString(
+        mBinding.humidity.text = getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
+        setBold(0, 8, mBinding.humidity)
+        mBinding.windSpeed.text =
+            getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
+        setBold(0, 11, mBinding.windSpeed)
+        mBinding.feelsLike.text = getString(
             R.string.feels_like_temp,
             weather.main.feelsLike.toInt().toString() + mDegreeUnit
         )
-        sunrise.text = getString(R.string.sunrise_time, setTimeToHour(weather.sys.sunrise))
-        setBold(0, 7, sunrise)
-        sunset.text = getString(R.string.sunset_time, setTimeToHour(weather.sys.sunset))
-        setBold(0, 6, sunset)
+        mBinding.sunrise.text = getString(R.string.sunrise_time, setTimeToHour(weather.sys.sunrise))
+        setBold(0, 7, mBinding.sunrise)
+        mBinding.sunset.text = getString(R.string.sunset_time, setTimeToHour(weather.sys.sunset))
+        setBold(0, 6, mBinding.sunset)
 
-        description.text = getString(R.string.description, weather.weather[0].description)
-        setBold(0, 7, description)
+        mBinding.description.text = getString(R.string.description, weather.weather[0].description)
+        setBold(0, 7, mBinding.description)
         var distanceUnits = "m"
         var visibilityValue = weather.visibility
         if (weather.visibility > 999) {
             visibilityValue = weather.visibility / 1000
             distanceUnits = "Km"
         }
-        visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
-        setBold(0, 10, visibility)
+        mBinding.visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+        setBold(0, 10, mBinding.visibility)
 
     }
 
     private fun setOnClickListener() {
-        units.setOnClickListener {
+        mBinding.units.setOnClickListener {
             val start: Int
             val end: Int
             if (mCelsius) {
-                start = units.text.length - 1
-                end = units.text.length
+                start = mBinding.units.text.length - 1
+                end = mBinding.units.text.length
                 mUnits = IMPERIAL
                 mDegreeUnit = "\u2109"
                 mWindSpeed = IMPERIAL_DEGREE
@@ -299,15 +296,10 @@ class CityFragment : Fragment() {
             getDailyWeather(mCityName, mCountryCode, mUnits)
         }
 
-        location_icon.setOnClickListener {
+        mBinding.locationIcon.setOnClickListener {
             val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat())
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
         }
-
-/*        show_attractions.setOnClickListener {
-            val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat())
-            mNavController.navigate(R.id.action_cityFragment_to_chooseAttractionFragment, bundle)
-        }*/
     }
 
     private fun setSpan(start: Int, end: Int) {
@@ -320,7 +312,7 @@ class CityFragment : Fragment() {
                 )
             ), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-        units.text = span
+        mBinding.units.text = span
     }
 
     private fun setBold(start: Int, end: Int, textView: TextView) {

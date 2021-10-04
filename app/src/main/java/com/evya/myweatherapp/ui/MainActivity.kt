@@ -27,15 +27,14 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.ismaeldivita.chipnavigation.ChipNavigationBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -50,10 +49,8 @@ class MainActivity : AppCompatActivity() {
     var mApprovePermissions = false
     private var mGspIsOn = false
     private var mThreeSec = false
-    private lateinit var mBottomNavigationBar: ChipNavigationBar
     private lateinit var mNavHostFragment: NavHostFragment
-    private lateinit var mFragmentContainerView: FragmentContainerView
-    private lateinit var mAppName: TextView
+    private lateinit var mBinding: ActivityMainBinding
 
     companion object {
         private val PERMISSIONS = arrayOf(
@@ -67,27 +64,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-        WindowInsetsControllerCompat(window, container).show(WindowInsetsCompat.Type.systemBars())
-        setContentView(R.layout.activity_main)
+        mBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(mBinding.root)
 
         mGspIsOn = isLocationEnabled()
-        mAppName = findViewById(R.id.app_name)
         val span = SpannableString(resources.getString(R.string.app_name_title))
         span.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.black)), 6, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        mAppName.text = span
+        mBinding.appName.text = span
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
-        mBottomNavigationBar = findViewById(R.id.bottom_navigation_bar)
-        mFragmentContainerView = findViewById(R.id.nav_host_fragment)
         mNavHostFragment =  (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-
         Handler(Looper.getMainLooper()).postDelayed({
             mThreeSec = true
             getLastLocation()
         }, THREE_SEC)
-        mBottomNavigationBar.setOnItemSelectedListener { id ->
+        mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
             val inflater = mNavHostFragment.navController.navInflater
             val graph = inflater.inflate(R.navigation.nav_graph)
             when (id) {
@@ -140,9 +131,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun startFlow() {
         if (mGspIsOn && mThreeSec) {
-            mBottomNavigationBar.setItemSelected(R.id.weather, true)
-            mBottomNavigationBar.visibility = View.VISIBLE
-            mFragmentContainerView.visibility = View.VISIBLE
+            mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
+            mBinding.bottomNavigationBar.visibility = View.VISIBLE
+            mBinding.navHostFragment.visibility = View.VISIBLE
             val inflater = mNavHostFragment.navController.navInflater
             val graph = inflater.inflate(R.navigation.nav_graph)
             graph.startDestination = R.id.cityFragment

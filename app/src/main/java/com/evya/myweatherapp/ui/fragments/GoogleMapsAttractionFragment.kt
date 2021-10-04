@@ -4,56 +4,41 @@ import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.databinding.GoogleMapsAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.model.placesmodel.Places
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.google_maps_attraction_fragment_layout.*
 
 
 @AndroidEntryPoint
-class GoogleMapsAttractionFragment : Fragment() {
+class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fragment_layout) {
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mPlaces: Places
     private lateinit var mMyLatLong: LatLng
     private lateinit var mMarkerTitle: String
     private lateinit var mNavController: NavController
+    private lateinit var mBinding: GoogleMapsAttractionFragmentLayoutBinding
 
+
+    @SuppressLint("PotentialBehaviorOverride")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mNavController = Navigation.findNavController(view)
-        back_arrow.setOnClickListener {
-            val bundle = bundleOf(
-                "lat" to mMyLatLong.latitude.toFloat(),
-                "long" to mMyLatLong.longitude.toFloat(),
-                "fromMaps" to true
-            )
-            mNavController.navigate(
-                R.id.action_googleMapsAttractionFragment_to_chooseAttractionFragment,
-                bundle
-            )
-        }
-    }
+        mBinding = GoogleMapsAttractionFragmentLayoutBinding.bind(view)
 
-    @SuppressLint("PotentialBehaviorOverride")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val v = inflater.inflate(R.layout.google_maps_attraction_fragment_layout, container, false)
         val mapView: SupportMapFragment =
-            (childFragmentManager.findFragmentById(R.id.map_layout)) as SupportMapFragment
+            (childFragmentManager.findFragmentById(mBinding.mapLayout.id)) as SupportMapFragment
 
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
@@ -79,11 +64,11 @@ class GoogleMapsAttractionFragment : Fragment() {
 
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
-             mGoogleMap.setOnMarkerClickListener { marker ->
-                 marker.showInfoWindow()
-                 mMarkerTitle = marker.title!!
-                 true
-             }
+            mGoogleMap.setOnMarkerClickListener { marker ->
+                marker.showInfoWindow()
+                mMarkerTitle = marker.title!!
+                true
+            }
 
             mGoogleMap.setOnMapLongClickListener {
                 val googleSearchIntent = Intent(Intent.ACTION_WEB_SEARCH)
@@ -94,6 +79,16 @@ class GoogleMapsAttractionFragment : Fragment() {
             }
         }
 
-        return v
+        mBinding.backArrow.setOnClickListener {
+            val bundle = bundleOf(
+                "lat" to mMyLatLong.latitude.toFloat(),
+                "long" to mMyLatLong.longitude.toFloat(),
+                "fromMaps" to true
+            )
+            mNavController.navigate(
+                R.id.action_googleMapsAttractionFragment_to_chooseAttractionFragment,
+                bundle
+            )
+        }
     }
 }

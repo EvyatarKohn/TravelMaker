@@ -9,8 +9,8 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.databinding.MainCitiesItemLayoutBinding
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
-import kotlinx.android.synthetic.main.main_cities_item_layout.view.*
 
 class CitiesAroundAdapter(
     private val context: Context?,
@@ -19,9 +19,9 @@ class CitiesAroundAdapter(
 ) : RecyclerView.Adapter<MainCitiesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainCitiesViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
+        val itemBinding = MainCitiesItemLayoutBinding.inflate(LayoutInflater.from(parent.context))
 
-        return MainCitiesViewHolder(inflater, parent)
+        return MainCitiesViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: MainCitiesViewHolder, position: Int) {
@@ -32,12 +32,12 @@ class CitiesAroundAdapter(
 
 }
 
-class MainCitiesViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
-    RecyclerView.ViewHolder(inflater.inflate(R.layout.main_cities_item_layout, parent, false)) {
+class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
+    RecyclerView.ViewHolder(itemBinding.root) {
     private var mCityName: TextView? = null
 
     init {
-        mCityName = itemView.name
+        mCityName = itemBinding.name
     }
 
     fun bind(context: Context?, cityName: String, navController: NavController) {

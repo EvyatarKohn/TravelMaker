@@ -126,14 +126,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:nestedScrollingEnabled="true"
-                android:paddingRight="25dp"
+                android:paddingHorizontal="10dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/main_weather_layout">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/daily_weather_recycler_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center" />
             </ScrollView>
