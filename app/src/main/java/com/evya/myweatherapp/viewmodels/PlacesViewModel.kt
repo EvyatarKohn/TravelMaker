@@ -1,7 +1,6 @@
-package com.evya.myweatherapp.ui.viewmodels
+package com.evya.myweatherapp.viewmodels
 
 import androidx.lifecycle.*
-import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.placesmodel.Places
 import com.evya.myweatherapp.repository.PlacesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

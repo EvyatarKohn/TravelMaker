@@ -24,7 +24,7 @@ import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
-import com.evya.myweatherapp.ui.viewmodels.WeatherViewModel
+import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import com.evya.myweatherapp.util.CustomTypeFaceSpan
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi

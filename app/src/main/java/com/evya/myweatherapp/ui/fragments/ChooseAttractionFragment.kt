@@ -14,7 +14,7 @@ import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
-import com.evya.myweatherapp.ui.viewmodels.PlacesViewModel
+import com.evya.myweatherapp.viewmodels.PlacesViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi

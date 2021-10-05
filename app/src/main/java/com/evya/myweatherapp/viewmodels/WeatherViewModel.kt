@@ -1,4 +1,4 @@
-package com.evya.myweatherapp.ui.viewmodels
+package com.evya.myweatherapp.viewmodels
 
 import androidx.lifecycle.*
 import com.evya.myweatherapp.R

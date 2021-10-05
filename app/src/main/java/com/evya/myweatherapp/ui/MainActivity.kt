@@ -17,14 +17,9 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
@@ -47,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
     var mApprovePermissions = false
-    private var mGspIsOn = false
+    private var mGpsIsOn = false
     private var mThreeSec = false
     private lateinit var mNavHostFragment: NavHostFragment
     private lateinit var mBinding: ActivityMainBinding
@@ -59,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         )
         private const val THREE_SEC = 3000L
         private const val PERMISSIONS_REQUEST_ID = 1000
+        private const val REQUEST_CODE_LOCATION_SETTING = 100
     }
 
 
@@ -67,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        mGspIsOn = isLocationEnabled()
+        mGpsIsOn = isLocationEnabled()
         val span = SpannableString(resources.getString(R.string.app_name_title))
         span.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.black)), 6, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         mBinding.appName.text = span
@@ -78,6 +74,7 @@ class MainActivity : AppCompatActivity() {
             mThreeSec = true
             getLastLocation()
         }, THREE_SEC)
+
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
             val inflater = mNavHostFragment.navController.navInflater
             val graph = inflater.inflate(R.navigation.nav_graph)
@@ -130,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startFlow() {
-        if (mGspIsOn && mThreeSec) {
+        if (mGpsIsOn && mThreeSec) {
             mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
@@ -210,13 +207,6 @@ class MainActivity : AppCompatActivity() {
         mApprovePermissions = true
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (mApprovePermissions) {
-            getLastLocation()
-        }
-    }
-
     fun turnGPSOn() {
         val locationRequest = LocationRequest.create().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -238,9 +228,10 @@ class MainActivity : AppCompatActivity() {
                 when (exception.statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
                         mApprovePermissions = true
-                        mGspIsOn = true
+                        mGpsIsOn = true
                         val resolvable = exception as ResolvableApiException
-                        resolvable.startResolutionForResult(this@MainActivity, 100)
+                        resolvable.startResolutionForResult(this@MainActivity, REQUEST_CODE_LOCATION_SETTING)
+                        resolvable.status
                     } catch (e: SendIntentException) {
                         e.message?.let { Log.d("TAG", it) }
                     } catch (e: ClassCastException) {
@@ -248,6 +239,20 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQUEST_CODE_LOCATION_SETTING -> getLastLocation()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mApprovePermissions  && !mGpsIsOn) {
+            getLastLocation()
         }
     }
 }
