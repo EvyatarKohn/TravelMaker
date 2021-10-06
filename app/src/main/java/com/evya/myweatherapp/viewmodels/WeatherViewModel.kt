@@ -1,6 +1,9 @@
 package com.evya.myweatherapp.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAround
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
@@ -12,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val repository: WeatherRepository,
+    private val repository: WeatherRepository
 ) : ViewModel() {
 
     private var mWeatherLiveData = MutableLiveData<Weather>()

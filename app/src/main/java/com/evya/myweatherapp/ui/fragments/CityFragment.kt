@@ -106,11 +106,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             }
         }
     }
-    
+
     private fun successObservers() {
         mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner, { weather ->
             mLat = weather.coord.lat.toString()
             mLong = weather.coord.lon.toString()
+            (activity as MainActivity).mLat = mLat
+            (activity as MainActivity).mLong = mLong
             mWeatherViewModel.getCitiesAround(mLat, mLong, mUnits)
             showWeather(weather)
         })
@@ -238,13 +240,15 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
         mCityName = weather.name
         mCountryCode = weather.sys.country
-        mBinding.cityName.text = getString(R.string.city_name_country, weather.name, weather.sys.country)
+        mBinding.cityName.text =
+            getString(R.string.city_name_country, weather.name, weather.sys.country)
         mBinding.temp.text = getString(R.string.temp, weather.main.temp.toInt().toString())
         mBinding.feelsLike.text = getString(
             R.string.feels_like_temp,
             weather.main.feelsLike.toInt().toString() + mDegreeUnit
         )
-        mBinding.humidity.text = getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
+        mBinding.humidity.text =
+            getString(R.string.humidity_new, weather.main.humidity.toString() + "%")
         setBold(0, 8, mBinding.humidity)
         mBinding.windSpeed.text =
             getString(R.string.wind_speed_new, weather.wind.speed.toString() + mWindSpeed)
@@ -266,7 +270,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             visibilityValue = weather.visibility / 1000
             distanceUnits = "Km"
         }
-        mBinding.visibility.text = getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+        mBinding.visibility.text =
+            getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
         setBold(0, 10, mBinding.visibility)
 
     }
@@ -299,6 +304,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mBinding.locationIcon.setOnClickListener {
             val bundle = bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat())
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
+            (activity as MainActivity).changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
         }
     }
 

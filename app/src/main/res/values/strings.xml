@@ -8,7 +8,7 @@
 
     <!-- Gate Fragment texts  -->
     <string name="icons_credit">Icons and images:</string>
-    <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010</string>
+    <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010\nhttps://unsplash.com/</string>
     <string name="lotties_credit">Lotties:</string>
     <string name="lotties_credit_url">https://lottiefiles.com/</string>
 
@@ -115,6 +115,7 @@
     <string name="get_historic_btn">Historic</string>
     <string name="get_cultural_btn">Cultural</string>
     <string name="get_architecture_btn">Architecture</string>
+    <string name="get_night_life_btn">Night Life</string>
 
     <!-- Google maps Attraction Fragment Strings  -->
     <string name="more_details">Long press on marker for more details</string>

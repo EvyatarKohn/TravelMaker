@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlacesViewModel @Inject constructor(
-    private val repository: PlacesRepository,
+    private val repository: PlacesRepository
 ) : ViewModel() {
 
     private var mPlacesLiveData = MutableLiveData<Places>()

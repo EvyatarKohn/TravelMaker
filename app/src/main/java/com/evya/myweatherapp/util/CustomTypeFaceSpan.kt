@@ -1,12 +1,9 @@
 package com.evya.myweatherapp.util
 
 import android.graphics.Paint
-import android.text.style.TypefaceSpan
 import android.graphics.Typeface
-
 import android.text.TextPaint
-
-
+import android.text.style.TypefaceSpan
 
 
 class CustomTypeFaceSpan(family: String?, type: Typeface?) : TypefaceSpan(family) {

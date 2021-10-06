@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.evya.myweatherapp.R
 
-class NoAttractionFoundDialog: DialogFragment() {
+class NoAttractionFoundDialog : DialogFragment() {
 
     private lateinit var mTitle: TextView
     private lateinit var mAttractionName: String
@@ -34,17 +34,25 @@ class NoAttractionFoundDialog: DialogFragment() {
         window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val v = inflater.inflate(R.layout.no_attraction_dialog_layout, container, false)
 
         mTitle = v.findViewById(R.id.title)
-        mTitle.text = resources.getString(R.string.There_is_no_attraction_in_your_area, mAttractionName)
+        mTitle.text =
+            resources.getString(R.string.There_is_no_attraction_in_your_area, mAttractionName)
 
         return v
     }
 
     override fun onResume() {
         super.onResume()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
     }
 }

@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
 @ExperimentalCoroutinesApi
-class PermissionDeniedDialog: DialogFragment() {
+class PermissionDeniedDialog : DialogFragment() {
 
     private lateinit var mTitle: TextView
     private lateinit var mExitBtn: TextView
@@ -41,7 +41,11 @@ class PermissionDeniedDialog: DialogFragment() {
         window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val v = inflater.inflate(R.layout.permission_denied_dialog_layout, container, false)
         dialog?.setCanceledOnTouchOutside(false)
         mTitle = v.findViewById(R.id.title)
@@ -67,6 +71,9 @@ class PermissionDeniedDialog: DialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
     }
 }

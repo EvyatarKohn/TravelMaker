@@ -29,7 +29,6 @@ class CitiesAroundAdapter(
     }
 
     override fun getItemCount() = citiesList.size
-
 }
 
 class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :

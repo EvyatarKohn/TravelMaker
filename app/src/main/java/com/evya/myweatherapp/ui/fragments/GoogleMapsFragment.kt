@@ -83,8 +83,9 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         }
 
         // Initialize the AutocompleteSupportFragment.
-        val autocompleteFragment = childFragmentManager.findFragmentById(mBinding.autocompleteFragment.id)
-                as AutocompleteSupportFragment
+        val autocompleteFragment =
+            childFragmentManager.findFragmentById(mBinding.autocompleteFragment.id)
+                    as AutocompleteSupportFragment
 
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
@@ -119,6 +120,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             val bundle =
                 bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat(), "fromMaps" to true)
             mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
+            (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
         }
     }
 

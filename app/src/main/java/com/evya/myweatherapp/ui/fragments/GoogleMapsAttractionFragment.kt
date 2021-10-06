@@ -30,7 +30,6 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
     private lateinit var mNavController: NavController
     private lateinit var mBinding: GoogleMapsAttractionFragmentLayoutBinding
 
-
     @SuppressLint("PotentialBehaviorOverride")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -85,6 +84,7 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
                 "long" to mMyLatLong.longitude.toFloat(),
                 "fromMaps" to true
             )
+
             mNavController.navigate(
                 R.id.action_googleMapsAttractionFragment_to_chooseAttractionFragment,
                 bundle

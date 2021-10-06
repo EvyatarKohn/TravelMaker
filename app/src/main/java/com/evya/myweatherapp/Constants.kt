@@ -233,7 +233,6 @@ object Constants {
         "car_sharing",
         "car_wash",
         "charging_station",
-        "fuel",
+        "fuel"
     )
-
 }

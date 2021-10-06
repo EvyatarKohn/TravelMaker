@@ -20,6 +20,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private var mGpsIsOn = false
     private var mThreeSec = false
     private lateinit var mNavHostFragment: NavHostFragment
+    private lateinit var mGraph: NavGraph
     private lateinit var mBinding: ActivityMainBinding
 
     companion object {
@@ -70,27 +72,24 @@ class MainActivity : AppCompatActivity() {
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         mNavHostFragment =  (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
+        mGraph = mNavHostFragment.navController.navInflater.inflate(R.navigation.nav_graph)
+
         Handler(Looper.getMainLooper()).postDelayed({
             mThreeSec = true
             getLastLocation()
         }, THREE_SEC)
 
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
-            val inflater = mNavHostFragment.navController.navInflater
-            val graph = inflater.inflate(R.navigation.nav_graph)
             when (id) {
                 R.id.weather -> {
                     mApprovePermissions = true
-                    graph.startDestination = R.id.cityFragment
-                    mNavHostFragment.navController.graph = graph
+                    changeNavBarIndex(R.id.cityFragment, R.id.weather)
                 }
-                R.id.maps -> {
-                    graph.startDestination = R.id.googleMapsFragment
-                    mNavHostFragment.navController.graph = graph
+                R.id.map -> {
+                    changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
                 }
                 R.id.attractions -> {
-                    graph.startDestination = R.id.chooseAttractionFragment
-                    mNavHostFragment.navController.graph = graph
+                    changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
                 }
                 R.id.info -> {
                     InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
@@ -114,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                         mApprovePermissions = true
                         mLat = location.latitude.toString()
                         mLong = location.longitude.toString()
-                       startFlow()
+                        startFlow()
                     }
                 }
             } else {
@@ -131,10 +130,8 @@ class MainActivity : AppCompatActivity() {
             mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
-            val inflater = mNavHostFragment.navController.navInflater
-            val graph = inflater.inflate(R.navigation.nav_graph)
-            graph.startDestination = R.id.cityFragment
-            mNavHostFragment.navController.graph = graph
+            mGraph.startDestination = R.id.cityFragment
+            mNavHostFragment.navController.graph = mGraph
         }
     }
 
@@ -254,5 +251,11 @@ class MainActivity : AppCompatActivity() {
         if (mApprovePermissions  && !mGpsIsOn) {
             getLastLocation()
         }
+    }
+
+    fun changeNavBarIndex(destination: Int, bottomNavId: Int) {
+        mGraph.startDestination = destination
+        mNavHostFragment.navController.graph = mGraph
+        mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
     }
 }
