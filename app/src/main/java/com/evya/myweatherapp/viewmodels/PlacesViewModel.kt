@@ -20,8 +20,8 @@ class PlacesViewModel @Inject constructor(
     val placesRepoError: LiveData<Int>
         get() = mPlacesLiveDataError
 
-    fun getWhatToDo(long: String, lat: String, kind: String, error: Int) = viewModelScope.launch {
-        repository.getWhatToDo(long, lat, kind).let { response ->
+    fun getWhatToDo(lat: String, long: String, kind: String, error: Int) = viewModelScope.launch {
+        repository.getWhatToDo(lat, long, kind).let { response ->
             if (response.isSuccessful) {
                 mPlacesLiveData.postValue(response.body())
             } else {

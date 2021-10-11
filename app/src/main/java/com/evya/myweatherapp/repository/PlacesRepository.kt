@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 class PlacesRepository @Inject constructor(private val tripApi: TripApi) {
 
-    suspend fun getWhatToDo(long: String, lat: String, kind: String) =
+    suspend fun getWhatToDo(lat: String, long: String, kind: String) =
         tripApi.getWhatToDo(
             "10000",
             long,

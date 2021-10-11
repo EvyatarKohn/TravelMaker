@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:paddingHorizontal="25dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -76,6 +77,34 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lotties_credit" />
 
+
+        <TextView
+            android:id="@+id/privacy_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/product_sans_regular"
+            android:text="@string/privacy_policy"
+            android:textColor="@color/turquoise"
+            android:textSize="25sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lotties_credit_url" />
+
+
+        <TextView
+            android:id="@+id/privacy_policy_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/product_sans_regular"
+            android:text="@string/privacy_policy_url"
+            android:textSize="15sp"
+            android:textColor="@color/blue_link"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/privacy_policy" />
+
         <ImageView
             android:id="@+id/ground"
             android:layout_width="match_parent"
@@ -85,7 +114,7 @@
             android:src="@drawable/ic_ground_location"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lotties_credit_url" />
+            app:layout_constraintTop_toBottomOf="@+id/privacy_policy_url" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

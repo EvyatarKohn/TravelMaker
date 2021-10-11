@@ -80,14 +80,14 @@
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
-        <argument
+ <!--       <argument
             android:name="lat"
             android:defaultValue="32.083333"
             app:argType="float"/>
         <argument
             android:name="long"
             android:defaultValue="34.7999968"
-            app:argType="float"/>
+            app:argType="float"/>-->
     </fragment>
 
 
@@ -100,14 +100,14 @@
             app:destination="@id/chooseAttractionFragment" />
     </fragment>
 
-    <argument
+<!--    <argument
         android:name="lat"
         android:defaultValue="32.083333"
         app:argType="float"/>
     <argument
         android:name="long"
         android:defaultValue="34.7999968"
-        app:argType="float"/>
+        app:argType="float"/>-->
 
     <argument
         android:name="places"

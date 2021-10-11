@@ -11,6 +11,8 @@
     <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010\nhttps://unsplash.com/</string>
     <string name="lotties_credit">Lotties:</string>
     <string name="lotties_credit_url">https://lottiefiles.com/</string>
+    <string name="privacy_policy">Privacy Policy:</string>
+    <string name="privacy_policy_url">https://www.termsfeed.com/live/e2e6d8ef-99f5-4abd-9eee-62e6af4c7928</string>
 
     <!-- City Fragment texts  -->
     <string name="to_cities_list_btn">to cities list</string>
@@ -50,7 +52,7 @@
 
     <!-- Permission denied dialog texts  -->
     <string name="you_have_to_approve_permissions_title">We would like to use\nyour current location</string>
-    <string name="you_have_to_approve_permissions_sub_title">To get the updated information for\ntour current location, we need you to\nenable the GPS service</string>
+    <string name="you_have_to_approve_permissions_sub_title">To get the updated information for\ntour current location, we need you to\nenable the GPS service\n(Always in use - even if app is in background)</string>
     <string name="exit_btn">No Thanks</string>
     <string name="enable_gps">Enable GPS</string>
     <string name="approve_permissions">Give permissions</string>

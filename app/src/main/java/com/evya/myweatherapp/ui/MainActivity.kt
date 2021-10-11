@@ -22,11 +22,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
+import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -38,8 +40,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    var mLat: String = ""//"32.083333"
-    var mLong: String = ""// "34.7999968
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
     var mApprovePermissions = false
@@ -66,12 +66,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(mBinding.root)
 
         mGpsIsOn = isLocationEnabled()
-        val span = SpannableString(resources.getString(R.string.app_name_title))
-        span.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.black)), 6, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        mBinding.appName.text = span
+        UtilsFunctions.setColorSpan(
+            6,
+            11,
+            R.color.black,
+            R.string.app_name_title,
+            mBinding.appName,
+            applicationContext
+        )
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        mNavHostFragment =  (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
+        mNavHostFragment =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
         mGraph = mNavHostFragment.navController.navInflater.inflate(R.navigation.nav_graph)
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -111,8 +117,8 @@ class MainActivity : AppCompatActivity() {
                         getNewLocation()
                     } else {
                         mApprovePermissions = true
-                        mLat = location.latitude.toString()
-                        mLong = location.longitude.toString()
+                        MainData.mLat = location.latitude.toString()
+                        MainData.mLong = location.longitude.toString()
                         startFlow()
                     }
                 }
@@ -153,8 +159,8 @@ class MainActivity : AppCompatActivity() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
-            mLat = lastLocation.latitude.toString()
-            mLong = lastLocation.longitude.toString()
+            MainData.mLat = lastLocation.latitude.toString()
+            MainData.mLong = lastLocation.longitude.toString()
             getLastLocation()
         }
     }
@@ -227,7 +233,10 @@ class MainActivity : AppCompatActivity() {
                         mApprovePermissions = true
                         mGpsIsOn = true
                         val resolvable = exception as ResolvableApiException
-                        resolvable.startResolutionForResult(this@MainActivity, REQUEST_CODE_LOCATION_SETTING)
+                        resolvable.startResolutionForResult(
+                            this@MainActivity,
+                            REQUEST_CODE_LOCATION_SETTING
+                        )
                         resolvable.status
                     } catch (e: SendIntentException) {
                         e.message?.let { Log.d("TAG", it) }
@@ -248,7 +257,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (mApprovePermissions  && !mGpsIsOn) {
+        if (mApprovePermissions && !mGpsIsOn) {
             getLastLocation()
         }
     }

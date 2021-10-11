@@ -5,10 +5,10 @@ import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.model.placesmodel.Places
@@ -42,8 +42,8 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
             mMyLatLong = LatLng(
-                arguments?.getString("lat")?.toDouble()!!,
-                arguments?.getString("long")?.toDouble()!!
+                MainData.mLat.toDouble(),
+                MainData.mLong.toDouble()
             )
             mPlaces = arguments?.getParcelable("places")!!
 
@@ -79,15 +79,9 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
         }
 
         mBinding.backArrow.setOnClickListener {
-            val bundle = bundleOf(
-                "lat" to mMyLatLong.latitude.toFloat(),
-                "long" to mMyLatLong.longitude.toFloat(),
-                "fromMaps" to true
-            )
 
             mNavController.navigate(
                 R.id.action_googleMapsAttractionFragment_to_chooseAttractionFragment,
-                bundle
             )
         }
     }

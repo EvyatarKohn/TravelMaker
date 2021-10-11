@@ -5,14 +5,14 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsFragmentLayoutBinding
 import com.evya.myweatherapp.ui.MainActivity
+import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -34,8 +34,6 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
     private lateinit var mNavController: NavController
     private lateinit var mGoogleMap: GoogleMap
-    private lateinit var mLat: String
-    private lateinit var mLong: String
     private lateinit var mBinding: GoogleMapsFragmentLayoutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,14 +44,11 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         val mapView: SupportMapFragment =
             (childFragmentManager.findFragmentById(mBinding.mapLayout.id) as SupportMapFragment)
 
-        mLat = arguments?.get("lat").toString()
-        mLong = arguments?.get("long").toString()
-
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
             val markerOptions = MarkerOptions()
 
-            val myLocation = LatLng(mLat.toDouble(), mLong.toDouble())
+            val myLocation = LatLng(MainData.mLat.toDouble(), MainData.mLong.toDouble())
             markerOptions.position(myLocation)
             mGoogleMap.addMarker(markerOptions)
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
@@ -63,11 +58,10 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             }
             mGoogleMap.setOnMapClickListener { latLng ->
                 mGoogleMap.clear()
-                mLat = latLng.latitude.toString()
-                mLong = latLng.longitude.toString()
+                MainData.mLat = latLng.latitude.toString()
+                MainData.mLong = latLng.longitude.toString()
                 mGoogleMap.addMarker(
                     MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
-                        .title("lat:$mLat, long: $mLong")
                 )
             }
         }
@@ -101,10 +95,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
                 if (list.size > 0) {
                     val address = list[0]
-                    mLat = address.latitude.toString()
-                    mLong = address.longitude.toString()
-                    (activity as MainActivity).mLat = mLat
-                    (activity as MainActivity).mLong = mLong
+                    MainData.mLat = address.latitude.toString()
+                    MainData.mLong = address.longitude.toString()
                     val latLang = LatLng(address.latitude, address.longitude)
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
@@ -112,23 +104,13 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             }
 
             override fun onError(status: Status) {
-                showToast(R.string.google_search_error)
+                UtilsFunctions.showToast(R.string.google_search_error, activity?.applicationContext)
             }
         })
 
         mBinding.showWeatherBtn.setOnClickListener {
-            val bundle =
-                bundleOf("lat" to mLat.toFloat(), "long" to mLong.toFloat(), "fromMaps" to true)
-            mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
+            mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment)
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
         }
-    }
-
-    private fun showToast(error: Int) {
-        Toast.makeText(
-            activity?.applicationContext,
-            activity?.applicationContext?.resources?.getString(error),
-            Toast.LENGTH_LONG
-        ).show()
     }
 }
