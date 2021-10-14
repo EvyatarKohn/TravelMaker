@@ -55,14 +55,25 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+<!--                <ImageView
+                    android:id="@+id/main_image_rain"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:contentDescription="@string/main_image_rain_view_desc"
+                    android:src="@drawable/ic_rain"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />-->
+
                 <TextView
                     android:id="@+id/location_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="25dp"
-                    android:fontFamily="@font/product_sans_regular"
                     android:drawablePadding="5dp"
+                    android:fontFamily="@font/product_sans_regular"
                     android:text="@string/different_destination"
                     android:textColor="@color/turquoise"
                     app:drawableLeftCompat="@drawable/ic_location"
@@ -146,6 +157,19 @@
                 android:paddingBottom="25dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/daily_weather_list">
+
+<!--                <org.eazegraph.lib.charts.ValueLineChart
+                    android:id="@+id/line_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    app:egUseCubic="true"
+                    app:egCurveSmoothness="0.4"
+                    app:egIndicatorLineColor="#FE6DA8"
+                    app:egLegendHeight="40dp"
+                    app:egShowStandardValue="true"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>-->
 
                 <TableLayout
                     android:layout_width="match_parent"

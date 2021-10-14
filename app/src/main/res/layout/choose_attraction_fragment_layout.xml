@@ -67,17 +67,17 @@
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_cinemas_btn"
+                        android:id="@+id/get_nightlife_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <ImageView
-                            android:id="@+id/cinemas_img"
+                            android:id="@+id/nightlife_img"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/product_sans_regular"
-                            android:src="@drawable/cinemas"
+                            android:src="@drawable/nightlife"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -87,12 +87,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_cinemas_btn"
+                            android:text="@string/get_night_life_btn"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/cinemas_img" />
+                            app:layout_constraintTop_toBottomOf="@+id/nightlife_img" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -230,16 +230,16 @@
                     android:gravity="center">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_religion_btn"
+                        android:id="@+id/get_history_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <ImageView
-                            android:id="@+id/religion_img"
+                            android:id="@+id/history_img"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:fontFamily="@font/product_sans_regular"
-                            android:src="@drawable/religion"
+                            android:src="@drawable/history"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -249,12 +249,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_religion_btn"
+                            android:text="@string/get_historic_btn"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/religion_img" />
+                            app:layout_constraintTop_toBottomOf="@+id/history_img" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout

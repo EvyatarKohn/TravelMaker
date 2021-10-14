@@ -87,9 +87,9 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             whatToDo("accomodations", R.string.accommodations_request_error)
         }
 
-        mBinding.getCinemasBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_cinemas_btn)
-            whatToDo("cinemas", R.string.cinemas_request_error)
+        mBinding.getNightlifeBtn.setOnClickListener {
+            mName = resources.getString(R.string.get_night_life_btn)
+            whatToDo("adult", R.string.adults_request_error)
         }
 
         mBinding.getTransportBtn.setOnClickListener {
@@ -112,9 +112,9 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             whatToDo("museums", R.string.museum_request_error)
         }
 
-        mBinding.getReligionBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_religion_btn)
-            whatToDo("religion", R.string.religion_request_error)
+        mBinding.getHistoryBtn.setOnClickListener {
+            mName = resources.getString(R.string.get_historic_btn)
+            whatToDo("historic", R.string.historic_request_error)
         }
 
         mBinding.getCultureBtn.setOnClickListener {

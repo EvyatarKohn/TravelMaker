@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Travelmaker</string>
+    <string name="app_name">Travel\nmaker</string>
 
     <!-- Activity texts  -->
     <string name="degree_units_celsius">Celsius</string>
@@ -19,6 +19,7 @@
     <string name="to_custom_city_btn">to custom city</string>
     <string name="different_destination">Different destination</string>
     <string name="units">℃ | F</string>
+    <string name="graph_texts">%1$s/%2$s</string>
 
     <!-- Custom City Fragment texts  -->
     <string name="choose_city_error_message_no_fields">You forgot something!</string>
@@ -36,6 +37,7 @@
     <string name="feels_like_temp">Feels like %1$s</string>
     <string name="temp_var">min %1$s - max %2$s</string>
     <string name="main_image_view_desc">Main image</string>
+    <string name="main_image_rain_view_desc">Main Rain image</string>
     <string name="sun_image_view_desc">Sun image</string>
     <string name="back_arrow_image_view_desc">Back arrow image</string>
     <string name="exit_image_view_desc">Exit image</string>
@@ -103,7 +105,6 @@
     <!--  Attraction Fragment Strings  -->
     <string name="search_activities">Search Activities</string>
     <string name="get_museums_btn">Museums</string>
-    <string name="get_cinemas_btn">Cinemas</string>
     <string name="get_hotels_btn">Hotels</string>
     <string name="get_adult_btn">Adult</string>
     <string name="get_amusements_btn">Amusements</string>
@@ -112,7 +113,6 @@
     <string name="get_food_btn">Food</string>
     <string name="get_shops_btn">Shops</string>
     <string name="get_transport_btn">Transport</string>
-    <string name="get_religion_btn">Religion</string>
     <string name="get_natural_btn">Nature</string>
     <string name="get_historic_btn">Historic</string>
     <string name="get_cultural_btn">Cultural</string>
@@ -146,6 +146,7 @@
     <string name="visibility">Visibility\n%1$s %2$s</string>
     <string name="probability_of_precipitation">Precipitation\nprobability\n%1$s</string>
     <string name="rain_last_3h">Rain last\n3h\n%1$s</string>
+    <string name="snow_last_3h">Snow last\n3h\n%1$s</string>
     <string name="wind_direction">Wind\ndirection\n%1$s</string>
     <string name="general_error">There been some error, please try again</string>
     <string name="press_again_to_exit">"press again to exit"</string>

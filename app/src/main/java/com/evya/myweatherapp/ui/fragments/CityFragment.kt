@@ -8,6 +8,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.anychart.AnyChart
+import com.anychart.enums.TooltipPositionMode
+import com.anychart.graphics.vector.Stroke
 import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
@@ -21,6 +24,8 @@ import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.eazegraph.lib.models.ValueLinePoint
+import org.eazegraph.lib.models.ValueLineSeries
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -41,6 +46,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private var mCelsius: Boolean = true
     private lateinit var mNavController: NavController
     private lateinit var mBinding: CityFragmentLayoutBinding
+    private var mLoadGraph = true
 
 
     companion object {
@@ -70,7 +76,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         if (mUnits == "imperial") {
             mDegreeUnit = "\u2109"
-            mWindSpeed = " miles/hr"
+            mWindSpeed = IMPERIAL_DEGREE
         }
 
         if (arguments?.get("fromTopAdapter") == true) {
@@ -109,6 +115,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
+            setGraph(dailyWeather.list)
+
+//            mBinding.mainImageRain.visibility = if (isRaining(dailyWeather.list[0].weather[0].description)) View.VISIBLE else View.GONE
             mBinding.probabilityOfPrecipitation.text = getString(
                 R.string.probability_of_precipitation,
                 (dailyWeather.list[0].pop * 100).toString() + " %"
@@ -120,10 +129,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 activity?.applicationContext
             )
             var rainHeight = "0"
+            var text = R.string.rain_last_3h
             if (dailyWeather.list[0].rain != null) {
                 rainHeight = dailyWeather.list[0].rain.h.toString()
+            } else if (dailyWeather.list[0].snow != null) {
+                rainHeight = dailyWeather.list[0].snow.h.toString()
+                text = R.string.snow_last_3h
             }
-            mBinding.rain3h.text = getString(R.string.rain_last_3h, "$rainHeight mm")
+            mBinding.rain3h.text = getString(text, "$rainHeight mm")
             UtilsFunctions.setSpanBold(0, 13, mBinding.rain3h, activity?.applicationContext)
             mBinding.windDirection.text = getString(
                 R.string.wind_direction,
@@ -137,6 +150,10 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 it.name
             })
         })
+    }
+
+    private fun isRaining(description: String): Boolean {
+        return (description == "rain" || description == "light rain" || description == "snow" || description == "light snow")
     }
 
     private fun errorObservers() {
@@ -227,6 +244,34 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
     }
 
+    private fun setGraph(dailyWeatherList: List<DailyWeatherData>) {
+
+/*        val series = ValueLineSeries()
+        series.color = resources.getColor(R.color.turquoise, null)
+
+        dailyWeatherList.forEach {
+            series.addPoint(
+                ValueLinePoint(
+                    resources.getString(
+                        R.string.graph_texts,
+                        it.dtTxt.substring(8, 10),
+                        it.dtTxt.substring(5, 7)
+                    ), it.main.temp.toFloat()
+                )
+            )
+        }
+        mBinding.lineChart.apply {
+            addSeries(series)
+            isShowStandardValues = true
+            isShowIndicator = true
+            indicatorLineColor = resources.getColor(R.color.black, null)
+            maxZoomX = 50.0F
+            maxZoomY = 50.0F
+            indicatorTextUnit = mDegreeUnit
+            startAnimation()
+        }*/
+    }
+
     private fun setWeatherDataInTextViews(weather: Weather) {
         mBinding.mainImage.setImageResource(R.drawable.ic_summer)
         if ((weather.main.temp <= 10 && mUnits == "metric") || (weather.main.temp <= 50 && mUnits == "imperial")) {
@@ -281,6 +326,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mDegreeUnit = "\u2109"
                 mWindSpeed = IMPERIAL_DEGREE
                 mCelsius = false
+
             } else {
                 start = 0
                 end = 1

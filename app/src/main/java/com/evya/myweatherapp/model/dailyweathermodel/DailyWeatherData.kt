@@ -28,6 +28,10 @@ data class DailyWeatherData(
     @Expose
     val rain: Rain,
 
+    @SerializedName("snow")
+    @Expose
+    val snow: Snow,
+
     @SerializedName("sys")
     @Expose
     val sys: Sys,
