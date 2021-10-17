@@ -123,8 +123,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                PermissionDeniedDialog.newInstance(false)
-                    .show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
+                if (!mGpsIsOn) {
+                    PermissionDeniedDialog.newInstance(false)
+                        .show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
+                } else {
+                    getLastLocation()
+                }
             }
         } else {
             requestPermissions()

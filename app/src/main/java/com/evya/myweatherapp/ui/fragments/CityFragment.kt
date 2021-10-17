@@ -8,9 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.anychart.AnyChart
-import com.anychart.enums.TooltipPositionMode
-import com.anychart.graphics.vector.Stroke
 import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
@@ -24,8 +21,6 @@ import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.eazegraph.lib.models.ValueLinePoint
-import org.eazegraph.lib.models.ValueLineSeries
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -64,7 +59,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         errorObservers()
 
         mNavController = Navigation.findNavController(view)
-        setOnClickListener()
+        onClickListener()
         UtilsFunctions.setColorSpan(
             0,
             1,
@@ -117,7 +112,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             setDailyAdapter(dailyWeather.list)
             setGraph(dailyWeather.list)
 
-//            mBinding.mainImageRain.visibility = if (isRaining(dailyWeather.list[0].weather[0].description)) View.VISIBLE else View.GONE
             mBinding.probabilityOfPrecipitation.text = getString(
                 R.string.probability_of_precipitation,
                 (dailyWeather.list[0].pop * 100).toString() + " %"
@@ -277,6 +271,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         if ((weather.main.temp <= 10 && mUnits == "metric") || (weather.main.temp <= 50 && mUnits == "imperial")) {
             mBinding.mainImage.setImageResource(R.drawable.ic_winter)
         }
+        mBinding.mainImageRain.visibility = if (isRaining(weather.weather[0].description)) View.VISIBLE else View.GONE
+
         mCityName = weather.name
         mCountryCode = weather.sys.country
         mBinding.cityName.text =
@@ -315,7 +311,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     }
 
-    private fun setOnClickListener() {
+    private fun onClickListener() {
         mBinding.units.setOnClickListener {
             val start: Int
             val end: Int
