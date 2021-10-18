@@ -61,6 +61,7 @@
                     android:layout_height="0dp"
                     android:contentDescription="@string/main_image_rain_view_desc"
                     android:src="@drawable/ic_rainy"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"

@@ -150,6 +150,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         return (description == "rain" || description == "light rain" || description == "snow" || description == "light snow")
     }
 
+    private fun isWinter(temp: Double): Boolean {
+        return if (mUnits == METRIC) {
+            temp <= 10
+        } else {
+            temp <= 50
+        }
+    }
+
     private fun errorObservers() {
         mWeatherViewModel.repoWeatherError.observe(viewLifecycleOwner, {
             getCityByLocation(MainData.mLat, MainData.mLong, mUnits)
@@ -267,11 +275,11 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun setWeatherDataInTextViews(weather: Weather) {
-        mBinding.mainImage.setImageResource(R.drawable.ic_summer)
-        if ((weather.main.temp <= 10 && mUnits == "metric") || (weather.main.temp <= 50 && mUnits == "imperial")) {
-            mBinding.mainImage.setImageResource(R.drawable.ic_winter)
-        }
-        mBinding.mainImageRain.visibility = if (isRaining(weather.weather[0].description)) View.VISIBLE else View.GONE
+        if (isWinter(weather.main.temp)) mBinding.mainImage.setImageResource(R.drawable.ic_winter) else mBinding.mainImage.setImageResource(
+            R.drawable.ic_summer
+        )
+        mBinding.mainImageRain.visibility =
+            if (isRaining(weather.weather[0].description)) View.VISIBLE else View.GONE
 
         mCityName = weather.name
         mCountryCode = weather.sys.country
