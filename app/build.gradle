@@ -16,8 +16,8 @@ android {
         applicationId "com.evya.weatherapp"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 18
-        versionName "1.9.54"
+        versionCode 14
+        versionName "1.9.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

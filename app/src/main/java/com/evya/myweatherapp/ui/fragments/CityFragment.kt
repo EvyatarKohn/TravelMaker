@@ -24,7 +24,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.roundToInt
 
 
 @ExperimentalCoroutinesApi
@@ -115,7 +114,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
             mBinding.probabilityOfPrecipitation.text = getString(
                 R.string.probability_of_precipitation,
-                (dailyWeather.list[0].pop * 100).roundToInt().toString() + "%"
+                (dailyWeather.list[0].pop * 100).toString() + " %"
             )
             UtilsFunctions.setSpanBold(
                 0,

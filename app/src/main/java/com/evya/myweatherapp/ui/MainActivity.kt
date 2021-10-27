@@ -22,7 +22,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import com.anychart.AnyChart
 import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
@@ -35,15 +34,13 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import android.R.attr.name
-import android.location.LocationListener
 
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mLocationManager: LocationManager
+    private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
     var mApprovePermissions = false
     private var mGpsIsOn = false
@@ -55,16 +52,14 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         )
         private const val THREE_SEC = 3000L
         private const val PERMISSIONS_REQUEST_ID = 1000
         private const val REQUEST_CODE_LOCATION_SETTING = 100
-        private const val LOCATION_REFRESH_DISTANCE = 1f
-        private const val LOCATION_REFRESH_TIME: Long = 100
     }
 
 
-    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
@@ -79,14 +74,8 @@ class MainActivity : AppCompatActivity() {
             mBinding.appName,
             applicationContext
         )
-        mLocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-        mLocationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            LOCATION_REFRESH_TIME,
-            LOCATION_REFRESH_DISTANCE,
-            mLocationListener
-        )
 
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         mNavHostFragment =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
         mGraph = mNavHostFragment.navController.navInflater.inflate(R.navigation.nav_graph)
@@ -118,9 +107,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun getLastLocation() {
         if (checkPermissions()) {
-            if (!isLocationEnabled()) {
+            if (isLocationEnabled()) {
+                mFusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
+                    val location = task.result
+                    if (location == null) {
+                        getNewLocation()
+                    } else {
+                        mApprovePermissions = true
+                        MainData.mLat = location.latitude.toString()
+                        MainData.mLong = location.longitude.toString()
+                        startFlow()
+                    }
+                }
+            } else {
                 if (!mGpsIsOn) {
                     PermissionDeniedDialog.newInstance(false)
                         .show(supportFragmentManager, "PERMISSION_DENIED_DIALOG")
@@ -133,16 +135,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val mLocationListener = LocationListener { location ->
-        MainData.mLat = location.latitude.toString()
-        MainData.mLong = location.longitude.toString()
-        startFlow()
-    }
-
-
     private fun startFlow() {
         if (mGpsIsOn && mThreeSec) {
-            mLocationManager.removeUpdates(mLocationListener)
             mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
@@ -151,11 +145,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun getNewLocation() {
+        mLocationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 0
+            fastestInterval = 0
+            numUpdates = 2
+        }
+        mFusedLocationProviderClient.requestLocationUpdates(
+            mLocationRequest,
+            locationCallback,
+            Looper.myLooper()!!
+        )
+    }
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            val lastLocation = locationResult.lastLocation
+            MainData.mLat = lastLocation.latitude.toString()
+            MainData.mLong = lastLocation.longitude.toString()
+            getLastLocation()
+        }
+    }
+
     private fun checkPermissions(): Boolean {
-        return ActivityCompat.checkSelfPermission(
+        return (ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun requestPermissions() {
