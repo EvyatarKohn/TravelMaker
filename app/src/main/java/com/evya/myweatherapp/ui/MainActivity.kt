@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
         )
         private const val THREE_SEC = 3000L
         private const val PERMISSIONS_REQUEST_ID = 1000
@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(
                     this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED)
     }
 
