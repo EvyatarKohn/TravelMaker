@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "368735409643",
+    "project_id": "travel-maker-331608",
+    "storage_bucket": "travel-maker-331608.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:368735409643:android:27d0249041d54691e735ae",
+        "android_client_info": {
+          "package_name": "com.evya.myweatherapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "368735409643-43sb2d9mroptc1g3ckiqbiu204khimsq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.evya.myweatherapp",
+            "certificate_hash": "38fe0c97b7d64d69ad4621a90ad2e4e0caffb6ac"
+          }
+        },
+        {
+          "client_id": "368735409643-qu7id66m8psu27497f59uj2etiolb060.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJvvUxA0jT63AXHgCqRpIL3alzBqIQHk4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "368735409643-qu7id66m8psu27497f59uj2etiolb060.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

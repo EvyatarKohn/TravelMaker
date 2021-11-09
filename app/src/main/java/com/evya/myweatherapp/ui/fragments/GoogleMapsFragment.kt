@@ -12,6 +12,7 @@ import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsFragmentLayoutBinding
 import com.evya.myweatherapp.ui.MainActivity
+import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -100,6 +101,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                     val latLang = LatLng(address.latitude, address.longitude)
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchInGoogleMap)
                 }
             }
 
@@ -109,6 +111,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         })
 
         mBinding.showWeatherBtn.setOnClickListener {
+            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowWeather)
             mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment)
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
         }

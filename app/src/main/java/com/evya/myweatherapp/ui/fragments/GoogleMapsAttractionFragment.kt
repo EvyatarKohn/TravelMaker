@@ -77,12 +77,5 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
                 startActivity(googleSearchIntent)
             }
         }
-
-        mBinding.backArrow.setOnClickListener {
-
-            mNavController.navigate(
-                R.id.action_googleMapsAttractionFragment_to_chooseAttractionFragment,
-            )
-        }
     }
 }

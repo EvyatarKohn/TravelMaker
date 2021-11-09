@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAround
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.pollution.Pollution
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +42,15 @@ class WeatherViewModel @Inject constructor(
     private var mCitiesAroundError = MutableLiveData<Int>()
     val repoCitiesAroundError: LiveData<Int>
         get() = mCitiesAroundError
+
+    private var mPollutionLiveData = MutableLiveData<Pollution>()
+    val pollutionRepo: LiveData<Pollution>
+        get() = mPollutionLiveData
+
+    private var mPollutionError = MutableLiveData<Int>()
+    val repoPollutionError: LiveData<Int>
+        get() = mPollutionError
+
 
 
     fun getWeather(cityName: String, units: String) = viewModelScope.launch {
@@ -103,6 +113,16 @@ class WeatherViewModel @Inject constructor(
                 mCitiesAroundLiveData.postValue(response.body())
             } else {
                 mCitiesAroundError.postValue(R.string.cities_around_error)
+            }
+        }
+    }
+
+    fun getAirPollution(lat: String, long: String) = viewModelScope.launch {
+        repository.getAirPollution(lat, long).let { response ->
+            if (response.isSuccessful) {
+                mPollutionLiveData.postValue(response.body())
+            } else {
+                mPollutionError.postValue(R.string.pollution_error)
             }
         }
     }

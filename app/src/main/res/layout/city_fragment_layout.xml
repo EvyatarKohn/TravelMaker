@@ -284,7 +284,7 @@
                             android:textSize="14sp" />
 
                         <TextView
-                            android:id="@+id/wind_direction"
+                            android:id="@+id/air_pollution"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/product_sans_regular"

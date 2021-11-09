@@ -44,4 +44,11 @@ class WeatherRepository @Inject constructor(private val weatherApi: WeatherApi) 
             "df128db76f752a3e23d8a0735cde83e6",
             units
         )
+
+    suspend fun getAirPollution(lat: String, long: String) =
+        weatherApi.getAirPollution(
+            lat,
+            long,
+            "df128db76f752a3e23d8a0735cde83e6"
+        )
 }

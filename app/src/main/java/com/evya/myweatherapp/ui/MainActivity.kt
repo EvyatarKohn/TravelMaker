@@ -17,6 +17,9 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,10 +31,14 @@ import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.ui.fragments.*
+import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -48,6 +55,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mNavHostFragment: NavHostFragment
     private lateinit var mGraph: NavGraph
     private lateinit var mBinding: ActivityMainBinding
+    private var mFirsTimeBack = true
+
 
     companion object {
         private val PERMISSIONS = arrayOf(
@@ -64,6 +73,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
+
+        FireBaseEvents.init()
 
         mGpsIsOn = isLocationEnabled()
         UtilsFunctions.setColorSpan(
@@ -90,15 +101,19 @@ class MainActivity : AppCompatActivity() {
                 R.id.weather -> {
                     mApprovePermissions = true
                     changeNavBarIndex(R.id.cityFragment, R.id.weather)
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToWeather)
                 }
                 R.id.map -> {
                     changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToGoogleMap)
                 }
                 R.id.attractions -> {
                     changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToAttractions)
                 }
                 R.id.info -> {
                     InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowInfo)
                 }
                 else -> {
                 }
@@ -173,11 +188,7 @@ class MainActivity : AppCompatActivity() {
         return (ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED)
+        ) == PackageManager.PERMISSION_GRANTED)
     }
 
     private fun requestPermissions() {
@@ -267,8 +278,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun changeNavBarIndex(destination: Int, bottomNavId: Int) {
+        mFirsTimeBack = true
         mGraph.startDestination = destination
         mNavHostFragment.navController.graph = mGraph
         mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
+    }
+
+    override fun onBackPressed() {
+        when {
+            mNavHostFragment.navController.currentDestination?.label == "GoogleMapsAttractionFragment" -> {
+                changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
+            }
+            mFirsTimeBack -> {
+                Toast.makeText(applicationContext, resources.getString(R.string.again_to_exit), Toast.LENGTH_LONG).show()
+                mFirsTimeBack = false
+            }
+            else -> {
+                finish()
+            }
+        }
     }
 }

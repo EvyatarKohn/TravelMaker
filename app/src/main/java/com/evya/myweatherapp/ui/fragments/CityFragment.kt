@@ -13,14 +13,18 @@ import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
+import com.evya.myweatherapp.model.pollution.Pollution
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
+import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.eazegraph.lib.models.ValueLinePoint
+import org.eazegraph.lib.models.ValueLineSeries
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -38,18 +42,20 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private lateinit var mDailyAdapter: DailyWeatherAdapter
     private var mWeather: Weather? = null
     private var mDegreeUnit = "\u2103"
-    private var mWindSpeed = " m/s"
+    private var mWindSpeed = METRIC_DEGREE
+    private var mVisibilityUnits = KM
     private var mCelsius: Boolean = true
     private lateinit var mNavController: NavController
     private lateinit var mBinding: CityFragmentLayoutBinding
-    private var mLoadGraph = true
-
+    private var mPollution = "Good"
 
     companion object {
         const val IMPERIAL = "imperial"
         const val METRIC = "metric"
         const val IMPERIAL_DEGREE = " miles/hr"
         const val METRIC_DEGREE = " m/s"
+        const val KM = " Km"
+        const val MILE = " mile"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,6 +64,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         successObservers()
         errorObservers()
+        mWeatherViewModel.getAirPollution(MainData.mLat, MainData.mLong)
 
         mNavController = Navigation.findNavController(view)
         onClickListener()
@@ -111,7 +118,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
-            setGraph(dailyWeather.list)
+//            setGraph(dailyWeather.list)
 
             mBinding.probabilityOfPrecipitation.text = getString(
                 R.string.probability_of_precipitation,
@@ -133,11 +140,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             }
             mBinding.rain3h.text = getString(text, "$rainHeight mm")
             UtilsFunctions.setSpanBold(0, 13, mBinding.rain3h, activity?.applicationContext)
-            mBinding.windDirection.text = getString(
-                R.string.wind_direction,
-                dailyWeather.list[0].wind.deg.toString() + " deg"
-            )
-            UtilsFunctions.setSpanBold(0, 15, mBinding.windDirection, activity?.applicationContext)
         })
 
         mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
@@ -145,6 +147,49 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 it.name
             })
         })
+
+        mWeatherViewModel.pollutionRepo.observe(viewLifecycleOwner, { pollution ->
+            definePollution(pollution)
+        })
+    }
+
+    private fun definePollution(pollution: Pollution) {
+
+        if (pollution.list[0].components.no2 > 400 || pollution.list[0].components.pm10 > 180 ||
+            pollution.list[0].components.o3 > 240 || pollution.list[0].components.pm25 > 110
+        ) {
+            mPollution = "Very Poor"
+        } else if ((pollution.list[0].components.no2 > 200 && pollution.list[0].components.no2 < 399) ||
+            (pollution.list[0].components.pm10 > 90 && pollution.list[0].components.pm10 < 179) ||
+            (pollution.list[0].components.o3 > 180 && pollution.list[0].components.o3 < 239) ||
+            (pollution.list[0].components.pm25 > 55 && pollution.list[0].components.pm25 < 109)
+        ) {
+            mPollution = "Poor"
+        } else if ((pollution.list[0].components.no2 > 100 && pollution.list[0].components.no2 < 199) ||
+            (pollution.list[0].components.pm10 > 50 && pollution.list[0].components.pm10 < 89) ||
+            (pollution.list[0].components.o3 > 120 && pollution.list[0].components.o3 < 179) ||
+            (pollution.list[0].components.pm25 > 30 && pollution.list[0].components.pm25 < 54)
+        ) {
+            mPollution = "Moderate"
+        } else if ((pollution.list[0].components.no2 > 50 && pollution.list[0].components.no2 < 99) ||
+            (pollution.list[0].components.pm10 > 25 && pollution.list[0].components.pm10 < 49) ||
+            (pollution.list[0].components.o3 > 60 && pollution.list[0].components.o3 < 119) ||
+            (pollution.list[0].components.pm25 > 15 && pollution.list[0].components.pm25 < 29)
+        ) {
+            mPollution = "Fair"
+        } else if ((pollution.list[0].components.no2 > 0 && pollution.list[0].components.no2 < 49) ||
+            (pollution.list[0].components.pm10 > 0 && pollution.list[0].components.pm10 < 24) ||
+            (pollution.list[0].components.o3 > 0 && pollution.list[0].components.o3 < 59) ||
+            (pollution.list[0].components.pm25 > 0 && pollution.list[0].components.pm25 < 14)
+        ) {
+            mPollution = "Good"
+        }
+
+        mBinding.airPollution.text = getString(
+            R.string.air_pollution,
+            mPollution
+        )
+        UtilsFunctions.setSpanBold(0, 14, mBinding.airPollution, activity?.applicationContext)
     }
 
     private fun isRaining(description: String): Boolean {
@@ -175,6 +220,10 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         })
 
         mWeatherViewModel.repoCitiesAroundError.observe(viewLifecycleOwner, {
+            UtilsFunctions.showToast(it, activity?.applicationContext)
+        })
+
+        mWeatherViewModel.repoPollutionError.observe(viewLifecycleOwner, {
             UtilsFunctions.showToast(it, activity?.applicationContext)
         })
     }
@@ -249,30 +298,31 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun setGraph(dailyWeatherList: List<DailyWeatherData>) {
 
-/*        val series = ValueLineSeries()
-        series.color = resources.getColor(R.color.turquoise, null)
+        /* val series = ValueLineSeries()
+         series.color = resources.getColor(R.color.turquoise, null)
+         val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
 
-        dailyWeatherList.forEach {
-            series.addPoint(
-                ValueLinePoint(
-                    resources.getString(
-                        R.string.graph_texts,
-                        it.dtTxt.substring(8, 10),
-                        it.dtTxt.substring(5, 7)
-                    ), it.main.temp.toFloat()
-                )
-            )
-        }
-        mBinding.lineChart.apply {
-            addSeries(series)
-            isShowStandardValues = true
-            isShowIndicator = true
-            indicatorLineColor = resources.getColor(R.color.black, null)
-            maxZoomX = 50.0F
-            maxZoomY = 50.0F
-            indicatorTextUnit = mDegreeUnit
-            startAnimation()
-        }*/
+         newList.forEach {
+             series.addPoint(
+                 ValueLinePoint(
+                     resources.getString(
+                         R.string.graph_texts,
+                         it.dtTxt.substring(8, 10),
+                         it.dtTxt.substring(5, 7)
+                     ), it.main.temp.toFloat()
+                 )
+             )
+         }
+         mBinding.lineChart.apply {
+             addSeries(series)
+             isShowStandardValues = true
+             isShowIndicator = true
+             indicatorLineColor = resources.getColor(R.color.black, null)
+             maxZoomX = 50.0F
+             maxZoomY = 50.0F
+             indicatorTextUnit = mDegreeUnit
+             startAnimation()
+         }*/
     }
 
     private fun setWeatherDataInTextViews(weather: Weather) {
@@ -308,20 +358,21 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mBinding.description.text = getString(R.string.description, weather.weather[0].description)
         UtilsFunctions.setSpanBold(0, 7, mBinding.description, activity?.applicationContext)
-        var distanceUnits = "m"
-        var visibilityValue = weather.visibility
-        if (weather.visibility > 999) {
-            visibilityValue = weather.visibility / 1000
-            distanceUnits = "Km"
+        val visibilityValue = if (mUnits == IMPERIAL) {
+            weather.visibility / 1609
+        } else {
+            weather.visibility / 1000
         }
+
         mBinding.visibility.text =
-            getString(R.string.visibility, visibilityValue.toString(), distanceUnits)
+            getString(R.string.visibility, visibilityValue.toString(), mVisibilityUnits)
         UtilsFunctions.setSpanBold(0, 10, mBinding.visibility, activity?.applicationContext)
 
     }
 
     private fun onClickListener() {
         mBinding.units.setOnClickListener {
+            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChangeTempUnits)
             val start: Int
             val end: Int
             if (mCelsius) {
@@ -331,6 +382,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mDegreeUnit = "\u2109"
                 mWindSpeed = IMPERIAL_DEGREE
                 mCelsius = false
+                mVisibilityUnits = MILE
 
             } else {
                 start = 0
@@ -339,6 +391,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mDegreeUnit = "\u2103"
                 mWindSpeed = METRIC_DEGREE
                 mCelsius = true
+                mVisibilityUnits = KM
             }
 
             UtilsFunctions.setColorSpan(

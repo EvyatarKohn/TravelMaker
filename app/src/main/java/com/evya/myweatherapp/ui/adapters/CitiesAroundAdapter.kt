@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.MainCitiesItemLayoutBinding
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
+import com.evya.myweatherapp.util.FireBaseEvents
 
 class CitiesAroundAdapter(
     private val context: Context?,
@@ -47,6 +48,7 @@ class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
             mCityName?.typeface = typeFace
             val bundle = bundleOf("cityName" to mCityName?.text.toString(), "fromTopAdapter" to true)
             navController.navigate(R.id.action_cityFragment_self, bundle)
+            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromTopAdapter.toString() + mCityName?.text.toString())
         }
     }
 }
