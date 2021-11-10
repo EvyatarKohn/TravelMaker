@@ -427,6 +427,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
         android:gravity="center"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:hint="@string/search_activities"
         app:layout_constraintBottom_toTopOf="@+id/main_layout"
         app:layout_constraintLeft_toLeftOf="parent"

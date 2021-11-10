@@ -7,7 +7,7 @@ class PlacesRepository @Inject constructor(private val tripApi: TripApi) {
 
     suspend fun getWhatToDo(lat: String, long: String, kind: String) =
         tripApi.getWhatToDo(
-            "10000",
+            "3000",
             long,
             lat,
             kind,
