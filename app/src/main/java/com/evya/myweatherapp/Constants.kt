@@ -2,6 +2,16 @@ package com.evya.myweatherapp
 
 object Constants {
 
+    const val THREE_SEC = 3000L
+    const val PERMISSIONS_REQUEST_ID = 1000
+    const val REQUEST_CODE_LOCATION_SETTING = 100
+    const val IMPERIAL = "imperial"
+    const val METRIC = "metric"
+    const val IMPERIAL_DEGREE = " miles/hr"
+    const val METRIC_DEGREE = " m/s"
+    const val KM = " Km"
+    const val MILE = " mile"
+
     fun replacedList (): ArrayList<String> {
         val list: ArrayList<String> = ArrayList()
         attractionList.forEach {

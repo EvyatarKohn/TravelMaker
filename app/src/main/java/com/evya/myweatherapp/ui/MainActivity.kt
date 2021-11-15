@@ -12,19 +12,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
+import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
+import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
+import com.evya.myweatherapp.Constants.THREE_SEC
 import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
@@ -36,9 +33,6 @@ import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -57,15 +51,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
     private var mFirsTimeBack = true
 
-
     companion object {
         private val PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
         )
-        private const val THREE_SEC = 3000L
-        private const val PERMISSIONS_REQUEST_ID = 1000
-        private const val REQUEST_CODE_LOCATION_SETTING = 100
     }
 
 

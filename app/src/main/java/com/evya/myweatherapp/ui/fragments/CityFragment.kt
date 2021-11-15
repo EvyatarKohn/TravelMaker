@@ -8,6 +8,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.evya.myweatherapp.Constants.IMPERIAL
+import com.evya.myweatherapp.Constants.IMPERIAL_DEGREE
+import com.evya.myweatherapp.Constants.KM
+import com.evya.myweatherapp.Constants.METRIC
+import com.evya.myweatherapp.Constants.METRIC_DEGREE
+import com.evya.myweatherapp.Constants.MILE
 import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
@@ -23,8 +29,6 @@ import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.eazegraph.lib.models.ValueLinePoint
-import org.eazegraph.lib.models.ValueLineSeries
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -49,14 +53,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private lateinit var mBinding: CityFragmentLayoutBinding
     private var mPollution = "Good"
 
-    companion object {
-        const val IMPERIAL = "imperial"
-        const val METRIC = "metric"
-        const val IMPERIAL_DEGREE = " miles/hr"
-        const val METRIC_DEGREE = " m/s"
-        const val KM = " Km"
-        const val MILE = " mile"
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
