@@ -1,5 +1,7 @@
 package com.evya.myweatherapp.util
 
+import android.content.Context
+import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
@@ -9,9 +11,12 @@ class FireBaseEvents {
     companion object {
         private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
-        fun init() {
+        fun init(context: Context) {
             // Obtain the FirebaseAnalytics instance.
-            mFirebaseAnalytics = Firebase.analytics
+            FirebaseApp.initializeApp(context)
+//            mFirebaseAnalytics = Firebase.analytics
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
+
         }
 
         fun sendFireBaseCustomEvents(event: FirebaseEventsStrings) {

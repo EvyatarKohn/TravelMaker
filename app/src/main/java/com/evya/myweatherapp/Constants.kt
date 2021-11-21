@@ -12,10 +12,10 @@ object Constants {
     const val KM = " Km"
     const val MILE = " mile"
 
-    fun replacedList (): ArrayList<String> {
+    fun replacedList(): ArrayList<String> {
         val list: ArrayList<String> = ArrayList()
         attractionList.forEach {
-            list.add( it.replace("_", " "))
+            list.add(it.replace("_", " "))
         }
 
         return list

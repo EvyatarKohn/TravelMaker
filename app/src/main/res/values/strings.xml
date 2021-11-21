@@ -10,8 +10,8 @@
     <!-- Gate Fragment texts  -->
     <string name="icons_credit">Icons and images:</string>
     <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010\nhttps://unsplash.com/</string>
-    <string name="lotties_credit">Lotties:</string>
-    <string name="lotties_credit_url">https://lottiefiles.com/</string>
+    <string name="lottie_credit">Lotties:</string>
+    <string name="lottie_credit_url">https://lottiefiles.com/</string>
     <string name="privacy_policy">Privacy Policy:</string>
     <string name="privacy_policy_url">https://www.termsfeed.com/live/e2e6d8ef-99f5-4abd-9eee-62e6af4c7928</string>
 

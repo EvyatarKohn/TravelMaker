@@ -8,17 +8,15 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.InfoDialogLayoutBinding
-import io.opencensus.resource.Resource
 
 class InfoDialog : DialogFragment() {
 
-    private lateinit var mBinding: InfoDialogLayoutBinding
+    private var mBinding: InfoDialogLayoutBinding? = null
 
     companion object {
         fun newInstance() = InfoDialog()
@@ -29,12 +27,14 @@ class InfoDialog : DialogFragment() {
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
         mBinding = InfoDialogLayoutBinding.inflate(LayoutInflater.from(context))
 
-        mBinding.privacyPolicyUrl
-        val italicSpan = SpannableString(mBinding.privacyPolicyUrl.text)
-        italicSpan.setSpan(UnderlineSpan(), 0, mBinding.privacyPolicyUrl.text.length, 0)
-        mBinding.privacyPolicyUrl.text = italicSpan
+        val italicSpan = SpannableString(mBinding?.privacyPolicyUrl?.text)
+        mBinding?.privacyPolicyUrl?.text?.length?.let {
+            italicSpan.setSpan(UnderlineSpan(), 0,
+                it, 0)
+        }
+        mBinding?.privacyPolicyUrl?.text = italicSpan
 
-        mBinding.privacyPolicyUrl.setOnClickListener {
+        mBinding?.privacyPolicyUrl?.setOnClickListener {
             val privacyPolicyIntent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(resources.getString(R.string.privacy_policy_url))
@@ -42,16 +42,8 @@ class InfoDialog : DialogFragment() {
             startActivity(privacyPolicyIntent)
         }
 
-        return AlertDialog.Builder(requireActivity()).setView(mBinding.root).create()
-
+        return AlertDialog.Builder(requireActivity()).setView(mBinding?.root).create()
     }
-
-    /*  override fun onCreateView(
-          inflater: LayoutInflater,
-          container: ViewGroup?,
-          savedInstanceState: Bundle?
-      ): View = inflater.inflate(R.layout.info_dialog_layout, container, false)
-  */
 
     override fun onResume() {
         super.onResume()
@@ -65,5 +57,10 @@ class InfoDialog : DialogFragment() {
         super.onStart()
         val window = dialog?.window
         window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mBinding = null
     }
 }
