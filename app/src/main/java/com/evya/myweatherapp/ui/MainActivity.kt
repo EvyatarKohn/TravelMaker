@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        FireBaseEvents.init()
+        FireBaseEvents.init(applicationContext)
 
         mGpsIsOn = isLocationEnabled()
         UtilsFunctions.setColorSpan(

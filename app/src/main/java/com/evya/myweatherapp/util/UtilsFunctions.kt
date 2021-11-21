@@ -9,7 +9,6 @@ import android.text.style.ForegroundColorSpan
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.evya.myweatherapp.R
 
 class UtilsFunctions {
 
@@ -29,7 +28,6 @@ class UtilsFunctions {
             span.setSpan(CustomTypeFaceSpan("", font), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             textView.text = span
         }
-
 
         fun setColorSpan(start: Int, end: Int, color: Int, text: Int, view: TextView, context: Context?) {
             val span = SpannableString(context?.resources?.getString(text))

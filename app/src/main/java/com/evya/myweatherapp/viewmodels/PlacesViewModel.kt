@@ -1,6 +1,9 @@
 package com.evya.myweatherapp.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.evya.myweatherapp.model.placesmodel.Places
 import com.evya.myweatherapp.repository.PlacesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
