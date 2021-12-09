@@ -42,8 +42,8 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
             mMyLatLong = LatLng(
-                MainData.mLat.toDouble(),
-                MainData.mLong.toDouble()
+                MainData.lat.toDouble(),
+                MainData.long.toDouble()
             )
             mPlaces = arguments?.getParcelable("places")!!
 

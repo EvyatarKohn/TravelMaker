@@ -143,6 +143,6 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         mBinding.mainLayout.visibility = View.GONE
         mBinding.lottie.visibility = View.VISIBLE
         mBinding.autoCompleteTextview.visibility = View.GONE
-        mPlacesViewModel.getWhatToDo(MainData.mLat, MainData.mLong, kind, error)
+        mPlacesViewModel.getWhatToDo(MainData.lat, MainData.long, kind, error)
     }
 }

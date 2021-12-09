@@ -19,7 +19,7 @@ import javax.inject.Singleton
 object AppModule {
 
     private var logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-    private val client =OkHttpClient.Builder().addInterceptor(logging).build()
+    private val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
     @Singleton
     @Provides
@@ -31,7 +31,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideWeatherRetrofit(gson: Gson):WeatherApi =
+    fun provideWeatherRetrofit(gson: Gson): WeatherApi =
         Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -41,12 +41,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTripRetrofit(gson: Gson):TripApi =
+    fun provideTripRetrofit(gson: Gson): TripApi =
         Retrofit.Builder()
             .baseUrl("https://api.opentripmap.com/0.1/en/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
             .create(TripApi::class.java)
-
 }
