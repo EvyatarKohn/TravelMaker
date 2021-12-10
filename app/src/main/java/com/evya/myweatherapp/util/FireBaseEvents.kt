@@ -36,6 +36,7 @@ class FireBaseEvents {
         SearchInGoogleMap,
         ShowWeather,
         MoveToAttractions,
+        MoveToFavorites,
         ShowInfo,
         SearchAttractions,
         HotelAttractions,

@@ -52,7 +52,6 @@ class WeatherViewModel @Inject constructor(
         get() = mPollutionError
 
 
-
     fun getWeather(cityName: String, units: String) = viewModelScope.launch {
         var cityNameTemp = cityName
         if (cityName.contains("(")) {

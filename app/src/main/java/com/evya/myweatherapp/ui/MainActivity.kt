@@ -99,6 +99,12 @@ class MainActivity : AppCompatActivity() {
                     changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
                     FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToAttractions)
                 }
+
+                R.id.favorites -> {
+                    changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToFavorites)
+                }
+
                 R.id.info -> {
                     InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
                     FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowInfo)
