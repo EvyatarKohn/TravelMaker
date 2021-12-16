@@ -26,6 +26,7 @@ import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
+import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,12 +40,14 @@ import kotlin.math.roundToInt
 @AndroidEntryPoint
 class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private val mWeatherViewModel: WeatherViewModel by viewModels()
+    private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private var mCityName = ""
     private var mCountryCode = "IL"
     private var mUnits: String = METRIC
     private lateinit var mMainCitiesAdapter: CitiesAroundAdapter
     private lateinit var mDailyAdapter: DailyWeatherAdapter
     private var mWeather: Weather? = null
+    private var mFavWeather: Weather? = null
     private var mDegreeUnit = "\u2103"
     private var mWindSpeed = METRIC_DEGREE
     private var mVisibilityUnits = KM
@@ -52,6 +55,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private lateinit var mNavController: NavController
     private lateinit var mBinding: CityFragmentLayoutBinding
     private var mPollution = "Good"
+    private var mFromFavorites = false
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +64,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         successObservers()
         errorObservers()
-        mWeatherViewModel.getAirPollution(MainData.mLat, MainData.mLong)
+        mWeatherViewModel.getAirPollution(MainData.lat, MainData.long)
 
         mNavController = Navigation.findNavController(view)
         onClickListener()
@@ -83,6 +87,15 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             getWeather(mCityName, mUnits)
             getDailyWeather(mCityName, mCountryCode, mUnits)
         }
+
+        if (arguments?.get("fromFavorites") == true) {
+            mFromFavorites = true
+            (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
+            MainData.lat = arguments?.get("lat").toString()
+            MainData.long = arguments?.get("long").toString()
+            getCityByLocation(MainData.lat, MainData.long, mUnits)
+            getDailyWeatherByLocation(MainData.lat, MainData.long, mUnits)
+        }
     }
 
     private fun getWeatherData() {
@@ -92,29 +105,30 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 getDailyWeather(mCityName, mCountryCode, mUnits)
             }
             else -> {
-                if (MainData.mLat.isEmpty() || MainData.mLong.isEmpty()) {
+                if (MainData.lat.isEmpty() || MainData.long.isEmpty()) {
                     getWeather(mCityName, mUnits)
                     getDailyWeather(mCityName, mCountryCode, mUnits)
                 } else {
-                    getCityByLocation(MainData.mLat, MainData.mLong, mUnits)
-                    getDailyWeatherByLocation(MainData.mLat, MainData.mLong, mUnits)
+                    getCityByLocation(MainData.lat, MainData.long, mUnits)
+                    getDailyWeatherByLocation(MainData.lat, MainData.long, mUnits)
                 }
-                mWeatherViewModel.getCitiesAround(MainData.mLat, MainData.mLong, mUnits)
+                mWeatherViewModel.getCitiesAround(MainData.lat, MainData.long, mUnits)
             }
         }
     }
 
     private fun successObservers() {
         mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner, { weather ->
-            MainData.mLat = weather.coord.lat.toString()
-            MainData.mLong = weather.coord.lon.toString()
-            mWeatherViewModel.getCitiesAround(MainData.mLat, MainData.mLong, mUnits)
+            mFavWeather = weather
+            MainData.lat = weather.coord.lat.toString()
+            MainData.long = weather.coord.lon.toString()
+            mWeatherViewModel.getCitiesAround(MainData.lat, MainData.long, mUnits)
             showWeather(weather)
+            checkIfAlreadyInFav()
         })
 
         mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
             setDailyAdapter(dailyWeather.list)
-//            setGraph(dailyWeather.list)
 
             mBinding.probabilityOfPrecipitation.text = getString(
                 R.string.probability_of_precipitation,
@@ -148,6 +162,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             definePollution(pollution)
         })
     }
+
 
     private fun definePollution(pollution: Pollution) {
 
@@ -202,14 +217,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun errorObservers() {
         mWeatherViewModel.repoWeatherError.observe(viewLifecycleOwner, {
-            getCityByLocation(MainData.mLat, MainData.mLong, mUnits)
+            getCityByLocation(MainData.lat, MainData.long, mUnits)
             if (it.second) {
                 UtilsFunctions.showToast(it.first, activity?.applicationContext)
             }
         })
 
         mWeatherViewModel.repoDailyWeatherError.observe(viewLifecycleOwner, {
-            getDailyWeatherByLocation(MainData.mLat, MainData.mLong, mUnits)
+            getDailyWeatherByLocation(MainData.lat, MainData.long, mUnits)
             if (it.second) {
                 UtilsFunctions.showToast(it.first, activity?.applicationContext)
             }
@@ -292,39 +307,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
     }
 
-    private fun setGraph(dailyWeatherList: List<DailyWeatherData>) {
-
-        /* val series = ValueLineSeries()
-         series.color = resources.getColor(R.color.turquoise, null)
-         val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
-
-         newList.forEach {
-             series.addPoint(
-                 ValueLinePoint(
-                     resources.getString(
-                         R.string.graph_texts,
-                         it.dtTxt.substring(8, 10),
-                         it.dtTxt.substring(5, 7)
-                     ), it.main.temp.toFloat()
-                 )
-             )
-         }
-         mBinding.lineChart.apply {
-             addSeries(series)
-             isShowStandardValues = true
-             isShowIndicator = true
-             indicatorLineColor = resources.getColor(R.color.black, null)
-             maxZoomX = 50.0F
-             maxZoomY = 50.0F
-             indicatorTextUnit = mDegreeUnit
-             startAnimation()
-         }*/
-    }
-
     private fun setWeatherDataInTextViews(weather: Weather) {
-        if (isWinter(weather.main.temp)) mBinding.mainImage.setImageResource(R.drawable.ic_winter) else mBinding.mainImage.setImageResource(
-            R.drawable.ic_summer
-        )
+        if (isWinter(weather.main.temp)) {
+            mBinding.mainImage.setImageResource(R.drawable.ic_winter)
+        } else {
+            mBinding.mainImage.setImageResource(R.drawable.ic_summer)
+        }
+
         mBinding.mainImageRain.visibility =
             if (isRaining(weather.weather[0].description)) View.VISIBLE else View.GONE
 
@@ -405,15 +394,38 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mBinding.locationIcon.setOnClickListener {
             val bundle =
-                bundleOf("lat" to MainData.mLat.toFloat(), "long" to MainData.mLong.toFloat())
+                bundleOf("lat" to MainData.lat.toFloat(), "long" to MainData.long.toFloat())
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
             (activity as MainActivity).changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
         }
+
+        mBinding.favoriteImg.setOnClickListener {
+            if (!MainData.addedToFav) {
+                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
+                MainData.addedToFav = true
+                mFavoritesViewModel.addCityDataToDB(mFavWeather!!)
+            } else {
+                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
+                MainData.addedToFav = false
+                mFavWeather?.name?.let { it1 -> mFavoritesViewModel.removeCityDataFromDB(it1) }
+            }
+        }
+    }
+
+    private fun checkIfAlreadyInFav() {
+        mFavoritesViewModel.setWeather(mFavWeather!!)
+        mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner, {
+            if (it) {
+                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
+            } else {
+                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
+            }
+        })
     }
 
     override fun onResume() {
         super.onResume()
-        if ((activity as MainActivity).mApprovePermissions) {
+        if ((activity as MainActivity).mApprovePermissions && !mFromFavorites) {
             (activity as MainActivity).mApprovePermissions = false
             getWeatherData()
         }

@@ -16,6 +16,11 @@
         android:title="@string/bottom_navigation_attractions" />
 
     <item
+        android:id="@+id/favorites"
+        android:icon="@drawable/ic_empty_heart"
+        android:title="@string/bottom_navigation_favorites" />
+
+    <item
         android:id="@+id/info"
         android:icon="@drawable/ic_info"
         android:title="@string/bottom_navigation_info" />

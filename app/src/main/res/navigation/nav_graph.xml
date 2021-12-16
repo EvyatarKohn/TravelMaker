@@ -131,4 +131,13 @@
         android:defaultValue="34.7999968"
         app:argType="float"/>
 
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.evya.myweatherapp.ui.fragments.FavoritesFragment"
+        android:label="FavoritesFragment" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_cityFragment"
+            app:destination="@id/cityFragment" />
+    </fragment>
+
 </navigation>

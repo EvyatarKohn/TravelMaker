@@ -49,7 +49,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             mGoogleMap = googleMap
             val markerOptions = MarkerOptions()
 
-            val myLocation = LatLng(MainData.mLat.toDouble(), MainData.mLong.toDouble())
+            val myLocation = LatLng(MainData.lat.toDouble(), MainData.long.toDouble())
             markerOptions.position(myLocation)
             mGoogleMap.addMarker(markerOptions)
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
@@ -59,8 +59,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             }
             mGoogleMap.setOnMapClickListener { latLng ->
                 mGoogleMap.clear()
-                MainData.mLat = latLng.latitude.toString()
-                MainData.mLong = latLng.longitude.toString()
+                MainData.lat = latLng.latitude.toString()
+                MainData.long = latLng.longitude.toString()
                 mGoogleMap.addMarker(
                     MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
                 )
@@ -96,8 +96,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
                 if (list.size > 0) {
                     val address = list[0]
-                    MainData.mLat = address.latitude.toString()
-                    MainData.mLong = address.longitude.toString()
+                    MainData.lat = address.latitude.toString()
+                    MainData.long = address.longitude.toString()
                     val latLang = LatLng(address.latitude, address.longitude)
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:334638354430:android:95bcc949db2f5ecc5bbaaf",
         "android_client_info": {
-          "package_name": "com.evya.myweatherapp"
+          "package_name": "com.evya.weatherapp"
         }
       },
       "oauth_client": [

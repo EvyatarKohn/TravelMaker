@@ -131,6 +131,7 @@
     <string name="bottom_navigation_weather">Weather</string>
     <string name="bottom_navigation_maps">Maps</string>
     <string name="bottom_navigation_attractions">Attractions</string>
+    <string name="bottom_navigation_favorites">Favorites</string>
     <string name="bottom_navigation_info">Info</string>
 
 
@@ -151,6 +152,11 @@
     <string name="air_pollution">Air\nPollution\n%1$s</string>
     <string name="general_error">There been some error, please try again</string>
     <string name="pollution_error">Pollution request error</string>
+    <string name="no_saved_favorites">There is no saved favorites</string>
+    <string name="are_you_sure_you_want_to_delete">Are you sure you\nwant to delete %1$s?</string>
+    <string name="are_you_sure_you_want_to_delete_all">Are you sure you\nwant to delete\n all favorites?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 
 </resources>

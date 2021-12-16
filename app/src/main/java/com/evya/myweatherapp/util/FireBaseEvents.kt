@@ -30,12 +30,16 @@ class FireBaseEvents {
 
     enum class FirebaseEventsStrings {
         ChooseCityFromTopAdapter,
+        ChooseCityFromFavorites,
+        DeleteCityFromFavorites,
+        DeleteAllCitiesFromFavorites,
         MoveToWeather,
         ChangeTempUnits,
         MoveToGoogleMap,
         SearchInGoogleMap,
         ShowWeather,
         MoveToAttractions,
+        MoveToFavorites,
         ShowInfo,
         SearchAttractions,
         HotelAttractions,

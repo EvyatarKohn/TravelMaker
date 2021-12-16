@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
@@ -100,6 +99,12 @@ class MainActivity : AppCompatActivity() {
                     changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
                     FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToAttractions)
                 }
+
+                R.id.favorites -> {
+                    changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToFavorites)
+                }
+
                 R.id.info -> {
                     InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
                     FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowInfo)
@@ -121,8 +126,8 @@ class MainActivity : AppCompatActivity() {
                         getNewLocation()
                     } else {
                         mApprovePermissions = true
-                        MainData.mLat = location.latitude.toString()
-                        MainData.mLong = location.longitude.toString()
+                        MainData.lat = location.latitude.toString()
+                        MainData.long = location.longitude.toString()
                         startFlow()
                     }
                 }
@@ -167,8 +172,8 @@ class MainActivity : AppCompatActivity() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
-            MainData.mLat = lastLocation.latitude.toString()
-            MainData.mLong = lastLocation.longitude.toString()
+            MainData.lat = lastLocation.latitude.toString()
+            MainData.long = lastLocation.longitude.toString()
             getLastLocation()
         }
     }
