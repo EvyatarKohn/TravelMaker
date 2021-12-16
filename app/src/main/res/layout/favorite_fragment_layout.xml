@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
-        android:id="@+id/delete_favorites"
+        android:id="@+id/delete_all_favorites"
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/delete_favorites"
+        app:layout_constraintTop_toBottomOf="@+id/delete_all_favorites"
         android:layout_marginHorizontal="25dp"
         android:layout_marginVertical="15dp"
         android:fontFamily="@font/product_sans_bold"

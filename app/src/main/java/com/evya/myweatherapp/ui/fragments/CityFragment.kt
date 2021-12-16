@@ -55,6 +55,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private lateinit var mNavController: NavController
     private lateinit var mBinding: CityFragmentLayoutBinding
     private var mPollution = "Good"
+    private var mFromFavorites = false
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,10 +89,12 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
 
         if (arguments?.get("fromFavorites") == true) {
+            mFromFavorites = true
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
-            mCityName = arguments?.get("cityName").toString()
-            getWeather(mCityName, mUnits)
-            getDailyWeather(mCityName, mCountryCode, mUnits)
+            MainData.lat = arguments?.get("lat").toString()
+            MainData.long = arguments?.get("long").toString()
+            getCityByLocation(MainData.lat, MainData.long, mUnits)
+            getDailyWeatherByLocation(MainData.lat, MainData.long, mUnits)
         }
     }
 
@@ -404,15 +407,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             } else {
                 mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
                 MainData.addedToFav = false
-                mFavoritesViewModel.removeCityDataFromDB(mFavWeather!!)
+                mFavWeather?.name?.let { it1 -> mFavoritesViewModel.removeCityDataFromDB(it1) }
             }
-//            mFavoritesViewModel.deleteAllFavorites()
         }
     }
 
     private fun checkIfAlreadyInFav() {
         mFavoritesViewModel.setWeather(mFavWeather!!)
-        mFavoritesViewModel.checkIfAlreadyAdded.observe(viewLifecycleOwner, {
+        mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner, {
             if (it) {
                 mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
             } else {
@@ -423,7 +425,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     override fun onResume() {
         super.onResume()
-        if ((activity as MainActivity).mApprovePermissions) {
+        if ((activity as MainActivity).mApprovePermissions && !mFromFavorites) {
             (activity as MainActivity).mApprovePermissions = false
             getWeatherData()
         }

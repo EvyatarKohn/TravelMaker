@@ -1,5 +1,8 @@
 package com.evya.myweatherapp.di
 
+import android.app.Application
+import com.evya.myweatherapp.db.FavoritesDB
+import com.evya.myweatherapp.db.FavoritesDao
 import com.evya.myweatherapp.network.TripApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -48,4 +51,9 @@ object AppModule {
             .client(client)
             .build()
             .create(TripApi::class.java)
+
+    @Singleton
+    @Provides
+    fun getFavoritesDao(app: Application): FavoritesDao =
+        FavoritesDB.getDB(app).attractionsDao()
 }

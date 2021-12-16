@@ -1,6 +1,9 @@
 package com.evya.myweatherapp.db
 
-import androidx.room.*
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import com.evya.myweatherapp.model.weathermodel.Weather
 import kotlinx.coroutines.flow.Flow
 
