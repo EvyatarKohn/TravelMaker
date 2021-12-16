@@ -6,19 +6,14 @@ import javax.inject.Inject
 
 class FavoritesRepository @Inject constructor(private val favoritesDao: FavoritesDao) {
 
-    suspend fun addCityDataToDB(weather: Weather) {
-        favoritesDao.addFavorites(weather)
-    }
+    suspend fun addCityDataToDB(weather: Weather) = favoritesDao.addFavorites(weather)
 
     val fetchAllCitiesFromDB = favoritesDao.fetchAllCities()
 
     fun checkIfAlreadyAddedToDB(cityName: String) = favoritesDao.checkIfAlreadyAdded(cityName)
 
-    suspend fun removeCityDataFromDB(cityName: String) {
+    suspend fun removeCityDataFromDB(cityName: String) =
         favoritesDao.deleteSpecificFavorite(cityName)
-    }
 
-    suspend fun deleteAllFavorites() {
-        favoritesDao.deleteAllFavorites()
-    }
+    suspend fun deleteAllFavorites() = favoritesDao.deleteAllFavorites()
 }

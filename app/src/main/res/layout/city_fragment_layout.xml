@@ -1,313 +1,326 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:layoutDirection="ltr">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <data>
+
+        <variable
+            name="weather"
+            type="com.evya.myweatherapp.model.weathermodel.Weather" />
+
+        <variable
+            name="dailyWeather"
+            type="com.evya.myweatherapp.model.dailyweathermodel.DailyWeather" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/white"
+        android:layoutDirection="ltr">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ScrollView
-                android:id="@+id/main_cities_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:nestedScrollingEnabled="true"
-                android:paddingRight="20dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="NestedScrolling">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/main_cities_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </ScrollView>
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/main_weather_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/main_cities_list">
+                android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/main_image"
+                <ScrollView
+                    android:id="@+id/main_cities_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/main_image_view_desc"
-                    android:src="@drawable/ic_summer"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginTop="20dp"
+                    android:nestedScrollingEnabled="true"
+                    android:paddingRight="20dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/favorite_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    android:layout_marginRight="35dp"
-                    android:layout_marginTop="35dp"
-                    android:src="@drawable/ic_empty_heart"/>
+                    tools:ignore="NestedScrolling">
 
-                <ImageView
-                    android:id="@+id/main_image_rain"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:contentDescription="@string/main_image_rain_view_desc"
-                    android:src="@drawable/ic_rainy"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/main_cities_recycler_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </ScrollView>
 
-                <TextView
-                    android:id="@+id/location_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="25dp"
-                    android:drawablePadding="5dp"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:text="@string/different_destination"
-                    android:textColor="@color/turquoise"
-                    app:drawableLeftCompat="@drawable/ic_location"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/city_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="25dp"
-                    android:fontFamily="@font/product_sans_bold"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/location_icon" />
-
-                <TextView
-                    android:id="@+id/temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:textColor="@color/black"
-                    android:textSize="50sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/city_name" />
-
-                <TextView
-                    android:id="@+id/units"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:text="@string/units"
-                    android:textColor="@color/grey_54"
-                    android:textSize="16sp"
-                    app:layout_constraintLeft_toRightOf="@id/temp"
-                    app:layout_constraintTop_toBottomOf="@+id/city_name" />
-
-                <TextView
-                    android:id="@+id/feels_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/product_sans_regular"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/temp" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <ScrollView
-                android:id="@+id/daily_weather_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:nestedScrollingEnabled="true"
-                android:paddingHorizontal="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/main_weather_layout">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/daily_weather_recycler_view"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/main_weather_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
-            </ScrollView>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/more_details_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingHorizontal="15dp"
-                android:paddingBottom="25dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/daily_weather_list">
-
-<!--                <org.eazegraph.lib.charts.ValueLineChart
-                    android:id="@+id/line_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    app:egUseCubic="true"
-                    app:egCurveSmoothness="0.4"
-                    app:egIndicatorLineColor="#FE6DA8"
-                    app:egLegendHeight="40dp"
-                    app:egShowStandardValue="true"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>-->
+                    app:layout_constraintTop_toBottomOf="@+id/main_cities_list">
 
-                <TableLayout
+                    <ImageView
+                        android:id="@+id/main_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/main_image_view_desc"
+                        android:src="@drawable/ic_summer"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/favorite_img"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginRight="35dp"
+                        android:src="@drawable/ic_empty_heart"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/main_image_rain"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:contentDescription="@string/main_image_rain_view_desc"
+                        android:src="@drawable/ic_rainy"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/location_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginTop="25dp"
+                        android:drawablePadding="5dp"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:text="@string/different_destination"
+                        android:textColor="@color/turquoise"
+                        app:drawableLeftCompat="@drawable/ic_location"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/city_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginTop="25dp"
+                        android:fontFamily="@font/product_sans_bold"
+                        android:text="@{weather.name}"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/location_icon" />
+
+                    <TextView
+                        android:id="@+id/temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:text="@{String.valueOf(weather.changeDoubleToInt(weather.main.temp))}"
+                        android:textColor="@color/black"
+                        android:textSize="50sp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/city_name" />
+
+                    <TextView
+                        android:id="@+id/units"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:text="@string/units"
+                        android:textColor="@color/grey_54"
+                        android:textSize="16sp"
+                        app:layout_constraintLeft_toRightOf="@id/temp"
+                        app:layout_constraintTop_toBottomOf="@+id/city_name" />
+
+                    <TextView
+                        android:id="@+id/feels_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:text='@{"Feels like :" + weather.getDegreeUnits(weather.main.feelsLike)}'
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/temp" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ScrollView
+                    android:id="@+id/daily_weather_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:nestedScrollingEnabled="true"
+                    android:paddingHorizontal="10dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/main_weather_layout">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/daily_weather_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+                </ScrollView>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/more_details_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="25dp"
-                    android:background="@color/grey_f7"
-                    android:gravity="center"
-                    android:paddingVertical="15dp"
+                    android:paddingHorizontal="15dp"
+                    android:paddingBottom="25dp"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toBottomOf="@+id/daily_weather_list">
 
-                    <TableRow
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/sunrise"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/sunset"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:paddingLeft="25dp"
-                            android:paddingRight="25dp"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/humidity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-
-
-                    </TableRow>
-
-                    <TableRow
+                    <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="25dp"
-                        android:gravity="center">
+                        android:background="@color/grey_f7"
+                        android:gravity="center"
+                        android:paddingVertical="15dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/wind_speed"
+                        <TableRow
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            android:layout_height="match_parent"
+                            android:gravity="center">
 
-                        <TextView
-                            android:id="@+id/description"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:paddingLeft="25dp"
-                            android:paddingRight="25dp"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/sunrise"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:text='@{"Sunrise\n" + String.valueOf(weather.setTimeToHour(weather.sys.sunrise))}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/visibility"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/sunset"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:paddingLeft="25dp"
+                                android:paddingRight="25dp"
+                                android:text='@{"Sunset\n" + String.valueOf(weather.setTimeToHour(weather.sys.sunset))}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                    </TableRow>
+                            <TextView
+                                android:id="@+id/humidity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:text='@{"Humidity\n" + String.valueOf(weather.main.humidity)+ "%"}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="25dp"
-                        android:gravity="center">
 
-                        <TextView
-                            android:id="@+id/probability_of_precipitation"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                        </TableRow>
 
-                        <TextView
-                            android:id="@+id/rain_3h"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:paddingLeft="25dp"
-                            android:paddingRight="25dp"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center">
 
-                        <TextView
-                            android:id="@+id/air_pollution"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:gravity="left"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/wind_speed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:text='@{"Wind\nspeed\n" + String.valueOf(weather.wind.speed) + weather.getWindSpeedDegree}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
 
-                    </TableRow>
-                </TableLayout>
+                            <TextView
+                                android:id="@+id/description"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:paddingLeft="25dp"
+                                android:paddingRight="25dp"
+                                android:text='@{"Weather\n" + String.valueOf(weather.weather[0].description)}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/visibility"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:text='@{"Visibility\n" + weather.getVisibilityUnits(weather.visibility)}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/probability_of_precipitation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:text='@{"Precipitation\nprobability\n" + String.valueOf(Math.round(dailyWeather.list[0].pop * 100)) + "%"}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/rain_3h"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:paddingLeft="25dp"
+                                android:paddingRight="25dp"
+                                android:text='@{"Rain last\n3h\n" + String.valueOf(dailyWeather.list[0].rain.h) + " mm"}'
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/air_pollution"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/product_sans_regular"
+                                android:gravity="left"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+
+                        </TableRow>
+                    </TableLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -2,8 +2,6 @@
     <string name="app_name">Travel\nmaker</string>
 
     <!-- Activity texts  -->
-    <string name="degree_units_celsius">Celsius</string>
-    <string name="degree_units_fahrenheit">Fahrenheit</string>
     <string name="app_name_title">Travelmaker</string>
     <string name="again_to_exit">"Press again to exit"</string>
 
@@ -16,40 +14,19 @@
     <string name="privacy_policy_url">https://www.termsfeed.com/live/e2e6d8ef-99f5-4abd-9eee-62e6af4c7928</string>
 
     <!-- City Fragment texts  -->
-    <string name="to_cities_list_btn">to cities list</string>
-    <string name="to_custom_city_btn">to custom city</string>
     <string name="different_destination">Different destination</string>
     <string name="units">℃ | F</string>
-    <string name="graph_texts">%1$s/%2$s</string>
 
     <!-- Custom City Fragment texts  -->
-    <string name="choose_city_error_message_no_fields">You forgot something!</string>
-    <string name="choose_city_error_message_only_one_fields">You need to choose only one option</string>
-    <string name="city_name_title">Choose city by name:</string>
-    <string name="city_name">City name</string>
-    <string name="lat_long_title">Choose city by\nlat &amp; long:</string>
-    <string name="longitude">Longitude</string>
-    <string name="latitude">Latitude</string>
-    <string name="continue_btn">Continue</string>
-    <string name="city_name_country">%1$s (%2$s)</string>
     <string name="humidity">Humidity: %1$s</string>
     <string name="wind_speed">Wind: %1$s</string>
-    <string name="right_now_temp">Right now: %1$s</string>
-    <string name="feels_like_temp">Feels like %1$s</string>
-    <string name="temp_var">min %1$s - max %2$s</string>
     <string name="main_image_view_desc">Main image</string>
     <string name="main_image_rain_view_desc">Main Rain image</string>
     <string name="sun_image_view_desc">Sun image</string>
-    <string name="back_arrow_image_view_desc">Back arrow image</string>
-    <string name="exit_image_view_desc">Exit image</string>
     <string name="sky_image_view_desc">Sky image</string>
     <string name="ground_image_view_desc">Ground image</string>
-    <string name="show_attractions">Show attractions</string>
 
     <!-- Adapter strings  -->
-    <string name="adapter_city_name">Tel-aviv</string>
-    <string name="adapter_clear_sky">Sunny</string>
-    <string name="adapter_wind_speed">2.5 m/s</string>
     <string name="date">%1$s/%2$s</string>
     <string name="temp_var_2">%1$d - %2$s</string>
 
@@ -61,63 +38,35 @@
     <string name="approve_permissions">Give permissions</string>
 
     <!-- Custom cities list dialog texts  -->
-    <string name="custom_cities_list_dialog_error">Please fill all four fields</string>
-    <string name="custom_cities_list_dialog_title">Please enter your boarder (Bounding box) of your country/area\n(lat - east &amp; west, long - north &amp; south)</string>
-    <string name="custom_cities_list_dialog_continue_btn">Exit</string>
-    <string name="custom_cities_list_dialog_default_btn">Approve</string>
-    <string name="latitude_west">Lat West</string>
-    <string name="latitude_east">Lat East</string>
-    <string name="longitude_north">Long North</string>
-    <string name="longitude_south">Long South</string>
-    <string name="custom_cities_custom_btn">Continue</string>
-    <string name="custom_cities_default_btn">To default List</string>
-    <string name="permissions_toast">Please Enable your location service</string>
-    <string name="area_to_big_toast">The area you chosen is too big, please try again with smaller area</string>
     <string name="city_not_found_error">City not found, your location city will be shown</string>
     <string name="daily_weather_error">Can\'t get Daily weather, your location daily weather will be shown</string>
     <string name="cities_around_error">Can\'t find cities around you</string>
 
     <!-- Google maps strings -->
-    <string name="choose_location_title">Choose desire city</string>
     <string name="show_weather_btn">Show weather</string>
-    <string name="show_radius_btn">Draw circle</string>
-    <string name="show_cities_list">Show cities list</string>
     <string name="search_bar_hint">Enter Address, City Or Zip Code</string>
     <string name="google_search_error">Error in search request</string>
 
     <!--  Places Api strings  -->
     <string name="museum_request_error">Museum request error</string>
-    <string name="cinemas_request_error">Cinemas request error</string>
     <string name="accommodations_request_error">Accommodations request error</string>
     <string name="adults_request_error">Adults request error</string>
-    <string name="amusements_request_error">Amusements request error</string>
-    <string name="sports_request_error">Sports request error</string>
     <string name="banks_request_error">Banks request error</string>
     <string name="food_request_error">Food request error</string>
-    <string name="shops_request_error">Shops request error</string>
     <string name="transports_request_error">Transports request error</string>
-    <string name="religion_request_error">Religion request error</string>
     <string name="natural_request_error">Nature request error</string>
     <string name="historic_request_error">History request error</string>
-    <string name="cultural_request_error">Cultural request error</string>
-    <string name="architecture_request_error">Architecture request error</string>
-    <string name="attraction_general_request_error">Request error</string>
 
     <!--  Attraction Fragment Strings  -->
     <string name="search_activities">Search Activities</string>
     <string name="get_museums_btn">Museums</string>
     <string name="get_hotels_btn">Hotels</string>
-    <string name="get_adult_btn">Adult</string>
-    <string name="get_amusements_btn">Amusements</string>
-    <string name="get_sports_btn">Sports</string>
     <string name="get_banks_btn">Banks</string>
     <string name="get_food_btn">Food</string>
-    <string name="get_shops_btn">Shops</string>
     <string name="get_transport_btn">Transport</string>
     <string name="get_natural_btn">Nature</string>
     <string name="get_historic_btn">Historic</string>
     <string name="get_cultural_btn">Cultural</string>
-    <string name="get_architecture_btn">Architecture</string>
     <string name="get_night_life_btn">Night Life</string>
 
     <!-- Google maps Attraction Fragment Strings  -->
@@ -136,17 +85,6 @@
 
 
     <!-- General strings -->
-    <string name="Please_choose_city_toast">City not found</string>
-    <string name="sunrise_time">Sunrise\n%1$s</string>
-    <string name="sunset_time">Sunset\n%1$s</string>
-    <string name="humidity_new">Humidity\n%1$s</string>
-    <string name="wind_speed_new">Wind\nspeed\n%1$s</string>
-    <string name="temp">%1$s</string>
-    <string name="temp_max">Temp max\n%1$s %2$s</string>
-    <string name="temp_min">Temp min\n%1$s %2$s</string>
-    <string name="description">Weather\n%1$s</string>
-    <string name="visibility">Visibility\n%1$s %2$s</string>
-    <string name="probability_of_precipitation">Precipitation\nprobability\n%1$s</string>
     <string name="rain_last_3h">Rain last\n3h\n%1$s</string>
     <string name="snow_last_3h">Snow last\n3h\n%1$s</string>
     <string name="air_pollution">Air\nPollution\n%1$s</string>
