@@ -43,7 +43,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         )
         mBinding.autoCompleteTextview.threshold = 1
         mBinding.autoCompleteTextview.setAdapter(adapter)
-        mBinding.autoCompleteTextview.setOnItemClickListener { adapterView, view, i, l ->
+        mBinding.autoCompleteTextview.setOnItemClickListener { _, _, _, _ ->
             whatToDo(
                 mBinding.autoCompleteTextview.text.toString().replace(" ", "_"),
                 R.string.general_error
