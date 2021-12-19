@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoriteFragmentLayoutBinding
@@ -16,8 +15,6 @@ import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 
 
 @AndroidEntryPoint
@@ -38,7 +35,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
             if (it.isNullOrEmpty()) {
                 UtilsFunctions.showToast(R.string.no_saved_favorites, activity?.applicationContext)
             } else {
-                mFavoritesAdapter = FavoritesAdapter(it, mNavController, this)
+                mFavoritesAdapter = FavoritesAdapter(it.sortedBy { it.name }, mNavController, this)
                 val layoutManager =
                     LinearLayoutManager(
                         activity?.applicationContext,
@@ -66,7 +63,6 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
                 it, "DELETE_FAVORITES_DIALOG"
             )
         }
-
     }
 
     fun deleteSpecificCityFromDB() {
