@@ -8,6 +8,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.MainCitiesItemLayoutBinding
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
@@ -46,7 +47,7 @@ class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
         itemView.setOnClickListener {
             val typeFace = context?.let { ResourcesCompat.getFont(it, R.font.product_sans_bold) }
             mCityName?.typeface = typeFace
-            val bundle = bundleOf("cityName" to mCityName?.text.toString(), "fromTopAdapter" to true)
+            val bundle = bundleOf(Constants.CITY_NAME to mCityName?.text.toString(), Constants.FROM_ADAPTER to true)
             navController.navigate(R.id.action_cityFragment_self, bundle)
             FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromTopAdapter.toString() + mCityName?.text.toString())
         }

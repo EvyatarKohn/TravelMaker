@@ -51,35 +51,46 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchAttractions)
         }
 
-        mPlacesViewModel.placesRepo.observe(viewLifecycleOwner, { places ->
-            val latLong: ArrayList<LatLng> = ArrayList()
-            places.features.forEach {
-                latLong.add(LatLng(it.geometry.coordinates[0], it.geometry.coordinates[1]))
-            }
-            if (latLong.size > 0) {
-                val bundle = bundleOf("places" to places)
-                mNavController.navigate(
-                    R.id.action_chooseAttractionFragment_to_googleMapsAttractionFragment,
-                    bundle
-                )
-            } else {
-                mBinding.lottie.visibility = View.GONE
-                activity?.supportFragmentManager?.let {
-
-                    if (mBinding.autoCompleteTextview.text.toString().isNotEmpty()) {
-                        mName = mBinding.autoCompleteTextview.text.toString()
-                    }
-                    NoAttractionFoundDialog.newInstance(mName)
-                        .show(
-                            it, " NO_ATTRACTION_DIALOG"
+        mPlacesViewModel.placesRepo.observe(viewLifecycleOwner, {
+            if (it.first != null) {
+                val latLong: ArrayList<LatLng> = ArrayList()
+                it.first!!.features.forEach { feature ->
+                    latLong.add(
+                        LatLng(
+                            feature.geometry.coordinates[0],
+                            feature.geometry.coordinates[1]
                         )
+                    )
                 }
+                if (latLong.size > 0) {
+                    val bundle = bundleOf("places" to it.first)
+                    mNavController.navigate(
+                        R.id.action_chooseAttractionFragment_to_googleMapsAttractionFragment,
+                        bundle
+                    )
+                } else {
+                    mBinding.lottie.visibility = View.GONE
+                    activity?.supportFragmentManager?.let { fragmentManager ->
+
+                        if (mBinding.autoCompleteTextview.text.toString().isNotEmpty()) {
+                            mName = mBinding.autoCompleteTextview.text.toString()
+                        }
+                        NoAttractionFoundDialog.newInstance(mName)
+                            .show(
+                                fragmentManager, " NO_ATTRACTION_DIALOG"
+                            )
+                    }
+                }
+            } else if (it.second.second) {
+                it.second.first?.let { it1 ->
+                    UtilsFunctions.showToast(
+                        it1,
+                        activity?.applicationContext
+                    )
+                }
+
             }
         })
-        mPlacesViewModel.placesRepoError.observe(viewLifecycleOwner, {
-            UtilsFunctions.showToast(it, activity?.applicationContext)
-        })
-
     }
 
     private fun setOnClickListener() {

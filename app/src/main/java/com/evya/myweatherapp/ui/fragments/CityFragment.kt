@@ -1,8 +1,6 @@
 package com.evya.myweatherapp.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -10,18 +8,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.Constants.IMPERIAL
-import com.evya.myweatherapp.Constants.IMPERIAL_DEGREE
-import com.evya.myweatherapp.Constants.KM
 import com.evya.myweatherapp.Constants.METRIC
-import com.evya.myweatherapp.Constants.METRIC_DEGREE
-import com.evya.myweatherapp.Constants.MILE
 import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
-import com.evya.myweatherapp.model.pollution.Pollution
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
@@ -31,10 +25,8 @@ import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.grpc.okhttp.internal.Util
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 @ExperimentalCoroutinesApi
@@ -42,16 +34,15 @@ import kotlin.collections.ArrayList
 class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private val mWeatherViewModel: WeatherViewModel by viewModels()
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
-    private var mCityName = ""
+    private var mCityName = "Ramat Gan"
     private var mCountryCode = "IL"
     private lateinit var mMainCitiesAdapter: CitiesAroundAdapter
     private lateinit var mDailyAdapter: DailyWeatherAdapter
     private var mWeather: Weather? = null
     private var mFavWeather: Weather? = null
-    private var mCelsius: Boolean = true
+    private var mCelsius = true
     private lateinit var mNavController: NavController
     private lateinit var mBinding: CityFragmentLayoutBinding
-    private var mPollution = "Good"
     private var mFromFavorites = false
 
 
@@ -59,8 +50,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = CityFragmentLayoutBinding.bind(view)
 
-        successObservers()
-        errorObservers()
+        liveDataObservers()
         mWeatherViewModel.getAirPollution(MainData.lat, MainData.long)
 
         mNavController = Navigation.findNavController(view)
@@ -74,17 +64,17 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             activity?.applicationContext
         )
 
-        if (arguments?.get("fromTopAdapter") == true) {
-            mCityName = arguments?.get("cityName").toString()
+        if (arguments?.get(Constants.FROM_ADAPTER) == true) {
+            mCityName = arguments?.get(Constants.CITY_NAME).toString()
             getWeather(mCityName, MainData.units)
             getDailyWeather(mCityName, mCountryCode, MainData.units)
         }
 
-        if (arguments?.get("fromFavorites") == true) {
+        if (arguments?.get(Constants.FROM_FAVORITES) == true) {
             mFromFavorites = true
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
-            MainData.lat = arguments?.get("lat").toString()
-            MainData.long = arguments?.get("long").toString()
+            MainData.lat = arguments?.get(Constants.LAT).toString()
+            MainData.long = arguments?.get(Constants.LONG).toString()
             getCityByLocation(MainData.lat, MainData.long, MainData.units)
             getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
         }
@@ -109,79 +99,49 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
     }
 
-    private fun successObservers() {
-        mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner, { weather ->
-            mFavWeather = weather
-            MainData.lat = weather.coord.lat.toString()
-            MainData.long = weather.coord.lon.toString()
-            mWeatherViewModel.getCitiesAround(MainData.lat, MainData.long, MainData.units)
-            showWeather(weather)
-            checkIfAlreadyInFav()
-        })
-
-        mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, { dailyWeather ->
-            setDailyAdapter(dailyWeather.list)
-
-            mBinding.dailyWeather = dailyWeather
-
-            var rainHeight = "0"
-            var text = R.string.rain_last_3h
-            if (dailyWeather.list[0].rain != null) {
-                rainHeight = dailyWeather.list[0].rain.h.toString()
-            } else if (dailyWeather.list[0].snow != null) {
-                rainHeight = dailyWeather.list[0].snow.h.toString()
-                text = R.string.snow_last_3h
+    private fun liveDataObservers() {
+        mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner, {
+            if (it.first != null) {
+                mFavWeather = it.first
+                MainData.lat = it.first?.coord?.lat.toString()
+                MainData.long = it.first?.coord?.lon.toString()
+                mWeatherViewModel.getCitiesAround(MainData.lat, MainData.long, MainData.units)
+                showWeather(it.first!!)
+                checkIfAlreadyInFav()
+            } else if (it.second.second) {
+                getCityByLocation(MainData.lat, MainData.long, MainData.units)
+                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
             }
-            mBinding.rain3h.text = getString(text, "$rainHeight mm")
         })
 
-        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, { citiesWeather ->
-            setTopAdapter(citiesWeather.list.distinctBy { citiesAroundData ->
-                citiesAroundData.name
-            })
+        mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, {
+            if (it.first != null) {
+                setDailyAdapter(it.first!!.list)
+                mBinding.dailyWeather = it.first
+            } else if (it.second.second) {
+                getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
+                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
+            }
+
         })
 
-        mWeatherViewModel.pollutionRepo.observe(viewLifecycleOwner, { pollution ->
-            definePollution(pollution)
+        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, {
+            if(it.first != null) {
+                setTopAdapter(it.first!!.list.distinctBy { citiesAroundData ->
+                    citiesAroundData.name
+                })
+            } else if (it.second.second) {
+                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
+            }
         })
-    }
 
-    private fun definePollution(pollution: Pollution) {
-
-        if (pollution.list[0].components.no2 > 400 || pollution.list[0].components.pm10 > 180 ||
-            pollution.list[0].components.o3 > 240 || pollution.list[0].components.pm25 > 110
-        ) {
-            mPollution = "Very Poor"
-        } else if ((pollution.list[0].components.no2 > 200 && pollution.list[0].components.no2 < 399) ||
-            (pollution.list[0].components.pm10 > 90 && pollution.list[0].components.pm10 < 179) ||
-            (pollution.list[0].components.o3 > 180 && pollution.list[0].components.o3 < 239) ||
-            (pollution.list[0].components.pm25 > 55 && pollution.list[0].components.pm25 < 109)
-        ) {
-            mPollution = "Poor"
-        } else if ((pollution.list[0].components.no2 > 100 && pollution.list[0].components.no2 < 199) ||
-            (pollution.list[0].components.pm10 > 50 && pollution.list[0].components.pm10 < 89) ||
-            (pollution.list[0].components.o3 > 120 && pollution.list[0].components.o3 < 179) ||
-            (pollution.list[0].components.pm25 > 30 && pollution.list[0].components.pm25 < 54)
-        ) {
-            mPollution = "Moderate"
-        } else if ((pollution.list[0].components.no2 > 50 && pollution.list[0].components.no2 < 99) ||
-            (pollution.list[0].components.pm10 > 25 && pollution.list[0].components.pm10 < 49) ||
-            (pollution.list[0].components.o3 > 60 && pollution.list[0].components.o3 < 119) ||
-            (pollution.list[0].components.pm25 > 15 && pollution.list[0].components.pm25 < 29)
-        ) {
-            mPollution = "Fair"
-        } else if ((pollution.list[0].components.no2 > 0 && pollution.list[0].components.no2 < 49) ||
-            (pollution.list[0].components.pm10 > 0 && pollution.list[0].components.pm10 < 24) ||
-            (pollution.list[0].components.o3 > 0 && pollution.list[0].components.o3 < 59) ||
-            (pollution.list[0].components.pm25 > 0 && pollution.list[0].components.pm25 < 14)
-        ) {
-            mPollution = "Good"
-        }
-
-        mBinding.airPollution.text = getString(
-            R.string.air_pollution,
-            mPollution
-        )
+        mWeatherViewModel.pollutionRepo.observe(viewLifecycleOwner, {
+            if (it.first != null) {
+                mBinding.pollution = it.first
+            } else if (it.second.second) {
+                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
+            }
+        })
     }
 
     private fun setBoldSpan() {
@@ -202,7 +162,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun isRaining(description: String): Boolean {
-        return (description == "rain" || description == "light rain" || description == "snow" || description == "light snow")
+        return (description == Constants.RAIN || description == Constants.LIGHT_RAIN ||
+                description == Constants.SNOW || description == Constants.LIGHT_SNOW)
     }
 
     private fun isWinter(temp: Double): Boolean {
@@ -211,30 +172,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         } else {
             temp <= 50
         }
-    }
-
-    private fun errorObservers() {
-        mWeatherViewModel.repoWeatherError.observe(viewLifecycleOwner, {
-            getCityByLocation(MainData.lat, MainData.long, MainData.units)
-            if (it.second) {
-                UtilsFunctions.showToast(it.first, activity?.applicationContext)
-            }
-        })
-
-        mWeatherViewModel.repoDailyWeatherError.observe(viewLifecycleOwner, {
-            getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
-            if (it.second) {
-                UtilsFunctions.showToast(it.first, activity?.applicationContext)
-            }
-        })
-
-        mWeatherViewModel.repoCitiesAroundError.observe(viewLifecycleOwner, {
-            UtilsFunctions.showToast(it, activity?.applicationContext)
-        })
-
-        mWeatherViewModel.repoPollutionError.observe(viewLifecycleOwner, {
-            UtilsFunctions.showToast(it, activity?.applicationContext)
-        })
     }
 
     private fun showWeather(weather: Weather) {
@@ -346,7 +283,10 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mBinding.locationIcon.setOnClickListener {
             val bundle =
-                bundleOf("lat" to MainData.lat.toFloat(), "long" to MainData.long.toFloat())
+                bundleOf(
+                    Constants.LAT to MainData.lat.toFloat(),
+                    Constants.LONG to MainData.long.toFloat()
+                )
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
             (activity as MainActivity).changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
         }

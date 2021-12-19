@@ -85,9 +85,6 @@
 
 
     <!-- General strings -->
-    <string name="rain_last_3h">Rain last\n3h\n%1$s</string>
-    <string name="snow_last_3h">Snow last\n3h\n%1$s</string>
-    <string name="air_pollution">Air\nPollution\n%1$s</string>
     <string name="general_error">There been some error, please try again</string>
     <string name="pollution_error">Pollution request error</string>
     <string name="no_saved_favorites">There is no saved favorites</string>

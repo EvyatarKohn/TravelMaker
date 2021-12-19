@@ -10,7 +10,25 @@ object Constants {
     const val IMPERIAL_DEGREE = " miles/hr"
     const val METRIC_DEGREE = " m/s"
     const val KM = " Km"
+    const val MM = " mm"
     const val MILE = " mile"
+    const val FROM_ADAPTER = "fromTopAdapter"
+    const val CITY_NAME = "cityName"
+    const val FROM_FAVORITES = "fromFavorites"
+    const val LAT = "lat"
+    const val LONG = "long"
+    const val RAIN = "rain"
+    const val LIGHT_RAIN = "light rain"
+    const val SNOW = "snow"
+    const val LIGHT_SNOW = "light snow"
+
+    enum class Pollution(var pollution: String) {
+        GOOD("good"),
+        FAIR("Fair"),
+        MODERATE("Moderate"),
+        POOR("Poor"),
+        VERY_POOR("Very Poor")
+    }
 
     fun replacedList(): ArrayList<String> {
         val list: ArrayList<String> = ArrayList()

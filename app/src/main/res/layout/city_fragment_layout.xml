@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="weather"
             type="com.evya.myweatherapp.model.weathermodel.Weather" />
@@ -12,6 +11,10 @@
         <variable
             name="dailyWeather"
             type="com.evya.myweatherapp.model.dailyweathermodel.DailyWeather" />
+
+        <variable
+            name="pollution"
+            type="com.evya.myweatherapp.model.pollution.Pollution" />
     </data>
 
 
@@ -301,7 +304,7 @@
                                 android:gravity="left"
                                 android:paddingLeft="25dp"
                                 android:paddingRight="25dp"
-                                android:text='@{"Rain last\n3h\n" + String.valueOf(dailyWeather.list[0].rain.h) + " mm"}'
+                                android:text="@{dailyWeather.precipitationLast3H()}"
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
 
@@ -311,6 +314,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/product_sans_regular"
                                 android:gravity="left"
+                                android:text="@{pollution.definePollution()}"
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
 

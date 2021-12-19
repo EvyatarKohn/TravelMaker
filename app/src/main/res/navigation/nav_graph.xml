@@ -14,30 +14,29 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            />
+            app:popExitAnim="@anim/slide_out_right" />
 
         <argument
             android:name="lat"
             android:defaultValue="32.083333"
-            app:argType="float"/>
+            app:argType="float" />
         <argument
             android:name="long"
             android:defaultValue="34.7999968"
-            app:argType="float"/>
+            app:argType="float" />
         <argument
             android:name="fromMaps"
             android:defaultValue="false"
-            app:argType="boolean"/>
+            app:argType="boolean" />
 
         <argument
             android:name="lat"
             android:defaultValue="32.083333"
-            app:argType="float"/>
+            app:argType="float" />
         <argument
             android:name="long"
             android:defaultValue="34.7999968"
-            app:argType="float"/>
+            app:argType="float" />
         <argument
             android:name="latLong"
             android:defaultValue="null" />
@@ -49,20 +48,19 @@
         <argument
             android:name="fromTopAdapter"
             android:defaultValue="false"
-            app:argType="boolean"/>
+            app:argType="boolean" />
 
         <argument
             android:name="cityName"
             android:defaultValue="Tel-aviv"
-            app:argType="string"/>
+            app:argType="string" />
         <action
             android:id="@+id/action_cityFragment_to_chooseAttractionFragment"
             app:destination="@id/chooseAttractionFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            />
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_cityFragment_self2"
             app:destination="@id/cityFragment" />
@@ -79,44 +77,26 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
- <!--       <argument
-            android:name="lat"
-            android:defaultValue="32.083333"
-            app:argType="float"/>
-        <argument
-            android:name="long"
-            android:defaultValue="34.7999968"
-            app:argType="float"/>-->
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
 
     <fragment
         android:id="@+id/googleMapsAttractionFragment"
         android:name="com.evya.myweatherapp.ui.fragments.GoogleMapsAttractionFragment"
-        android:label="GoogleMapsAttractionFragment" >
+        android:label="GoogleMapsAttractionFragment">
         <action
             android:id="@+id/action_googleMapsAttractionFragment_to_chooseAttractionFragment"
             app:destination="@id/chooseAttractionFragment" />
     </fragment>
 
-<!--    <argument
-        android:name="lat"
-        android:defaultValue="32.083333"
-        app:argType="float"/>
-    <argument
-        android:name="long"
-        android:defaultValue="34.7999968"
-        app:argType="float"/>-->
-
     <argument
         android:name="places"
-        app:argType="com.evya.myweatherapp.model.placesmodel.Places"
-        />
+        app:argType="com.evya.myweatherapp.model.placesmodel.Places" />
     <fragment
         android:id="@+id/chooseAttractionFragment"
         android:name="com.evya.myweatherapp.ui.fragments.ChooseAttractionFragment"
-        android:label="ChooseAttractionFragment" >
+        android:label="ChooseAttractionFragment">
         <action
             android:id="@+id/action_chooseAttractionFragment_to_googleMapsAttractionFragment"
             app:destination="@id/googleMapsAttractionFragment" />
@@ -125,16 +105,16 @@
     <argument
         android:name="lat"
         android:defaultValue="32.083333"
-        app:argType="float"/>
+        app:argType="float" />
     <argument
         android:name="long"
         android:defaultValue="34.7999968"
-        app:argType="float"/>
+        app:argType="float" />
 
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.evya.myweatherapp.ui.fragments.FavoritesFragment"
-        android:label="FavoritesFragment" >
+        android:label="FavoritesFragment">
         <action
             android:id="@+id/action_favoritesFragment_to_cityFragment"
             app:destination="@id/cityFragment" />
