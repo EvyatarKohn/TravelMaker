@@ -72,6 +72,5 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
     fun deleteAllCitiesFromDB() {
         FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.DeleteAllCitiesFromFavorites.toString())
         mFavoritesViewModel.deleteAllFavoritesFromDB()
-        mFavoritesAdapter.notifyDataSetChanged()
     }
 }
