@@ -25,7 +25,6 @@ import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import io.grpc.okhttp.internal.Util
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
