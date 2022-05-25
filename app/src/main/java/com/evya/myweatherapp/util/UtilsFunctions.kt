@@ -9,11 +9,11 @@ import android.text.style.ForegroundColorSpan
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import org.w3c.dom.Text
 
 class UtilsFunctions {
 
     companion object {
-
         fun showToast(error: Int, context: Context?) {
             Toast.makeText(
                 context,
@@ -27,6 +27,13 @@ class UtilsFunctions {
             val font = Typeface.createFromAsset(context?.assets, "font/product_sans_bold.ttf")
             span.setSpan(CustomTypeFaceSpan("", font), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             textView.text = span
+        }
+
+        fun setSpanBold(string: String, context: Context?): SpannableString {
+            val span = SpannableString(string)
+            val font = Typeface.createFromAsset(context?.assets, "font/product_sans_bold.ttf")
+            span.setSpan(CustomTypeFaceSpan("", font), 0, string.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+            return span
         }
 
         fun setColorSpan(start: Int, end: Int, color: Int, text: Int, view: TextView, context: Context?) {

@@ -25,7 +25,6 @@ import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import io.grpc.okhttp.internal.Util
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -100,7 +99,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun liveDataObservers() {
-        mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner, {
+        mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner) {
             if (it.first != null) {
                 mFavWeather = it.first
                 MainData.lat = it.first?.coord?.lat.toString()
@@ -108,40 +107,48 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mWeatherViewModel.getCitiesAround(MainData.lat, MainData.long, MainData.units)
                 showWeather(it.first!!)
                 checkIfAlreadyInFav()
-            } else if (it.second.second) {
+            } else {
                 getCityByLocation(MainData.lat, MainData.long, MainData.units)
-                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
+                it.second?.let { it1 ->
+                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                }
             }
-        })
+        }
 
-        mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner, {
+        mWeatherViewModel.dailyWeatherRepo.observe(viewLifecycleOwner) {
             if (it.first != null) {
-                setDailyAdapter(it.first!!.list)
+                it.first?.list?.let { it1 -> setDailyAdapter(it1) }
                 mBinding.dailyWeather = it.first
-            } else if (it.second.second) {
+            } else {
                 getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
-                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
+                it.second?.let { it1 ->
+                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                }
             }
 
-        })
+        }
 
-        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner, {
-            if(it.first != null) {
-                setTopAdapter(it.first!!.list.distinctBy { citiesAroundData ->
+        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner) {
+            if (it.first != null) {
+                it.first?.list?.distinctBy { citiesAroundData ->
                     citiesAroundData.name
-                })
-            } else if (it.second.second) {
-                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
+                }?.let { it1 -> setTopAdapter(it1) }
+            } else {
+                it.second?.let { it1 ->
+                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                }
             }
-        })
+        }
 
-        mWeatherViewModel.pollutionRepo.observe(viewLifecycleOwner, {
+        mWeatherViewModel.pollutionRepo.observe(viewLifecycleOwner) {
             if (it.first != null) {
                 mBinding.pollution = it.first
-            } else if (it.second.second) {
-                it.second.first?.let { it1 -> UtilsFunctions.showToast(it1, activity?.applicationContext) }
+            } else {
+                it.second?.let { it1 ->
+                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                }
             }
-        })
+        }
     }
 
     private fun setBoldSpan() {
@@ -152,10 +159,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         UtilsFunctions.setSpanBold(0, 7, mBinding.description, activity?.applicationContext)
         UtilsFunctions.setSpanBold(0, 10, mBinding.visibility, activity?.applicationContext)
         UtilsFunctions.setSpanBold(
-            0,
-            26,
-            mBinding.probabilityOfPrecipitation,
-            activity?.applicationContext
+            0, 26, mBinding.probabilityOfPrecipitation, activity?.applicationContext
         )
         UtilsFunctions.setSpanBold(0, 13, mBinding.rain3h, activity?.applicationContext)
         UtilsFunctions.setSpanBold(0, 14, mBinding.airPollution, activity?.applicationContext)
@@ -306,13 +310,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun checkIfAlreadyInFav() {
         mFavoritesViewModel.setWeather(mFavWeather!!)
-        mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner, {
+        mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner) {
             if (it) {
                 mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
             } else {
                 mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
             }
-        })
+        }
     }
 
     override fun onResume() {

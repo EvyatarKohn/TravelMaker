@@ -49,4 +49,5 @@ object AppModule {
     @Provides
     fun getFavoritesDao(app: Application): FavoritesDao =
         FavoritesDB.getDB(app).attractionsDao()
+
 }

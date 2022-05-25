@@ -1,5 +1,6 @@
 package com.evya.myweatherapp.repository
 
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.network.TripApi
 import javax.inject.Inject
 
@@ -7,7 +8,7 @@ class PlacesRepository @Inject constructor(private val tripApi: TripApi) {
 
     suspend fun getWhatToDo(lat: String, long: String, kind: String) =
         tripApi.getWhatToDo(
-            "3000",
+            MainData.attractionRadius,
             long,
             lat,
             kind,
