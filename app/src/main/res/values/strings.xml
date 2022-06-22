@@ -68,6 +68,7 @@
     <string name="get_historic_btn">Historic</string>
     <string name="get_cultural_btn">Cultural</string>
     <string name="get_night_life_btn">Night Life</string>
+    <string name="attraction_radius">attraction radius</string>
 
     <!-- Google maps Attraction Fragment Strings  -->
     <string name="more_details">Long press on marker for more details</string>
@@ -92,6 +93,6 @@
     <string name="are_you_sure_you_want_to_delete_all">Are you sure you\nwant to delete\n all favorites?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-
+    <string name="no_internet_connection">No internet connection</string>
 
 </resources>

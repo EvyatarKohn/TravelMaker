@@ -19,20 +19,20 @@ class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository
 ) : ViewModel() {
 
-    private var mWeatherLiveData = MutableLiveData<Pair<Weather?, Pair<Int?, Boolean>>>()
-    val weatherRepo: LiveData<Pair<Weather?, Pair<Int?, Boolean>>>
+    private var mWeatherLiveData = MutableLiveData<Pair<Weather?, Int?>>()
+    val weatherRepo: LiveData<Pair<Weather?, Int?>>
         get() = mWeatherLiveData
 
-    private var mDailyWeatherLiveData = MutableLiveData<Pair<DailyWeather?, Pair<Int?, Boolean>>>()
-    val dailyWeatherRepo: LiveData<Pair<DailyWeather?, Pair<Int?, Boolean>>>
+    private var mDailyWeatherLiveData = MutableLiveData<Pair<DailyWeather?, Int?>>()
+    val dailyWeatherRepo: LiveData<Pair<DailyWeather?, Int?>>
         get() = mDailyWeatherLiveData
 
-    private var mCitiesAroundLiveData = MutableLiveData<Pair<CitiesAround?, Pair<Int?, Boolean>>>()
-    val citiesAroundRepo: LiveData<Pair<CitiesAround?, Pair<Int?, Boolean>>>
+    private var mCitiesAroundLiveData = MutableLiveData<Pair<CitiesAround?, Int?>>()
+    val citiesAroundRepo: LiveData<Pair<CitiesAround?, Int?>>
         get() = mCitiesAroundLiveData
 
-    private var mPollutionLiveData = MutableLiveData<Pair<Pollution?, Pair<Int?, Boolean>>>()
-    val pollutionRepo: LiveData<Pair<Pollution?, Pair<Int?, Boolean>>>
+    private var mPollutionLiveData = MutableLiveData<Pair<Pollution?, Int?>>()
+    val pollutionRepo: LiveData<Pair<Pollution?, Int?>>
         get() = mPollutionLiveData
 
 
@@ -43,9 +43,9 @@ class WeatherViewModel @Inject constructor(
         }
         repository.getWeather(cityNameTemp, units).let { response ->
             if (response.isSuccessful) {
-                mWeatherLiveData.postValue(Pair(response.body(), Pair(null, false)))
+                mWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
-                mWeatherLiveData.postValue(Pair(null, Pair(R.string.city_not_found_error, true)))
+                mWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
             }
         }
     }
@@ -55,15 +55,12 @@ class WeatherViewModel @Inject constructor(
             if (response.isSuccessful) {
                 if (response.body()?.name.isNullOrEmpty() || response.body()?.sys?.country.isNullOrEmpty()) {
                     mWeatherLiveData.postValue(
-                        Pair(
-                            null,
-                            Pair(R.string.city_not_found_error, true)
-                        )
+                        Pair(null, R.string.city_not_found_error)
                     )
                 }
-                mWeatherLiveData.postValue(Pair(response.body(), Pair(null, false)))
+                mWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
-                mWeatherLiveData.postValue(Pair(null, Pair(R.string.city_not_found_error, true)))
+                mWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
             }
         }
     }
@@ -77,13 +74,10 @@ class WeatherViewModel @Inject constructor(
             cityNameTemp += ",$countryCode"
             repository.getDailyWeather(cityNameTemp, units).let { response ->
                 if (response.isSuccessful) {
-                    mDailyWeatherLiveData.postValue(Pair(response.body(), Pair(null, false)))
+                    mDailyWeatherLiveData.postValue(Pair(response.body(), null))
                 } else {
                     mDailyWeatherLiveData.postValue(
-                        Pair(
-                            null,
-                            Pair(R.string.daily_weather_error, true)
-                        )
+                        Pair(null, R.string.daily_weather_error)
                     )
                 }
             }
@@ -93,13 +87,10 @@ class WeatherViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getDailyWeatherByLocation(lat, long, units).let { response ->
                 if (response.isSuccessful) {
-                    mDailyWeatherLiveData.postValue(Pair(response.body(), Pair(null, false)))
+                    mDailyWeatherLiveData.postValue(Pair(response.body(), null))
                 } else {
                     mDailyWeatherLiveData.postValue(
-                        Pair(
-                            null,
-                            Pair(R.string.daily_weather_error, true)
-                        )
+                        Pair(null, R.string.daily_weather_error)
                     )
                 }
             }
@@ -108,13 +99,10 @@ class WeatherViewModel @Inject constructor(
     fun getCitiesAround(lat: String, long: String, units: String) = viewModelScope.launch {
         repository.getCitiesAround(lat, long, units).let { response ->
             if (response.isSuccessful) {
-                mCitiesAroundLiveData.postValue(Pair(response.body(), Pair(null, false)))
+                mCitiesAroundLiveData.postValue(Pair(response.body(), null))
             } else {
                 mCitiesAroundLiveData.postValue(
-                    Pair(
-                        null,
-                        Pair(R.string.cities_around_error, true)
-                    )
+                    Pair(null, R.string.cities_around_error)
                 )
             }
         }
@@ -123,9 +111,9 @@ class WeatherViewModel @Inject constructor(
     fun getAirPollution(lat: String, long: String) = viewModelScope.launch {
         repository.getAirPollution(lat, long).let { response ->
             if (response.isSuccessful) {
-                mPollutionLiveData.postValue(Pair(response.body(), Pair(null, false)))
+                mPollutionLiveData.postValue(Pair(response.body(), null))
             } else {
-                mPollutionLiveData.postValue(Pair(null, Pair(R.string.pollution_error, true)))
+                mPollutionLiveData.postValue(Pair(null, R.string.pollution_error))
             }
         }
     }

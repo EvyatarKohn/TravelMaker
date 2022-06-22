@@ -7,4 +7,5 @@ object MainData {
     var long = ""// "34.7999968
     var addedToFav = false
     var units = METRIC
+    var attractionRadius = "1000"
 }

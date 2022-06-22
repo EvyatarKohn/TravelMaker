@@ -2,6 +2,7 @@ package com.evya.myweatherapp.ui.fragments
 
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -39,7 +40,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         val adapter = ArrayAdapter(
             activity?.applicationContext!!,
             android.R.layout.select_dialog_item,
-            Constants.replacedList()
+            Constants.manipulatedList()
         )
         mBinding.autoCompleteTextview.threshold = 1
         mBinding.autoCompleteTextview.setAdapter(adapter)
@@ -51,10 +52,30 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchAttractions)
         }
 
-        mPlacesViewModel.placesRepo.observe(viewLifecycleOwner, {
+
+        val radiusAdapter = ArrayAdapter(
+            activity?.applicationContext!!,
+            android.R.layout.simple_spinner_item,
+            arrayListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        )
+        radiusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        mBinding.radiusSpinner.adapter = radiusAdapter
+        mBinding.radiusSpinner.prompt = "sasdas"
+
+        mBinding.radiusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                MainData.attractionRadius = (parent?.getItemAtPosition(position) as Int * 1000 ).toString()
+            }
+
+        }
+
+        mPlacesViewModel.placesRepo.observe(viewLifecycleOwner) {
             if (it.first != null) {
                 val latLong: ArrayList<LatLng> = ArrayList()
-                it.first!!.features.forEach { feature ->
+                it.first?.features?.forEach { feature ->
                     latLong.add(
                         LatLng(
                             feature.geometry.coordinates[0],
@@ -76,21 +97,15 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
                             mName = mBinding.autoCompleteTextview.text.toString()
                         }
                         NoAttractionFoundDialog.newInstance(mName)
-                            .show(
-                                fragmentManager, " NO_ATTRACTION_DIALOG"
-                            )
+                            .show(fragmentManager, " NO_ATTRACTION_DIALOG")
                     }
                 }
-            } else if (it.second.second) {
-                it.second.first?.let { it1 ->
-                    UtilsFunctions.showToast(
-                        it1,
-                        activity?.applicationContext
-                    )
+            } else {
+                it.second?.let { it1 ->
+                    UtilsFunctions.showToast(it1, activity?.applicationContext)
                 }
-
             }
-        })
+        }
     }
 
     private fun setOnClickListener() {

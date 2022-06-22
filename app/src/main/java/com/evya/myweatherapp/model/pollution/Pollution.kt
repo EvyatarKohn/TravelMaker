@@ -47,6 +47,6 @@ data class Pollution(
             airPollution = Constants.Pollution.GOOD.pollution
         }
 
-        return "Air\nPollution\n$airPollution"
+        return "Air\nPollution:\n$airPollution"
     }
 }

@@ -2,9 +2,9 @@ package com.evya.myweatherapp.model.dailyweathermodel
 
 
 import com.evya.myweatherapp.Constants
-import com.evya.myweatherapp.R
-import com.google.gson.annotations.SerializedName
+import com.evya.myweatherapp.MainData
 import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
 data class DailyWeather(
     @SerializedName("city")
@@ -30,14 +30,18 @@ data class DailyWeather(
 
     fun precipitationLast3H(): String {
         var rainHeight = "0"
-        var text = "Rain last\n3h\n"
+        var text = "Rain last\n3h:\n"
         if (list[0].rain != null) {
             rainHeight = list[0].rain.h.toString()
         } else if (list[0].snow != null) {
             rainHeight = list[0].snow.h.toString()
-            text = "Snow last\n3h\n"
+            text = "Snow last\n3h:\n"
         }
 
-        return text + rainHeight + Constants.MM
+        return if (MainData.units == Constants.METRIC) {
+            text + rainHeight + Constants.MM
+        } else {
+            text + (String.format("%.2f", rainHeight.toDouble() * 0.04)) + Constants.INCH
+        }
     }
 }
