@@ -3,6 +3,7 @@ package com.evya.myweatherapp.ui.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -125,14 +126,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     UtilsFunctions.showToast(it1, activity?.applicationContext)
                 }
             }
-
         }
 
-        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner) {
+        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner) { it ->
             if (it.first != null) {
                 it.first?.list?.distinctBy { citiesAroundData ->
                     citiesAroundData.name
-                }?.let { it1 -> setTopAdapter(it1) }
+                }?.let { citiesAroundDataList -> setTopAdapter(citiesAroundDataList) }
             } else {
                 it.second?.let { it1 ->
                     UtilsFunctions.showToast(it1, activity?.applicationContext)
@@ -165,17 +165,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         UtilsFunctions.setSpanBold(0, 14, mBinding.airPollution, activity?.applicationContext)
     }
 
-    private fun isRaining(description: String): Boolean {
-        return (description == Constants.RAIN || description == Constants.LIGHT_RAIN ||
-                description == Constants.SNOW || description == Constants.LIGHT_SNOW)
-    }
+    private fun isRaining(description: String) =
+        description == Constants.RAIN || description == Constants.LIGHT_RAIN ||
+                description == Constants.SNOW || description == Constants.LIGHT_SNOW
 
-    private fun isWinter(temp: Double): Boolean {
-        return if (MainData.units == METRIC) {
-            temp <= 10
-        } else {
-            temp <= 50
-        }
+    private fun isWinter(temp: Double) = if (MainData.units == METRIC) {
+        temp <= 10
+    } else {
+        temp <= 50
     }
 
     private fun showWeather(weather: Weather) {
@@ -250,8 +247,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mCityName = weather.name
         mCountryCode = weather.sys.country
 
-        mBinding.mainImageRain.visibility =
-            if (isRaining(weather.weather[0].description)) View.VISIBLE else View.GONE
+        mBinding.mainImageRain.isVisible = isRaining(weather.weather[0].description)
     }
 
     private fun onClickListener() {
