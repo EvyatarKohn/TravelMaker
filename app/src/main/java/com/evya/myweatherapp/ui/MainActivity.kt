@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private var mFirsTimeBack = true
 
     companion object {
+        private val TAG = MainActivity::class.toString()
         private val PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
         )
@@ -84,33 +85,35 @@ class MainActivity : AppCompatActivity() {
         }, THREE_SEC)
 
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
+            var firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
             when (id) {
                 R.id.weather -> {
                     mApprovePermissions = true
                     changeNavBarIndex(R.id.cityFragment, R.id.weather)
-                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToWeather)
+                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
                 }
                 R.id.map -> {
                     changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
-                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToGoogleMap)
+                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToGoogleMap
                 }
                 R.id.attractions -> {
                     changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
-                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToAttractions)
+                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToAttractions
                 }
 
                 R.id.favorites -> {
                     changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
-                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MoveToFavorites)
+                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToFavorites
                 }
 
                 R.id.info -> {
                     InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
-                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowInfo)
+                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.ShowInfo
                 }
                 else -> {
                 }
             }
+            FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent)
 
         }
     }
@@ -148,10 +151,11 @@ class MainActivity : AppCompatActivity() {
             mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
-            mGraph.startDestination = R.id.cityFragment
-            mNavHostFragment.navController.graph = mGraph
+            startDestination(R.id.cityFragment)
+
         }
     }
+
 
     @SuppressLint("MissingPermission")
     private fun getNewLocation() {
@@ -171,8 +175,8 @@ class MainActivity : AppCompatActivity() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
-            MainData.lat = lastLocation.latitude.toString()
-            MainData.long = lastLocation.longitude.toString()
+            MainData.lat = lastLocation?.latitude.toString()
+            MainData.long = lastLocation?.longitude.toString()
             getLastLocation()
         }
     }
@@ -247,9 +251,9 @@ class MainActivity : AppCompatActivity() {
                         )
                         resolvable.status
                     } catch (e: SendIntentException) {
-                        e.message?.let { Log.d("TAG", it) }
+                        e.message?.let { Log.d(TAG, it) }
                     } catch (e: ClassCastException) {
-                        e.message?.let { Log.d("TAG", it) }
+                        e.message?.let { Log.d(TAG, it) }
                     }
                 }
             }
@@ -272,7 +276,7 @@ class MainActivity : AppCompatActivity() {
 
     fun changeNavBarIndex(destination: Int, bottomNavId: Int) {
         mFirsTimeBack = true
-        mGraph.startDestination = destination
+        startDestination(destination)
         mNavHostFragment.navController.graph = mGraph
         mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
     }
@@ -290,5 +294,11 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun startDestination(id: Int) {
+        mGraph.setStartDestination(id)
+        mNavHostFragment.navController.graph = mGraph
+        mNavHostFragment.navController.navigate(id)
     }
 }
