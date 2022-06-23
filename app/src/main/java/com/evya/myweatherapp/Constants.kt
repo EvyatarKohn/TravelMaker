@@ -13,7 +13,7 @@ object Constants {
     const val MM = " mm"
     const val INCH = " inch"
     const val MILE = " mile"
-    const val FROM_ADAPTER = "fromTopAdapter"
+    const val FROM_TOP_ADAPTER = "fromTopAdapter"
     const val CITY_NAME = "cityName"
     const val FROM_FAVORITES = "fromFavorites"
     const val LAT = "lat"

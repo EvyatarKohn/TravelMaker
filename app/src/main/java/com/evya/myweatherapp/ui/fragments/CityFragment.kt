@@ -64,17 +64,17 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             activity?.applicationContext
         )
 
-        if (arguments?.get(Constants.FROM_ADAPTER) == true) {
-            mCityName = arguments?.get(Constants.CITY_NAME).toString()
+        if (arguments?.getString(Constants.FROM_TOP_ADAPTER) == "true") {
+            mCityName = arguments?.getString(Constants.CITY_NAME).toString()
             getWeather(mCityName, MainData.units)
             getDailyWeather(mCityName, mCountryCode, MainData.units)
         }
 
-        if (arguments?.get(Constants.FROM_FAVORITES) == true) {
+        if (arguments?.getString(Constants.FROM_FAVORITES) == "true") {
             mFromFavorites = true
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
-            MainData.lat = arguments?.get(Constants.LAT).toString()
-            MainData.long = arguments?.get(Constants.LONG).toString()
+            MainData.lat = arguments?.getString(Constants.LAT).toString()
+            MainData.long = arguments?.getString(Constants.LONG).toString()
             getCityByLocation(MainData.lat, MainData.long, MainData.units)
             getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
         }
@@ -128,7 +128,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             }
         }
 
-        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner) { it ->
+        mWeatherViewModel.citiesAroundRepo.observe(viewLifecycleOwner) {
             if (it.first != null) {
                 it.first?.list?.distinctBy { citiesAroundData ->
                     citiesAroundData.name

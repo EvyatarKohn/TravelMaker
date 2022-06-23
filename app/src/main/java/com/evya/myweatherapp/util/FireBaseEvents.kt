@@ -3,8 +3,6 @@ package com.evya.myweatherapp.util
 import android.content.Context
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
 
 class FireBaseEvents {
 
@@ -15,7 +13,7 @@ class FireBaseEvents {
             // Obtain the FirebaseAnalytics instance.
             FirebaseApp.initializeApp(context)
 //            mFirebaseAnalytics = Firebase.analytics
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
         }
 

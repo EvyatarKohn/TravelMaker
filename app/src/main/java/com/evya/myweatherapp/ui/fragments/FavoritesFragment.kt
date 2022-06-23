@@ -31,11 +31,11 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
         mBinding = FavoriteFragmentLayoutBinding.bind(view)
         mNavController = Navigation.findNavController(view)
 
-        mFavoritesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner, {
-            if (it.isNullOrEmpty()) {
+        mFavoritesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner) { weatherList ->
+            if (weatherList.isNullOrEmpty()) {
                 UtilsFunctions.showToast(R.string.no_saved_favorites, activity?.applicationContext)
             } else {
-                mFavoritesAdapter = FavoritesAdapter(it.sortedBy { it.name }, mNavController, this)
+                mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.name }, mNavController, this)
                 val layoutManager =
                     LinearLayoutManager(
                         activity?.applicationContext,
@@ -45,7 +45,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
                 mBinding.citiesNameRecyclerView.layoutManager = layoutManager
                 mBinding.citiesNameRecyclerView.adapter = mFavoritesAdapter
             }
-        })
+        }
 
         mBinding.deleteAllFavorites.setOnClickListener {
             activity?.supportFragmentManager?.let {

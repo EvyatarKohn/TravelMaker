@@ -47,7 +47,7 @@ class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
         itemView.setOnClickListener {
             val typeFace = context?.let { ResourcesCompat.getFont(it, R.font.product_sans_bold) }
             mCityName?.typeface = typeFace
-            val bundle = bundleOf(Constants.CITY_NAME to mCityName?.text.toString(), Constants.FROM_ADAPTER to true)
+            val bundle = bundleOf(Constants.CITY_NAME to mCityName?.text.toString(), Constants.FROM_TOP_ADAPTER to true)
             navController.navigate(R.id.action_cityFragment_self, bundle)
             FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromTopAdapter.toString() + mCityName?.text.toString())
         }

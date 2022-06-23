@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavGraph
@@ -63,6 +64,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(mBinding.root)
 
         FireBaseEvents.init(applicationContext)
+
+        handleOnBackPressed()
 
         mGpsIsOn = isLocationEnabled()
         UtilsFunctions.setColorSpan(
@@ -160,7 +163,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun getNewLocation() {
         mLocationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = Priority.PRIORITY_HIGH_ACCURACY
             interval = 0
             fastestInterval = 0
             numUpdates = 2
@@ -224,7 +227,7 @@ class MainActivity : AppCompatActivity() {
 
     fun turnGPSOn() {
         val locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = Priority.PRIORITY_HIGH_ACCURACY
             interval = 30000
             fastestInterval = 5000
         }
@@ -260,14 +263,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REQUEST_CODE_LOCATION_SETTING -> getLastLocation()
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         if (mApprovePermissions && !mGpsIsOn) {
@@ -282,24 +277,35 @@ class MainActivity : AppCompatActivity() {
         mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
     }
 
-    override fun onBackPressed() {
-        when {
-            mNavHostFragment.navController.currentDestination?.label == "GoogleMapsAttractionFragment" -> {
-                changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
-            }
-            mFirsTimeBack -> {
-                Toast.makeText(applicationContext, resources.getString(R.string.again_to_exit), Toast.LENGTH_LONG).show()
-                mFirsTimeBack = false
-            }
-            else -> {
-                finish()
-            }
-        }
-    }
-
     private fun startDestination(id: Int) {
-        mGraph.setStartDestination(id)
+        mGraph.startDestination = id
         mNavHostFragment.navController.graph = mGraph
         mNavHostFragment.navController.navigate(id)
+    }
+
+    private fun handleOnBackPressed() {
+        onBackPressedDispatcher.addCallback(
+            this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    when {
+                        mNavHostFragment.navController.currentDestination?.label == "GoogleMapsAttractionFragment" -> {
+                            changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
+                        }
+                        mFirsTimeBack -> {
+                            Toast.makeText(
+                                applicationContext,
+                                resources.getString(R.string.again_to_exit),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            mFirsTimeBack = false
+                        }
+                        else -> {
+                            finish()
+                        }
+                    }
+                }
+
+            }
+        )
     }
 }
