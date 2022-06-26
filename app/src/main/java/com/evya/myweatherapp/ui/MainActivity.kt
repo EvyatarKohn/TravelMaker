@@ -117,7 +117,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent)
-
         }
     }
 
@@ -158,7 +157,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
 
     @SuppressLint("MissingPermission")
     private fun getNewLocation() {
