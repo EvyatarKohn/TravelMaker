@@ -48,6 +48,9 @@ class FireBaseEvents {
         MuseumsAttraction,
         HistoricAttraction,
         CulturalAttraction,
-        NatureAttraction
+        NatureAttraction,
+        ShowAd,
+        CloseAd,
+        ClickOnAd
     }
 }

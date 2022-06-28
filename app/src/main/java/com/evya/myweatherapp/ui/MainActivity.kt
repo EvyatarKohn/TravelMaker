@@ -23,13 +23,18 @@ import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
 import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
 import com.evya.myweatherapp.Constants.THREE_SEC
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.MainData.approvedPermissions
+import com.evya.myweatherapp.MainData.lat
+import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -43,13 +48,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
-    var mApprovePermissions = false
     private var mGpsIsOn = false
     private var mThreeSec = false
     private lateinit var mNavHostFragment: NavHostFragment
     private lateinit var mGraph: NavGraph
     private lateinit var mBinding: ActivityMainBinding
     private var mFirsTimeBack = true
+    private var mInterstitialAd: InterstitialAd? = null
+    private lateinit var mAdRequest: AdRequest
 
     companion object {
         private val TAG = MainActivity::class.toString()
@@ -63,7 +69,11 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        FireBaseEvents.init(applicationContext)
+        FireBaseEvents.init(this)
+        MobileAds.initialize(this) {}
+
+        mAdRequest = AdRequest.Builder().build()
+        mBinding.adView.loadAd(mAdRequest)
 
         handleOnBackPressed()
 
@@ -88,37 +98,105 @@ class MainActivity : AppCompatActivity() {
         }, THREE_SEC)
 
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
-            var firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
-            when (id) {
-                R.id.weather -> {
-                    mApprovePermissions = true
-                    changeNavBarIndex(R.id.cityFragment, R.id.weather)
-                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
-                }
-                R.id.map -> {
-                    changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
-                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToGoogleMap
-                }
-                R.id.attractions -> {
-                    changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
-                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToAttractions
-                }
-
-                R.id.favorites -> {
-                    changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
-                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToFavorites
-                }
-
-                R.id.info -> {
-                    InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
-                    firebaseEvent = FireBaseEvents.FirebaseEventsStrings.ShowInfo
-                }
-                else -> {
-                }
-            }
-            FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent)
+            handleFlow(id)
         }
     }
+
+    private fun handleFlow(id: Int) {
+        if (id == 2131296554) {
+            navigateToRelevantScreen(id)
+        } else {
+            // For release -> ca-app-pub-9058418744370338~6033831169
+            InterstitialAd.load(
+                this,
+                "ca-app-pub-3940256099942544/1033173712",
+                mAdRequest,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d(TAG, adError.toString())
+                        mInterstitialAd = null
+                    }
+
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        Log.d(TAG, "Ad was loaded.")
+                        mInterstitialAd = interstitialAd
+                    }
+                })
+
+            if (mInterstitialAd != null) {
+                mInterstitialAd?.show(this)
+            } else {
+                Log.d(TAG, "The interstitial ad wasn't ready yet.")
+            }
+
+            mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdClicked() {
+                    // Called when a click is recorded for an ad.
+                    Log.d(TAG, "Ad was clicked.")
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ClickOnAd)
+                }
+
+                override fun onAdDismissedFullScreenContent() {
+                    // Called when ad is dismissed.
+                    Log.d(TAG, "Ad dismissed fullscreen content.")
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.CloseAd)
+                    navigateToRelevantScreen(id)
+                    mInterstitialAd = null
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    // Called when ad fails to show.
+                    Log.e(TAG, "Ad failed to show fullscreen content.")
+                    mInterstitialAd = null
+                }
+
+                override fun onAdImpression() {
+                    // Called when an impression is recorded for an ad.
+                    Log.d(TAG, "Ad recorded an impression.")
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowAd)
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    // Called when ad is shown.
+                    Log.d(TAG, "Ad showed fullscreen content.")
+                }
+            }
+        }
+    }
+
+    private fun navigateToRelevantScreen(id: Int) {
+        var firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
+
+        when (id) {
+            R.id.weather -> {
+                approvedPermissions = true
+                changeNavBarIndex(R.id.cityFragment, R.id.weather)
+                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
+            }
+            R.id.map -> {
+                changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
+                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToGoogleMap
+            }
+            R.id.attractions -> {
+                changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
+                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToAttractions
+            }
+
+            R.id.favorites -> {
+                changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
+                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToFavorites
+            }
+
+            R.id.info -> {
+                InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
+                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.ShowInfo
+            }
+            else -> {
+            }
+        }
+        FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent)
+    }
+
 
     @SuppressLint("MissingPermission")
     fun getLastLocation() {
@@ -129,9 +207,9 @@ class MainActivity : AppCompatActivity() {
                     if (location == null) {
                         getNewLocation()
                     } else {
-                        mApprovePermissions = true
-                        MainData.lat = location.latitude.toString()
-                        MainData.long = location.longitude.toString()
+                        approvedPermissions = true
+                        lat = location.latitude.toString()
+                        long = location.longitude.toString()
                         startFlow()
                     }
                 }
@@ -152,6 +230,7 @@ class MainActivity : AppCompatActivity() {
         if (mGpsIsOn && mThreeSec) {
             mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
+            mBinding.adView.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
             startDestination(R.id.cityFragment)
 
@@ -176,8 +255,8 @@ class MainActivity : AppCompatActivity() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation = locationResult.lastLocation
-            MainData.lat = lastLocation?.latitude.toString()
-            MainData.long = lastLocation?.longitude.toString()
+            lat = lastLocation?.latitude.toString()
+            long = lastLocation?.longitude.toString()
             getLastLocation()
         }
     }
@@ -220,7 +299,7 @@ class MainActivity : AppCompatActivity() {
         )
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-        mApprovePermissions = true
+        approvedPermissions = true
     }
 
     fun turnGPSOn() {
@@ -243,7 +322,7 @@ class MainActivity : AppCompatActivity() {
             } catch (exception: ApiException) {
                 when (exception.statusCode) {
                     LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> try {
-                        mApprovePermissions = true
+                        approvedPermissions = true
                         mGpsIsOn = true
                         val resolvable = exception as ResolvableApiException
                         resolvable.startResolutionForResult(
@@ -263,7 +342,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (mApprovePermissions && !mGpsIsOn) {
+        if (approvedPermissions && !mGpsIsOn) {
             getLastLocation()
         }
     }
@@ -280,6 +359,7 @@ class MainActivity : AppCompatActivity() {
         mNavHostFragment.navController.graph = mGraph
         mNavHostFragment.navController.navigate(id)
     }
+
 
     private fun handleOnBackPressed() {
         onBackPressedDispatcher.addCallback(

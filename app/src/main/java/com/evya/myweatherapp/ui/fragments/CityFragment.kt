@@ -12,7 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.Constants.IMPERIAL
 import com.evya.myweatherapp.Constants.METRIC
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.MainData.addedToFav
+import com.evya.myweatherapp.MainData.approvedPermissions
+import com.evya.myweatherapp.MainData.lat
+import com.evya.myweatherapp.MainData.long
+import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
@@ -51,7 +55,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mBinding = CityFragmentLayoutBinding.bind(view)
 
         liveDataObservers()
-        mWeatherViewModel.getAirPollution(MainData.lat, MainData.long)
+        mWeatherViewModel.getAirPollution(lat, long)
 
         mNavController = Navigation.findNavController(view)
         onClickListener()
@@ -64,19 +68,19 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             activity?.applicationContext
         )
 
-        if (arguments?.getString(Constants.FROM_TOP_ADAPTER) == "true") {
+        if (arguments?.getBoolean(Constants.FROM_TOP_ADAPTER) == true) {
             mCityName = arguments?.getString(Constants.CITY_NAME).toString()
-            getWeather(mCityName, MainData.units)
-            getDailyWeather(mCityName, mCountryCode, MainData.units)
+            getWeather(mCityName, degreesUnits)
+            getDailyWeather(mCityName, mCountryCode, degreesUnits)
         }
 
-        if (arguments?.getString(Constants.FROM_FAVORITES) == "true") {
+        if (arguments?.getBoolean(Constants.FROM_FAVORITES) == true) {
             mFromFavorites = true
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
-            MainData.lat = arguments?.getString(Constants.LAT).toString()
-            MainData.long = arguments?.getString(Constants.LONG).toString()
-            getCityByLocation(MainData.lat, MainData.long, MainData.units)
-            getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
+            lat = arguments?.getString(Constants.LAT).toString()
+            long = arguments?.getString(Constants.LONG).toString()
+            getCityByLocation(lat, long, degreesUnits)
+            getDailyWeatherByLocation(lat, long, degreesUnits)
         }
     }
 
@@ -84,17 +88,17 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         when {
             mWeather != null -> {
                 showWeather(mWeather!!)
-                getDailyWeather(mCityName, mCountryCode, MainData.units)
+                getDailyWeather(mCityName, mCountryCode, degreesUnits)
             }
             else -> {
-                if (MainData.lat.isEmpty() || MainData.long.isEmpty()) {
-                    getWeather(mCityName, MainData.units)
-                    getDailyWeather(mCityName, mCountryCode, MainData.units)
+                if (lat.isEmpty() || long.isEmpty()) {
+                    getWeather(mCityName, degreesUnits)
+                    getDailyWeather(mCityName, mCountryCode, degreesUnits)
                 } else {
-                    getCityByLocation(MainData.lat, MainData.long, MainData.units)
-                    getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
+                    getCityByLocation(lat, long, degreesUnits)
+                    getDailyWeatherByLocation(lat, long, degreesUnits)
                 }
-                mWeatherViewModel.getCitiesAround(MainData.lat, MainData.long, MainData.units)
+                mWeatherViewModel.getCitiesAround(lat, long, degreesUnits)
             }
         }
     }
@@ -103,13 +107,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mWeatherViewModel.weatherRepo.observe(viewLifecycleOwner) {
             if (it.first != null) {
                 mFavWeather = it.first
-                MainData.lat = it.first?.coord?.lat.toString()
-                MainData.long = it.first?.coord?.lon.toString()
-                mWeatherViewModel.getCitiesAround(MainData.lat, MainData.long, MainData.units)
+                lat = it.first?.coord?.lat.toString()
+                long = it.first?.coord?.lon.toString()
+                mWeatherViewModel.getCitiesAround(lat, long, degreesUnits)
                 showWeather(it.first!!)
                 checkIfAlreadyInFav()
             } else {
-                getCityByLocation(MainData.lat, MainData.long, MainData.units)
+                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
                     UtilsFunctions.showToast(it1, activity?.applicationContext)
                 }
@@ -121,7 +125,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 it.first?.list?.let { it1 -> setDailyAdapter(it1) }
                 mBinding.dailyWeather = it.first
             } else {
-                getDailyWeatherByLocation(MainData.lat, MainData.long, MainData.units)
+                getDailyWeatherByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
                     UtilsFunctions.showToast(it1, activity?.applicationContext)
                 }
@@ -169,7 +173,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         description == Constants.RAIN || description == Constants.LIGHT_RAIN ||
                 description == Constants.SNOW || description == Constants.LIGHT_SNOW
 
-    private fun isWinter(temp: Double) = if (MainData.units == METRIC) {
+    private fun isWinter(temp: Double) = if (degreesUnits == METRIC) {
         temp <= 10
     } else {
         temp <= 50
@@ -184,22 +188,22 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun getCityByLocation(lat: String, long: String, units: String) {
-        MainData.units = units
+        degreesUnits = units
         mWeatherViewModel.getWeatherByLocation(lat, long, units)
     }
 
     private fun getWeather(cityName: String, units: String) {
-        MainData.units = units
+        degreesUnits = units
         mWeatherViewModel.getWeather(cityName, units)
     }
 
     private fun getDailyWeatherByLocation(lat: String, long: String, units: String) {
-        MainData.units = units
+        degreesUnits = units
         mWeatherViewModel.getDailyWeatherByLocation(lat, long, units)
     }
 
     private fun getDailyWeather(cityName: String, countryCode: String, units: String) {
-        MainData.units = units
+        degreesUnits = units
         mWeatherViewModel.getDailyWeather(cityName, countryCode, units)
     }
 
@@ -258,13 +262,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             if (mCelsius) {
                 start = mBinding.units.text.length - 1
                 end = mBinding.units.text.length
-                MainData.units = IMPERIAL
+                degreesUnits = IMPERIAL
                 mCelsius = false
 
             } else {
                 start = 0
                 end = 1
-                MainData.units = METRIC
+                degreesUnits = METRIC
                 mCelsius = true
             }
 
@@ -277,28 +281,28 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 activity?.applicationContext
             )
             mBinding.units.text
-            getWeather(mCityName, MainData.units)
-            getDailyWeather(mCityName, mCountryCode, MainData.units)
+            getWeather(mCityName, degreesUnits)
+            getDailyWeather(mCityName, mCountryCode, degreesUnits)
         }
 
         mBinding.locationIcon.setOnClickListener {
             val bundle =
                 bundleOf(
-                    Constants.LAT to MainData.lat.toFloat(),
-                    Constants.LONG to MainData.long.toFloat()
+                    Constants.LAT to lat.toFloat(),
+                    Constants.LONG to long.toFloat()
                 )
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
             (activity as MainActivity).changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
         }
 
         mBinding.favoriteImg.setOnClickListener {
-            if (!MainData.addedToFav) {
+            if (!addedToFav) {
                 mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
-                MainData.addedToFav = true
+                addedToFav = true
                 mFavoritesViewModel.addCityDataToDB(mFavWeather!!)
             } else {
                 mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
-                MainData.addedToFav = false
+                addedToFav = false
                 mFavWeather?.name?.let { it1 -> mFavoritesViewModel.removeCityDataFromDB(it1) }
             }
         }
@@ -317,8 +321,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     override fun onResume() {
         super.onResume()
-        if ((activity as MainActivity).mApprovePermissions && !mFromFavorites) {
-            (activity as MainActivity).mApprovePermissions = false
+        if (approvedPermissions && !mFromFavorites) {
+            approvedPermissions = false
             getWeatherData()
         }
     }
