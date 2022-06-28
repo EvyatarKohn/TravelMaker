@@ -1,6 +1,5 @@
 package com.evya.myweatherapp.ui.fragments
 
-import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +7,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.MainData.lat
+import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsFragmentLayoutBinding
 import com.evya.myweatherapp.ui.MainActivity
@@ -49,7 +49,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             mGoogleMap = googleMap
             val markerOptions = MarkerOptions()
 
-            val myLocation = LatLng(MainData.lat.toDouble(), MainData.long.toDouble())
+            val myLocation = LatLng(lat.toDouble(), long.toDouble())
             markerOptions.position(myLocation)
             mGoogleMap.addMarker(markerOptions)
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
@@ -59,8 +59,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             }
             mGoogleMap.setOnMapClickListener { latLng ->
                 mGoogleMap.clear()
-                MainData.lat = latLng.latitude.toString()
-                MainData.long = latLng.longitude.toString()
+                lat = latLng.latitude.toString()
+                long = latLng.longitude.toString()
                 mGoogleMap.addMarker(
                     MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
                 )
@@ -91,18 +91,29 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 // TODO: Get info about the selected place.
                 Log.i("GoogleMapsFragment", "Place: ${place.name}, ${place.id}")
                 mGoogleMap.clear()
-                val location = place.name
-                val geocoder = Geocoder(activity?.applicationContext)
-                val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
-                if (list.size > 0) {
-                    val address = list[0]
-                    MainData.lat = address.latitude.toString()
-                    MainData.long = address.longitude.toString()
-                    val latLang = LatLng(address.latitude, address.longitude)
-                    mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
-                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchInGoogleMap)
+                place.name?.let { placeName ->
+                    activity?.applicationContext?.let {
+                        Geocoder(it)
+                    }?.getFromLocationName(
+                        placeName, 1
+                    ) { list ->
+                        if (list.size > 0) {
+                            val address = list[0]
+                            lat = address.latitude.toString()
+                            long = address.longitude.toString()
+                            val latLang = LatLng(address.latitude, address.longitude)
+                            mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                            mGoogleMap.animateCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    latLang,
+                                    18f
+                                )
+                            )
+                            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchInGoogleMap)
+                        }
+                    }
                 }
+
             }
 
             override fun onError(status: Status) {

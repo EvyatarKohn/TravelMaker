@@ -69,6 +69,7 @@
     <string name="get_cultural_btn">Cultural</string>
     <string name="get_night_life_btn">Night Life</string>
     <string name="attraction_radius">attraction radius</string>
+    <string name="radius">Radius (in KM)</string>
 
     <!-- Google maps Attraction Fragment Strings  -->
     <string name="more_details">Long press on marker for more details</string>
@@ -76,14 +77,12 @@
     <!-- No attraction dialog  -->
     <string name="There_is_no_attraction_in_your_area">There is no\n%1$s\nin your area</string>
 
-
     <!-- Bottom navigation strings  -->
     <string name="bottom_navigation_weather">Weather</string>
     <string name="bottom_navigation_maps">Maps</string>
     <string name="bottom_navigation_attractions">Attractions</string>
     <string name="bottom_navigation_favorites">Favorites</string>
     <string name="bottom_navigation_info">Info</string>
-
 
     <!-- General strings -->
     <string name="general_error">There been some error, please try again</string>

@@ -8,7 +8,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.MainData.lat
+import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.model.placesmodel.Places
@@ -42,8 +43,8 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
         mapView.getMapAsync { googleMap ->
             mGoogleMap = googleMap
             mMyLatLong = LatLng(
-                MainData.lat.toDouble(),
-                MainData.long.toDouble()
+                lat.toDouble(),
+                long.toDouble()
             )
             mPlaces = arguments?.getParcelable("places")!!
 

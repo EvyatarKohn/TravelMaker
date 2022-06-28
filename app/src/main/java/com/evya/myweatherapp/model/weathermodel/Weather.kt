@@ -3,8 +3,12 @@ package com.evya.myweatherapp.model.weathermodel
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.evya.myweatherapp.Constants
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.Constants.IMPERIAL
+import com.evya.myweatherapp.Constants.IMPERIAL_DEGREE
+import com.evya.myweatherapp.Constants.KM
+import com.evya.myweatherapp.Constants.METRIC_DEGREE
+import com.evya.myweatherapp.Constants.MILE
+import com.evya.myweatherapp.MainData.degreesUnits
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
@@ -79,7 +83,7 @@ data class Weather(
     }
 
     fun getDegreeUnits(temp: Double): String {
-        return if (MainData.units == Constants.IMPERIAL) {
+        return if (degreesUnits == IMPERIAL) {
             temp.toInt().toString() + " \u2109"
         } else {
             temp.toInt().toString() + " \u2103"
@@ -87,18 +91,18 @@ data class Weather(
     }
 
     fun getWindSpeedDegree(): String {
-        return if (MainData.units == Constants.IMPERIAL) {
-            Constants.IMPERIAL_DEGREE
+        return if (degreesUnits == IMPERIAL) {
+            IMPERIAL_DEGREE
         } else {
-            Constants.METRIC_DEGREE
+            METRIC_DEGREE
         }
     }
 
     fun getVisibilityUnits(visibility: Int): String {
-        return if (MainData.units == Constants.IMPERIAL) {
-            (visibility / 1609).toString() + Constants.MILE
+        return if (degreesUnits == IMPERIAL) {
+            (visibility / 1609).toString() + MILE
         } else {
-            (visibility / 1000).toString() + Constants.KM
+            (visibility / 1000).toString() + KM
         }
     }
 

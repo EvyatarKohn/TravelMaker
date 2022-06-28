@@ -10,7 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.Constants
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.MainData.attractionRadius
+import com.evya.myweatherapp.MainData.lat
+import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
@@ -67,7 +69,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                MainData.attractionRadius = (parent?.getItemAtPosition(position) as Int * 1000 ).toString()
+                attractionRadius = (parent?.getItemAtPosition(position) as Int * 1000 ).toString()
             }
 
         }
@@ -169,6 +171,6 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         mBinding.mainLayout.visibility = View.GONE
         mBinding.lottie.visibility = View.VISIBLE
         mBinding.autoCompleteTextview.visibility = View.GONE
-        mPlacesViewModel.getWhatToDo(MainData.lat, MainData.long, kind, error)
+        mPlacesViewModel.getWhatToDo(lat, long, kind, error)
     }
 }

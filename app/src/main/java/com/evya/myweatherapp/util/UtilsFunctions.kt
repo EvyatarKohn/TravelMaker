@@ -9,7 +9,6 @@ import android.text.style.ForegroundColorSpan
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import org.w3c.dom.Text
 
 class UtilsFunctions {
 

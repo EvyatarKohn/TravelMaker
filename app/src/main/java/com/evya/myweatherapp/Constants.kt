@@ -13,7 +13,7 @@ object Constants {
     const val MM = " mm"
     const val INCH = " inch"
     const val MILE = " mile"
-    const val FROM_ADAPTER = "fromTopAdapter"
+    const val FROM_TOP_ADAPTER = "fromTopAdapter"
     const val CITY_NAME = "cityName"
     const val FROM_FAVORITES = "fromFavorites"
     const val LAT = "lat"
@@ -22,8 +22,9 @@ object Constants {
     const val LIGHT_RAIN = "light rain"
     const val SNOW = "snow"
     const val LIGHT_SNOW = "light snow"
+    const val DEFAULT_ATTRACTION_RADIUS = "1000"
 
-    enum class Pollution(var pollution: String) {
+    enum class AirQuality(var airQuality: String) {
         GOOD("Good"),
         FAIR("Fair"),
         MODERATE("Moderate"),

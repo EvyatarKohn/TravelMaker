@@ -6,7 +6,9 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
-import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.Constants.FROM_FAVORITES
+import com.evya.myweatherapp.Constants.LAT
+import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoritesItemLayoutBinding
 import com.evya.myweatherapp.model.weathermodel.Weather
@@ -56,9 +58,9 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
 
         itemView.setOnClickListener {
             val bundle = bundleOf(
-                Constants.LAT to lat.toFloat(),
-                Constants.LONG to long.toFloat(),
-                Constants.FROM_FAVORITES to true
+                LAT to lat.toFloat(),
+                LONG to long.toFloat(),
+                FROM_FAVORITES to true
             )
             navController.navigate(R.id.action_favoritesFragment_to_cityFragment, bundle)
             FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromFavorites.toString() + mCityName?.text.toString())

@@ -1,8 +1,10 @@
 package com.evya.myweatherapp.model.dailyweathermodel
 
 
-import com.evya.myweatherapp.Constants
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.Constants.INCH
+import com.evya.myweatherapp.Constants.METRIC
+import com.evya.myweatherapp.Constants.MM
+import com.evya.myweatherapp.MainData.degreesUnits
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -38,10 +40,10 @@ data class DailyWeather(
             text = "Snow last\n3h:\n"
         }
 
-        return if (MainData.units == Constants.METRIC) {
-            text + rainHeight + Constants.MM
+        return if (degreesUnits == METRIC) {
+            text + rainHeight + MM
         } else {
-            text + (String.format("%.2f", rainHeight.toDouble() * 0.04)) + Constants.INCH
+            text + (String.format("%.2f", rainHeight.toDouble() * 0.04)) + INCH
         }
     }
 }
