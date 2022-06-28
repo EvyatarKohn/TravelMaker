@@ -107,9 +107,10 @@ class MainActivity : AppCompatActivity() {
             navigateToRelevantScreen(id)
         } else {
             // For release -> ca-app-pub-9058418744370338~6033831169
+            // For debug -> ca-app-pub-3940256099942544/1033173712
             InterstitialAd.load(
                 this,
-                "ca-app-pub-3940256099942544/1033173712",
+                "ca-app-pub-9058418744370338~6033831169",
                 mAdRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
