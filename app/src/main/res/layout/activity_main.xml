@@ -70,7 +70,7 @@
         android:visibility="gone"
         ads:adUnitId="ca-app-pub-9058418744370338~6033831169"/>
 -->
-    
+
     <com.ismaeldivita.chipnavigation.ChipNavigationBar
         android:id="@+id/bottom_navigation_bar"
         android:layout_width="match_parent"

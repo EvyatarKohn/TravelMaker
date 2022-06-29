@@ -148,6 +148,8 @@ class MainActivity : AppCompatActivity() {
                 override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                     // Called when ad fails to show.
                     Log.e(TAG, "Ad failed to show fullscreen content.")
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.FailedToLoadAd)
+                    navigateToRelevantScreen(id)
                     mInterstitialAd = null
                 }
 

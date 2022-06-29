@@ -51,6 +51,7 @@ class FireBaseEvents {
         NatureAttraction,
         ShowAd,
         CloseAd,
-        ClickOnAd
+        ClickOnAd,
+        FailedToLoadAd
     }
 }
