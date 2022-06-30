@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
+import com.evya.myweatherapp.BuildConfig
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.InfoDialogLayoutBinding
 
@@ -28,18 +29,23 @@ class InfoDialog : DialogFragment() {
         mBinding = InfoDialogLayoutBinding.inflate(LayoutInflater.from(context))
 
         val italicSpan = SpannableString(mBinding?.privacyPolicyUrl?.text)
-        mBinding?.privacyPolicyUrl?.text?.length?.let {
-            italicSpan.setSpan(UnderlineSpan(), 0,
-                it, 0)
-        }
-        mBinding?.privacyPolicyUrl?.text = italicSpan
 
-        mBinding?.privacyPolicyUrl?.setOnClickListener {
-            val privacyPolicyIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(resources.getString(R.string.privacy_policy_url))
-            )
-            startActivity(privacyPolicyIntent)
+        mBinding?.apply {
+            version.text = context?.getString(R.string.app_version, BuildConfig.VERSION_NAME)
+            privacyPolicyUrl.text?.length?.let {
+                italicSpan.setSpan(
+                    UnderlineSpan(), 0,
+                    it, 0
+                )
+            }
+            privacyPolicyUrl.text = italicSpan
+            privacyPolicyUrl.setOnClickListener {
+                val privacyPolicyIntent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(resources.getString(R.string.privacy_policy_url))
+                )
+                startActivity(privacyPolicyIntent)
+            }
         }
 
         return AlertDialog.Builder(requireActivity()).setView(mBinding?.root).create()

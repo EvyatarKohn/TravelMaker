@@ -1,7 +1,6 @@
 package com.evya.myweatherapp.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,22 +10,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.Constants
-import com.evya.myweatherapp.Constants.GOOGLE_ADS_DEBUG
 import com.evya.myweatherapp.MainData.attractionRadius
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
+import com.evya.myweatherapp.util.AdsUtils.Companion.handleAds
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,13 +36,11 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     private lateinit var mNavController: NavController
     private lateinit var mBinding: ChooseAttractionFragmentLayoutBinding
     private lateinit var mName: String
-    private var mInterstitialAd: InterstitialAd? = null
-    private lateinit var mAdRequest: AdRequest
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = ChooseAttractionFragmentLayoutBinding.bind(view)
-        mAdRequest = AdRequest.Builder().build()
 
         mNavController = Navigation.findNavController(view)
         setOnClickListener()
@@ -90,7 +81,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
                     position: Int,
                     id: Long
                 ) {
-                    handleAds()
+                    handleAds(activity!!, TAG)
                     attractionRadius =
                         (parent?.getItemAtPosition(position) as Int * 1000).toString()
                 }
@@ -192,66 +183,12 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     }
 
     private fun whatToDo(kind: String, error: Int) {
+        handleAds(activity!!, TAG)
         mBinding.mainLayout.visibility = View.GONE
         mBinding.lottie.visibility = View.VISIBLE
         mBinding.autoCompleteTextview.visibility = View.GONE
         mPlacesViewModel.getWhatToDo(lat, long, kind, error)
     }
 
-    private fun handleAds() {
-        InterstitialAd.load(
-            requireContext(),
-            GOOGLE_ADS_DEBUG,
-            mAdRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d(TAG, adError.toString())
-                    mInterstitialAd = null
-                }
 
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    Log.d(TAG, "Ad was loaded.")
-                    mInterstitialAd = interstitialAd
-                }
-            })
-
-        if (mInterstitialAd != null) {
-            activity?.let { mInterstitialAd?.show(it) }
-        } else {
-            Log.d(TAG, "The interstitial ad wasn't ready yet.")
-        }
-
-        mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdClicked() {
-                // Called when a click is recorded for an ad.
-                Log.d(TAG, "Ad was clicked.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ClickOnAd)
-            }
-
-            override fun onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                Log.d(TAG, "Ad dismissed fullscreen content.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.CloseAd)
-                mInterstitialAd = null
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                // Called when ad fails to show.
-                Log.e(TAG, "Ad failed to show fullscreen content.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.FailedToLoadAd)
-                mInterstitialAd = null
-            }
-
-            override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Log.d(TAG, "Ad recorded an impression.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowAd)
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Log.d(TAG, "Ad showed fullscreen content.")
-            }
-        }
-    }
 }

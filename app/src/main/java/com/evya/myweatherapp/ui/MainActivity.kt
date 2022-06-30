@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import com.evya.myweatherapp.Constants.GOOGLE_ADS_DEBUG
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
 import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
 import com.evya.myweatherapp.Constants.THREE_SEC
@@ -31,11 +30,12 @@ import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
+import com.evya.myweatherapp.util.AdsUtils.Companion.getAdRequest
+import com.evya.myweatherapp.util.AdsUtils.Companion.handleAds
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -74,8 +74,7 @@ class MainActivity : AppCompatActivity() {
         FireBaseEvents.init(this)
         MobileAds.initialize(this) {}
 
-        mAdRequest = AdRequest.Builder().build()
-        mBinding.adView.loadAd(mAdRequest)
+        mBinding.adView.loadAd(getAdRequest())
 
         handleOnBackPressed()
 
@@ -100,67 +99,8 @@ class MainActivity : AppCompatActivity() {
         }, THREE_SEC)
 
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
-            handleFlow(id)
-        }
-    }
-
-    private fun handleFlow(id: Int) {
-        InterstitialAd.load(
-            this,
-            GOOGLE_ADS_DEBUG,
-            mAdRequest,
-            object : InterstitialAdLoadCallback() {
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    Log.d(TAG, adError.toString())
-                    mInterstitialAd = null
-                }
-
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    Log.d(TAG, "Ad was loaded.")
-                    mInterstitialAd = interstitialAd
-                }
-            })
-
-        if (mInterstitialAd != null) {
-            mInterstitialAd?.show(this)
-        } else {
-            Log.d(TAG, "The interstitial ad wasn't ready yet.")
+            handleAds(this, TAG)
             navigateToRelevantScreen(id)
-        }
-
-        mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-            override fun onAdClicked() {
-                // Called when a click is recorded for an ad.
-                Log.d(TAG, "Ad was clicked.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ClickOnAd)
-            }
-
-            override fun onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                Log.d(TAG, "Ad dismissed fullscreen content.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.CloseAd)
-                navigateToRelevantScreen(id)
-                mInterstitialAd = null
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                // Called when ad fails to show.
-                Log.e(TAG, "Ad failed to show fullscreen content.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.FailedToLoadAd)
-                navigateToRelevantScreen(id)
-                mInterstitialAd = null
-            }
-
-            override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                Log.d(TAG, "Ad recorded an impression.")
-                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowAd)
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                Log.d(TAG, "Ad showed fullscreen content.")
-            }
         }
     }
 
