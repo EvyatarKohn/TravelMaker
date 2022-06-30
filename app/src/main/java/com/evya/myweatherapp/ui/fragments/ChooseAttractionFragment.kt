@@ -72,7 +72,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         val radiusAdapter = ArrayAdapter(
             activity?.applicationContext!!,
             android.R.layout.simple_spinner_item,
-            arrayListOf(1 to 10)
+            arrayListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         )
         radiusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         mBinding.radiusSpinner.adapter = radiusAdapter
@@ -200,7 +200,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     private fun handleAds() {
         InterstitialAd.load(
             requireContext(),
-            Constants.GOOGLE_ADS_DEBUG,
+            Constants.GOOGLE_ADS_RELEASE,
             mAdRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
