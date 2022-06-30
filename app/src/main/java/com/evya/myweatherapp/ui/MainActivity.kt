@@ -20,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import com.evya.myweatherapp.Constants.GOOGLE_ADS_RELEASE
+import com.evya.myweatherapp.Constants.GOOGLE_ADS_DEBUG
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
 import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
 import com.evya.myweatherapp.Constants.THREE_SEC
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
     private fun handleFlow(id: Int) {
         InterstitialAd.load(
             this,
-            GOOGLE_ADS_RELEASE,
+            GOOGLE_ADS_DEBUG,
             mAdRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {

@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.Constants.GOOGLE_ADS_DEBUG
 import com.evya.myweatherapp.MainData.attractionRadius
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
@@ -200,7 +201,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     private fun handleAds() {
         InterstitialAd.load(
             requireContext(),
-            Constants.GOOGLE_ADS_RELEASE,
+            GOOGLE_ADS_DEBUG,
             mAdRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
