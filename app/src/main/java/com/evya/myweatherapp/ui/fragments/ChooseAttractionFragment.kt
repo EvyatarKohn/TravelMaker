@@ -1,6 +1,7 @@
 package com.evya.myweatherapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -19,6 +20,12 @@ import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,14 +34,21 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_layout) {
 
+    companion object {
+        private val TAG = ChooseAttractionFragment::class.toString()
+    }
+
     private val mPlacesViewModel: PlacesViewModel by viewModels()
     private lateinit var mNavController: NavController
     private lateinit var mBinding: ChooseAttractionFragmentLayoutBinding
     private lateinit var mName: String
+    private var mInterstitialAd: InterstitialAd? = null
+    private lateinit var mAdRequest: AdRequest
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = ChooseAttractionFragmentLayoutBinding.bind(view)
+        mAdRequest = AdRequest.Builder().build()
 
         mNavController = Navigation.findNavController(view)
         setOnClickListener()
@@ -58,21 +72,29 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         val radiusAdapter = ArrayAdapter(
             activity?.applicationContext!!,
             android.R.layout.simple_spinner_item,
-            arrayListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+            arrayListOf(1 to 10)
         )
         radiusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         mBinding.radiusSpinner.adapter = radiusAdapter
         mBinding.radiusSpinner.prompt = "sasdas"
 
-        mBinding.radiusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+        mBinding.radiusSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                attractionRadius = (parent?.getItemAtPosition(position) as Int * 1000 ).toString()
-            }
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    handleAds()
+                    attractionRadius =
+                        (parent?.getItemAtPosition(position) as Int * 1000).toString()
+                }
 
-        }
+            }
 
         mPlacesViewModel.placesRepo.observe(viewLifecycleOwner) {
             if (it.first != null) {
@@ -111,59 +133,60 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     }
 
     private fun setOnClickListener() {
+        mBinding.apply {
+            getHotelBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_hotels_btn)
+                whatToDo("accomodations", R.string.accommodations_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.HotelAttractions)
+            }
 
-        mBinding.getHotelBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_hotels_btn)
-            whatToDo("accomodations", R.string.accommodations_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.HotelAttractions)
-        }
+            getNightlifeBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_night_life_btn)
+                whatToDo("adult", R.string.adults_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.NightLifeAttractions)
+            }
 
-        mBinding.getNightlifeBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_night_life_btn)
-            whatToDo("adult", R.string.adults_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.NightLifeAttractions)
-        }
+            getTransportBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_transport_btn)
+                whatToDo("transport", R.string.transports_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.TransportAttraction)
+            }
 
-        mBinding.getTransportBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_transport_btn)
-            whatToDo("transport", R.string.transports_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.TransportAttraction)
-        }
+            getBanksBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_banks_btn)
+                whatToDo("banks", R.string.banks_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.BanksAttraction)
+            }
 
-        mBinding.getBanksBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_banks_btn)
-            whatToDo("banks", R.string.banks_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.BanksAttraction)
-        }
+            getFoodBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_food_btn)
+                whatToDo("foods", R.string.food_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.FoodAttraction)
+            }
 
-        mBinding.getFoodBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_food_btn)
-            whatToDo("foods", R.string.food_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.FoodAttraction)
-        }
+            getMuseumsBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_museums_btn)
+                whatToDo("museums", R.string.museum_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MuseumsAttraction)
+            }
 
-        mBinding.getMuseumsBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_museums_btn)
-            whatToDo("museums", R.string.museum_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.MuseumsAttraction)
-        }
+            getHistoryBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_historic_btn)
+                whatToDo("historic", R.string.historic_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.HistoricAttraction)
+            }
 
-        mBinding.getHistoryBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_historic_btn)
-            whatToDo("historic", R.string.historic_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.HistoricAttraction)
-        }
+            getCultureBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_cultural_btn)
+                whatToDo("cultural", R.string.natural_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.CulturalAttraction)
+            }
 
-        mBinding.getCultureBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_cultural_btn)
-            whatToDo("cultural", R.string.natural_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.CulturalAttraction)
-        }
-
-        mBinding.getNatureBtn.setOnClickListener {
-            mName = resources.getString(R.string.get_natural_btn)
-            whatToDo("natural", R.string.natural_request_error)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.NatureAttraction)
+            getNatureBtn.setOnClickListener {
+                mName = resources.getString(R.string.get_natural_btn)
+                whatToDo("natural", R.string.natural_request_error)
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.NatureAttraction)
+            }
         }
     }
 
@@ -172,5 +195,62 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         mBinding.lottie.visibility = View.VISIBLE
         mBinding.autoCompleteTextview.visibility = View.GONE
         mPlacesViewModel.getWhatToDo(lat, long, kind, error)
+    }
+
+    private fun handleAds() {
+        InterstitialAd.load(
+            requireContext(),
+            Constants.GOOGLE_ADS_DEBUG,
+            mAdRequest,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.d(TAG, adError.toString())
+                    mInterstitialAd = null
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    Log.d(TAG, "Ad was loaded.")
+                    mInterstitialAd = interstitialAd
+                }
+            })
+
+        if (mInterstitialAd != null) {
+            activity?.let { mInterstitialAd?.show(it) }
+        } else {
+            Log.d(TAG, "The interstitial ad wasn't ready yet.")
+        }
+
+        mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+            override fun onAdClicked() {
+                // Called when a click is recorded for an ad.
+                Log.d(TAG, "Ad was clicked.")
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ClickOnAd)
+            }
+
+            override fun onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                Log.d(TAG, "Ad dismissed fullscreen content.")
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.CloseAd)
+                mInterstitialAd = null
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                // Called when ad fails to show.
+                Log.e(TAG, "Ad failed to show fullscreen content.")
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.FailedToLoadAd)
+                mInterstitialAd = null
+            }
+
+            override fun onAdImpression() {
+                // Called when an impression is recorded for an ad.
+                Log.d(TAG, "Ad recorded an impression.")
+                FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowAd)
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+                Log.d(TAG, "Ad showed fullscreen content.")
+            }
+        }
     }
 }
