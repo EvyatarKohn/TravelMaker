@@ -280,6 +280,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQUEST_CODE_LOCATION_SETTING -> getLastLocation()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         if (approvedPermissions && !mGpsIsOn) {
