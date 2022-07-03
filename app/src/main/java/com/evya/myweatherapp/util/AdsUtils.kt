@@ -2,7 +2,7 @@ package com.evya.myweatherapp.util
 
 import android.app.Activity
 import android.util.Log
-import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.Constants.GOOGLE_ADS_RELEASE
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -22,7 +22,7 @@ class AdsUtils {
             mAdRequest =  getAdRequest()
             InterstitialAd.load(
                 activity,
-                Constants.GOOGLE_ADS_DEBUG,
+                GOOGLE_ADS_RELEASE,
                 mAdRequest,
                 object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {

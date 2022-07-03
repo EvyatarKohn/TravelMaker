@@ -25,7 +25,7 @@ object Constants {
     const val DEFAULT_ATTRACTION_RADIUS = "1000"
     // For release -> ca-app-pub-9058418744370338~6033831169
     // For debug -> ca-app-pub-3940256099942544/1033173712
-    const val GOOGLE_ADS_RELEASE = "ca-app-pub-9058418744370338/6033831169"
+    const val GOOGLE_ADS_RELEASE = "ca-app-pub-9058418744370338~6033831169"
     const val GOOGLE_ADS_DEBUG = "ca-app-pub-3940256099942544/1033173712"
 
     enum class AirQuality(var airQuality: String) {
