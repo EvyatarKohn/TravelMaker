@@ -16,7 +16,6 @@ import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
-import com.evya.myweatherapp.util.AdsUtils.Companion.handleAds
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
@@ -81,7 +80,6 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
                     position: Int,
                     id: Long
                 ) {
-                    handleAds(activity!!, TAG)
                     attractionRadius =
                         (parent?.getItemAtPosition(position) as Int * 1000).toString()
                 }
@@ -183,7 +181,6 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     }
 
     private fun whatToDo(kind: String, error: Int) {
-        handleAds(activity!!, TAG)
         mBinding.mainLayout.visibility = View.GONE
         mBinding.lottie.visibility = View.VISIBLE
         mBinding.autoCompleteTextview.visibility = View.GONE

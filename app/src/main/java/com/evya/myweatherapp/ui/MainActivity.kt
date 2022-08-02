@@ -30,12 +30,8 @@ import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
-import com.evya.myweatherapp.util.AdsUtils.Companion.getAdRequest
-import com.evya.myweatherapp.util.AdsUtils.Companion.handleAds
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
-import com.google.android.gms.ads.*
-import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -55,8 +51,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mGraph: NavGraph
     private lateinit var mBinding: ActivityMainBinding
     private var mFirsTimeBack = true
-    private var mInterstitialAd: InterstitialAd? = null
-    private lateinit var mAdRequest: AdRequest
 
     companion object {
         private val TAG = MainActivity::class.toString()
@@ -72,9 +66,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(mBinding.root)
 
         FireBaseEvents.init(this)
-        MobileAds.initialize(this) {}
-
-        mBinding.adView.loadAd(getAdRequest())
 
         handleOnBackPressed()
 
@@ -99,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         }, THREE_SEC)
 
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
-            handleAds(this, TAG)
             navigateToRelevantScreen(id)
         }
     }
@@ -170,7 +160,6 @@ class MainActivity : AppCompatActivity() {
         if (mGpsIsOn && mThreeSec) {
             mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
-            mBinding.adView.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
             startDestination(R.id.cityFragment)
 

@@ -1,5 +1,6 @@
 package com.evya.myweatherapp.ui.fragments
 
+import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -86,34 +87,26 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
 
         // Set up a PlaceSelectionListener to handle the response.
+        // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 // TODO: Get info about the selected place.
                 Log.i("GoogleMapsFragment", "Place: ${place.name}, ${place.id}")
                 mGoogleMap.clear()
-                place.name?.let { placeName ->
-                    activity?.applicationContext?.let {
-                        Geocoder(it)
-                    }?.getFromLocationName(
-                        placeName, 1
-                    ) { list ->
-                        if (list.size > 0) {
-                            val address = list[0]
-                            lat = address.latitude.toString()
-                            long = address.longitude.toString()
-                            val latLang = LatLng(address.latitude, address.longitude)
-                            mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                            mGoogleMap.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    latLang,
-                                    18f
-                                )
-                            )
-                            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchInGoogleMap)
-                        }
-                    }
+                val location = place.name
+                val geocoder = Geocoder(activity?.applicationContext)
+                val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
+                if (list.size > 0) {
+                    val address = list[0]
+                    lat = address.latitude.toString()
+                    long = address.longitude.toString()
+                    lat = address.latitude.toString()
+                    long = address.longitude.toString()
+                    val latLang = LatLng(address.latitude, address.longitude)
+                    mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchInGoogleMap)
                 }
-
             }
 
             override fun onError(status: Status) {
