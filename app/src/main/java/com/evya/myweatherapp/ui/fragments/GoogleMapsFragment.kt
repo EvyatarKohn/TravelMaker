@@ -94,8 +94,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 Log.i("GoogleMapsFragment", "Place: ${place.name}, ${place.id}")
                 mGoogleMap.clear()
                 val location = place.name
-                val geocoder = Geocoder(activity?.applicationContext)
-                val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
+                val geocoder = activity?.applicationContext?.let { Geocoder(it) }
+                val list = geocoder?.getFromLocationName(location, 1) as ArrayList<Address>
                 if (list.size > 0) {
                     val address = list[0]
                     lat = address.latitude.toString()
