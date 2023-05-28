@@ -18,6 +18,7 @@ import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
@@ -116,7 +117,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
                 }
             } else {
                 it.second?.let { it1 ->
-                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                    showToast(context?.resources?.getString(it1), activity?.applicationContext)
                 }
             }
         }

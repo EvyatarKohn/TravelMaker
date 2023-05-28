@@ -14,7 +14,7 @@ import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsFragmentLayoutBinding
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.util.FireBaseEvents
-import com.evya.myweatherapp.util.UtilsFunctions
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -110,7 +110,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             }
 
             override fun onError(status: Status) {
-                UtilsFunctions.showToast(R.string.google_search_error, activity?.applicationContext)
+                showToast(context?.resources?.getString(R.string.google_search_error), activity?.applicationContext)
             }
         })
 

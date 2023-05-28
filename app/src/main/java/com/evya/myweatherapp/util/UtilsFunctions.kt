@@ -13,10 +13,10 @@ import androidx.core.content.ContextCompat
 class UtilsFunctions {
 
     companion object {
-        fun showToast(error: Int, context: Context?) {
+        fun showToast(error: String?, context: Context?) {
             Toast.makeText(
                 context,
-                context?.resources?.getString(error),
+                error,
                 Toast.LENGTH_LONG
             ).show()
         }

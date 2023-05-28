@@ -12,7 +12,7 @@ import com.evya.myweatherapp.databinding.FavoriteFragmentLayoutBinding
 import com.evya.myweatherapp.ui.adapters.FavoritesAdapter
 import com.evya.myweatherapp.ui.dialogs.DeleteFavoritesDialog
 import com.evya.myweatherapp.util.FireBaseEvents
-import com.evya.myweatherapp.util.UtilsFunctions
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,7 +33,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
 
         mFavoritesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner) { weatherList ->
             if (weatherList.isNullOrEmpty()) {
-                UtilsFunctions.showToast(R.string.no_saved_favorites, activity?.applicationContext)
+                showToast(context?.getString(R.string.no_saved_favorites), activity?.applicationContext)
             } else {
                 mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.name }, mNavController, this)
                 val layoutManager =

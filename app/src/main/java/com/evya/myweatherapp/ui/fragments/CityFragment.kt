@@ -26,7 +26,9 @@ import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.util.FireBaseEvents
-import com.evya.myweatherapp.util.UtilsFunctions
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import com.evya.myweatherapp.viewmodels.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,7 +61,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mNavController = Navigation.findNavController(view)
         onClickListener()
-        UtilsFunctions.setColorSpan(
+        setColorSpan(
             0,
             1,
             R.color.turquoise,
@@ -115,7 +117,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             } else {
                 getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
-                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                    showToast(context?.getString(it1, mCityName), activity?.applicationContext)
                 }
             }
         }
@@ -127,7 +129,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             } else {
                 getDailyWeatherByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
-                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                    showToast(context?.resources?.getString(it1, mCityName), activity?.applicationContext)
                 }
             }
         }
@@ -139,7 +141,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 }?.let { citiesAroundDataList -> setTopAdapter(citiesAroundDataList) }
             } else {
                 it.second?.let { it1 ->
-                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                    showToast(context?.resources?.getString(it1), activity?.applicationContext)
                 }
             }
         }
@@ -149,24 +151,24 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mBinding.pollution = it.first
             } else {
                 it.second?.let { it1 ->
-                    UtilsFunctions.showToast(it1, activity?.applicationContext)
+                    showToast(context?.resources?.getString(it1), activity?.applicationContext)
                 }
             }
         }
     }
 
     private fun setBoldSpan() {
-        UtilsFunctions.setSpanBold(0, 8, mBinding.humidity, activity?.applicationContext)
-        UtilsFunctions.setSpanBold(0, 11, mBinding.windSpeed, activity?.applicationContext)
-        UtilsFunctions.setSpanBold(0, 7, mBinding.sunrise, activity?.applicationContext)
-        UtilsFunctions.setSpanBold(0, 6, mBinding.sunset, activity?.applicationContext)
-        UtilsFunctions.setSpanBold(0, 7, mBinding.description, activity?.applicationContext)
-        UtilsFunctions.setSpanBold(0, 10, mBinding.visibility, activity?.applicationContext)
-        UtilsFunctions.setSpanBold(
+        setSpanBold(0, 8, mBinding.humidity, activity?.applicationContext)
+        setSpanBold(0, 11, mBinding.windSpeed, activity?.applicationContext)
+        setSpanBold(0, 7, mBinding.sunrise, activity?.applicationContext)
+        setSpanBold(0, 6, mBinding.sunset, activity?.applicationContext)
+        setSpanBold(0, 7, mBinding.description, activity?.applicationContext)
+        setSpanBold(0, 10, mBinding.visibility, activity?.applicationContext)
+        setSpanBold(
             0, 26, mBinding.probabilityOfPrecipitation, activity?.applicationContext
         )
-        UtilsFunctions.setSpanBold(0, 13, mBinding.rain3h, activity?.applicationContext)
-        UtilsFunctions.setSpanBold(0, 14, mBinding.airPollution, activity?.applicationContext)
+        setSpanBold(0, 13, mBinding.rain3h, activity?.applicationContext)
+        setSpanBold(0, 14, mBinding.airPollution, activity?.applicationContext)
     }
 
     private fun isRaining(description: String) =
@@ -272,7 +274,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mCelsius = true
             }
 
-            UtilsFunctions.setColorSpan(
+            setColorSpan(
                 start,
                 end,
                 R.color.turquoise,

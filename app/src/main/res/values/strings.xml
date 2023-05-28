@@ -39,8 +39,8 @@
     <string name="approve_permissions">Give permissions</string>
 
     <!-- Custom cities list dialog texts  -->
-    <string name="city_not_found_error">City not found, your location city will be shown</string>
-    <string name="daily_weather_error">Can\'t get Daily weather, your location daily weather will be shown</string>
+    <string name="city_not_found_error">Data for %1$s not found, your current location will be shown</string>
+    <string name="daily_weather_error">Can\'t get the weather for %1$s, your current location weather will be shown</string>
     <string name="cities_around_error">Can\'t find cities around you</string>
 
     <!-- Google maps strings -->
