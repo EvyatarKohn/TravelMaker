@@ -77,8 +77,6 @@ class MainActivity : AppCompatActivity() {
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
         MobileAds.setRequestConfiguration(configuration)*/
 
-        handleBannerAd()
-
         handleOnBackPressed()
 
         mGpsIsOn = isLocationEnabled()
@@ -174,7 +172,7 @@ class MainActivity : AppCompatActivity() {
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
             startDestination(R.id.cityFragment)
-
+            handleBannerAd()
         }
     }
 
