@@ -32,12 +32,17 @@ import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
+import java.util.Arrays
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -66,6 +71,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(mBinding.root)
 
         FireBaseEvents.init(this)
+        MobileAds.initialize(this) {}
+
+       /* val testDeviceIds = Arrays.asList("ca-app-pub-3940256099942544/6300978111\n")
+        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+        MobileAds.setRequestConfiguration(configuration)*/
+
+        handleBannerAd()
 
         handleOnBackPressed()
 
@@ -294,6 +306,50 @@ class MainActivity : AppCompatActivity() {
         mGraph.startDestination = id
         mNavHostFragment.navController.graph = mGraph
         mNavHostFragment.navController.navigate(id)
+    }
+
+    private fun handleBannerAd() {
+
+       /* val testDeviceIds = listOf("33BE2250B43518CCDA7DE426D04EE231")
+        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+        MobileAds.setRequestConfiguration(configuration)
+*/
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder().setTestDeviceIds(listOf("ABCDEF012345")).build()
+        )
+
+        val adRequest = AdRequest.Builder().build()
+
+        mBinding.adView.loadAd(adRequest)
+
+        mBinding.adView.adListener = object: AdListener() {
+            override fun onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            override fun onAdClosed() {
+                // Code to be executed when the user is about to return
+                // to the app after tapping on an ad.
+            }
+
+            override fun onAdFailedToLoad(adError : LoadAdError) {
+                // Code to be executed when an ad request fails.
+            }
+
+            override fun onAdImpression() {
+                // Code to be executed when an impression is recorded
+                // for an ad.
+            }
+
+            override fun onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+            }
+
+            override fun onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+            }
+        }
     }
 
 

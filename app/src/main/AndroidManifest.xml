@@ -36,6 +36,10 @@
             android:value="${MAPS_API_KEY}" />
         -->
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9058418744370338~6033831169"/>
+
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
