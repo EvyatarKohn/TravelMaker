@@ -33,7 +33,7 @@ class DeleteFavoritesDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        mBinding = DeleteFavoritesDilaogLayoutBinding.inflate(LayoutInflater.from(context))
+        mBinding = DeleteFavoritesDilaogLayoutBinding.inflate(layoutInflater)
 
         if (mDeleteAllFavorites) {
             mBinding?.title?.text = resources.getString(R.string.are_you_sure_you_want_to_delete_all)
