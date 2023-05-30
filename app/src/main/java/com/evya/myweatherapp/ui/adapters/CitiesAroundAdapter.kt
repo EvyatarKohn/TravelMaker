@@ -61,9 +61,9 @@ class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
             navController.navigate(R.id.action_cityFragment_self, bundle)
 
             val params = bundleOf(
-                PARAMS_CITY_NAME.toString() to mCityName?.text.toString()
+                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
             )
-            FireBaseEvents.sendFireBaseCustomEvents(ChooseCityFromTopAdapter, params)
+            FireBaseEvents.sendFireBaseCustomEvents(CHOOSE_CITY_FROM_TOP_ADAPTER.eventName, params)
         }
     }
 }

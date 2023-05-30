@@ -20,7 +20,7 @@ import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ChangeTempUnits
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CHANGE_TEMP_UNITS
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_TEMPERATURE_UNITS
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
@@ -261,9 +261,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private fun onClickListener() {
         mBinding.units.setOnClickListener {
             val params = bundleOf(
-                PARAMS_TEMPERATURE_UNITS.toString() to if (!mCelsius) "Celsius" else "Fahrenheit"
+                PARAMS_TEMPERATURE_UNITS.paramsName to if (!mCelsius) "Celsius" else "Fahrenheit"
             )
-            FireBaseEvents.sendFireBaseCustomEvents(ChangeTempUnits, params)
+            FireBaseEvents.sendFireBaseCustomEvents(CHANGE_TEMP_UNITS.eventName, params)
             val start: Int
             val end: Int
             if (mCelsius) {

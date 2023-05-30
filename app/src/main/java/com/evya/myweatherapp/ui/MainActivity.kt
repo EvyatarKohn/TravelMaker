@@ -106,45 +106,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToRelevantScreen(id: Int) {
-        var firebaseEvent = MoveToWeather
+        var firebaseEvent = NAVIGATE_TO_WEATHER
         var navigateTo = "weather"
 
         when (id) {
             R.id.weather -> {
                 approvedPermissions = true
                 changeNavBarIndex(R.id.cityFragment, R.id.weather)
-                firebaseEvent = MoveToWeather
+                firebaseEvent = NAVIGATE_TO_WEATHER
                 navigateTo = "weather"
             }
             R.id.map -> {
                 changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
-                firebaseEvent = MoveToGoogleMap
+                firebaseEvent = NAVIGATE_TO_GOOGLE_MAP
                 navigateTo = "map"
             }
             R.id.attractions -> {
                 changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
-                firebaseEvent = MoveToAttractions
+                firebaseEvent = NAVIGATE_TO_ATTRACTIONS
                 navigateTo = "attractions"
             }
 
             R.id.favorites -> {
                 changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
-                firebaseEvent = MoveToFavorites
+                firebaseEvent = NAVIGATE_TO_FAVORITES
                 navigateTo = "favorites"
             }
 
             R.id.info -> {
                 InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
-                firebaseEvent = ShowInfo
+                firebaseEvent = NAVIGATE_TO_SHOW_INFO
                 navigateTo = "info"
             }
             else -> {
             }
         }
         val params = bundleOf(
-            PARAMS_NAVIGATE_TO.toString() to navigateTo
+            PARAMS_NAVIGATE_TO.paramsName to navigateTo
         )
-        FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent, params)
+        FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent.eventName, params)
     }
 
 
@@ -333,6 +333,10 @@ class MainActivity : AppCompatActivity() {
         mBinding.adView.adListener = object: AdListener() {
             override fun onAdClicked() {
                 // Code to be executed when the user clicks on an ad.
+                val params = bundleOf(
+
+                )
+                FireBaseEvents.sendFireBaseCustomEvents(CLICK_ON_AD.eventName, params)
             }
 
             override fun onAdClosed() {

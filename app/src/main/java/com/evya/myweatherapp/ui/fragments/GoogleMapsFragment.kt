@@ -110,9 +110,9 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
                     val params = bundleOf(
-                        PARAMS_CITY_NAME.toString() to address
+                        PARAMS_CITY_NAME.paramsName to address
                     )
-                    FireBaseEvents.sendFireBaseCustomEvents(SearchInGoogleMap, params)
+                    FireBaseEvents.sendFireBaseCustomEvents(SEARCH_IN_GOOGLE_MAP.eventName, params)
                 }
             }
 
@@ -123,9 +123,9 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
         mBinding.showWeatherBtn.setOnClickListener {
             val params = bundleOf(
-                PARAMS_CITY_NAME.toString() to address
+                PARAMS_CITY_NAME.paramsName to address
             )
-            FireBaseEvents.sendFireBaseCustomEvents(ShowWeather, params)
+            FireBaseEvents.sendFireBaseCustomEvents(SHOW_WEATHER.eventName, params)
             mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment)
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
         }

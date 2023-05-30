@@ -74,9 +74,9 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
 
     fun deleteAllCitiesFromDB() {
         val params = bundleOf(
-            PARAMS_CITY_NAME.toString() to mCityName
+            PARAMS_CITY_NAME.paramsName to mCityName
         )
-        FireBaseEvents.sendFireBaseCustomEvents(DeleteAllCitiesFromFavorites, params)
+        FireBaseEvents.sendFireBaseCustomEvents(DELETE_ALL_CITIES_FROM_FAVORITES.eventName, params)
         mFavoritesViewModel.deleteAllFavoritesFromDB()
     }
 }

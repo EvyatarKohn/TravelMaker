@@ -12,11 +12,11 @@ class FireBaseEvents {
     companion object {
         private var firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
 
-        fun sendFireBaseCustomEvents(event: FireBaseEventsNamesStrings, params: Bundle) {
+        fun sendFireBaseCustomEvents(event: String, params: Bundle) {
             params.putString(PARAMS_APP_VERSION.paramsName, BuildConfig.VERSION_NAME)
             params.putInt(PARAMS_APP_BUILD_NUMBER.paramsName, BuildConfig.VERSION_CODE)
 
-            firebaseAnalytics.logEvent(event.toString(), params)
+            firebaseAnalytics.logEvent(event, params)
         }
     }
 }

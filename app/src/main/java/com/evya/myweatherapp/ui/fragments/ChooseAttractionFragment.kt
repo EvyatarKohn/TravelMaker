@@ -59,9 +59,9 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
                 R.string.general_error
             )
             val params = bundleOf(
-                PARAMS_WHAT_TO_DO.toString() to mBinding.autoCompleteTextview.text
+                PARAMS_WHAT_TO_DO.paramsName to mBinding.autoCompleteTextview.text
             )
-            FireBaseEvents.sendFireBaseCustomEvents(SearchAttractions, params)
+            FireBaseEvents.sendFireBaseCustomEvents(SEARCH_ATTRACTIONS.eventName, params)
         }
 
 
@@ -178,9 +178,9 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
 
     private fun whatToDo(kind: String, error: Int) {
         val params = bundleOf(
-            PARAMS_WHAT_TO_DO.toString() to mName
+            PARAMS_WHAT_TO_DO.paramsName to mName
         )
-        FireBaseEvents.sendFireBaseCustomEvents(WhatToDo, params)
+        FireBaseEvents.sendFireBaseCustomEvents(WHAT_TO_DO.eventName, params)
         mBinding.mainLayout.visibility = View.GONE
         mBinding.lottie.visibility = View.VISIBLE
         mBinding.autoCompleteTextview.visibility = View.GONE
