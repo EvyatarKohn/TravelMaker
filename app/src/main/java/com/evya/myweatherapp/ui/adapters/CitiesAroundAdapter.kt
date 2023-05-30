@@ -1,9 +1,11 @@
 package com.evya.myweatherapp.ui.adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
@@ -28,7 +30,7 @@ class CitiesAroundAdapter(
     }
 
     override fun onBindViewHolder(holder: MainCitiesViewHolder, position: Int) {
-        holder.bind(context, citiesList[position].name, navController)
+        holder.bind(context, citiesList[position].name, position, navController)
     }
 
     override fun getItemCount() = citiesList.size
@@ -42,15 +44,20 @@ class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
         mCityName = itemBinding.name
     }
 
-    fun bind(context: Context?, cityName: String, navController: NavController) {
+    fun bind(context: Context?, cityName: String, position: Int, navController: NavController) {
         mCityName?.text = cityName.trim()
 
-        itemView.setOnClickListener {
+        if (0 == position) {
             val typeFace = context?.let { ResourcesCompat.getFont(it, R.font.product_sans_bold) }
             mCityName?.typeface = typeFace
+            val colorBlue = context?.let { ContextCompat.getColor(it, R.color.blue) }
+            colorBlue?.let { mCityName?.setTextColor(it) }
+        }
+
+        itemView.setOnClickListener {
             val bundle = bundleOf(CITY_NAME to mCityName?.text.toString(), FROM_TOP_ADAPTER to true)
             navController.navigate(R.id.action_cityFragment_self, bundle)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromTopAdapter.toString() + mCityName?.text.toString())
+            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromTopAdapter.toString() + ": " + mCityName?.text.toString())
         }
     }
 }
