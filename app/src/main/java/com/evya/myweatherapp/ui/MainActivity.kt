@@ -70,7 +70,6 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        FireBaseEvents.init(this)
         MobileAds.initialize(this) {}
 
        /* val testDeviceIds = Arrays.asList("ca-app-pub-3940256099942544/6300978111\n")
