@@ -11,9 +11,12 @@ import com.evya.myweatherapp.Constants.LAT
 import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoritesItemLayoutBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ChooseCityFromFavorites
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.DeleteCityFromFavorites
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.fragments.FavoritesFragment
-import com.evya.myweatherapp.util.FireBaseEvents
 
 class FavoritesAdapter(
     private val weather: List<Weather>,
@@ -63,12 +66,18 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
                 FROM_FAVORITES to true
             )
             navController.navigate(R.id.action_favoritesFragment_to_cityFragment, bundle)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromFavorites.toString() + mCityName?.text.toString())
+            val params = bundleOf(
+                PARAMS_CITY_NAME.toString() to mCityName?.text.toString()
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(ChooseCityFromFavorites, params)
         }
 
         itemView.setOnLongClickListener {
             favoritesFragment.deleteSpecificCityFromDBPopUp(cityName)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.DeleteCityFromFavorites.toString() + mCityName?.text.toString())
+            val params = bundleOf(
+                PARAMS_CITY_NAME.toString() to mCityName?.text.toString()
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(DeleteCityFromFavorites, params)
             true
         }
     }

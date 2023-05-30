@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
@@ -28,9 +29,11 @@ import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ActivityMainBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
-import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -42,7 +45,6 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.util.Arrays
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -104,36 +106,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToRelevantScreen(id: Int) {
-        var firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
+        var firebaseEvent = MoveToWeather
+        var navigateTo = "weather"
 
         when (id) {
             R.id.weather -> {
                 approvedPermissions = true
                 changeNavBarIndex(R.id.cityFragment, R.id.weather)
-                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToWeather
+                firebaseEvent = MoveToWeather
+                navigateTo = "weather"
             }
             R.id.map -> {
                 changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
-                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToGoogleMap
+                firebaseEvent = MoveToGoogleMap
+                navigateTo = "map"
             }
             R.id.attractions -> {
                 changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
-                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToAttractions
+                firebaseEvent = MoveToAttractions
+                navigateTo = "attractions"
             }
 
             R.id.favorites -> {
                 changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
-                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.MoveToFavorites
+                firebaseEvent = MoveToFavorites
+                navigateTo = "favorites"
             }
 
             R.id.info -> {
                 InfoDialog.newInstance().show(supportFragmentManager, "INFO_DIALOG")
-                firebaseEvent = FireBaseEvents.FirebaseEventsStrings.ShowInfo
+                firebaseEvent = ShowInfo
+                navigateTo = "info"
             }
             else -> {
             }
         }
-        FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent)
+        val params = bundleOf(
+            PARAMS_NAVIGATE_TO.toString() to navigateTo
+        )
+        FireBaseEvents.sendFireBaseCustomEvents(firebaseEvent, params)
     }
 
 

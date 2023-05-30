@@ -1,7 +1,6 @@
 package com.evya.myweatherapp.ui.adapters
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -14,8 +13,11 @@ import com.evya.myweatherapp.Constants.CITY_NAME
 import com.evya.myweatherapp.Constants.FROM_TOP_ADAPTER
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.MainCitiesItemLayoutBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
-import com.evya.myweatherapp.util.FireBaseEvents
+
 
 class CitiesAroundAdapter(
     private val context: Context?,
@@ -57,7 +59,11 @@ class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
         itemView.setOnClickListener {
             val bundle = bundleOf(CITY_NAME to mCityName?.text.toString(), FROM_TOP_ADAPTER to true)
             navController.navigate(R.id.action_cityFragment_self, bundle)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromTopAdapter.toString() + ": " + mCityName?.text.toString())
+
+            val params = bundleOf(
+                PARAMS_CITY_NAME.toString() to mCityName?.text.toString()
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(ChooseCityFromTopAdapter, params)
         }
     }
 }

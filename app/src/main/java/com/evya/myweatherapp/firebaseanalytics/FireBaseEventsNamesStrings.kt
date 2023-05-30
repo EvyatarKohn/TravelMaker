@@ -1,0 +1,31 @@
+package com.evya.myweatherapp.firebaseanalytics
+
+enum class FireBaseEventsNamesStrings {
+    ChooseCityFromTopAdapter,
+    ChooseCityFromFavorites,
+    DeleteCityFromFavorites,
+    DeleteAllCitiesFromFavorites,
+    MoveToWeather,
+    ChangeTempUnits,
+    MoveToGoogleMap,
+    SearchInGoogleMap,
+    ShowWeather,
+    MoveToAttractions,
+    MoveToFavorites,
+    ShowInfo,
+    SearchAttractions,
+    WhatToDo,
+    HotelAttractions,
+    NightLifeAttractions,
+    TransportAttraction,
+    BanksAttraction,
+    FoodAttraction,
+    MuseumsAttraction,
+    HistoricAttraction,
+    CulturalAttraction,
+    NatureAttraction,
+    ShowAd,
+    CloseAd,
+    ClickOnAd,
+    FailedToLoadAd
+}

@@ -13,6 +13,7 @@ import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.model.placesmodel.Places
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -71,6 +72,7 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
             }
 
             mGoogleMap.setOnMapLongClickListener {
+//                FireBaseEvents.sendFireBaseCustomEvents()
                 val googleSearchIntent = Intent(Intent.ACTION_WEB_SEARCH)
                 googleSearchIntent.putExtra(SearchManager.QUERY, mMarkerTitle)
                 googleSearchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

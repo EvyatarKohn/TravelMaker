@@ -14,18 +14,20 @@ import com.evya.myweatherapp.Constants.IMPERIAL
 import com.evya.myweatherapp.Constants.METRIC
 import com.evya.myweatherapp.MainData.addedToFav
 import com.evya.myweatherapp.MainData.approvedPermissions
+import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
-import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ChangeTempUnits
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_TEMPERATURE_UNITS
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
-import com.evya.myweatherapp.util.FireBaseEvents
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
@@ -258,7 +260,10 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun onClickListener() {
         mBinding.units.setOnClickListener {
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChangeTempUnits)
+            val params = bundleOf(
+                PARAMS_TEMPERATURE_UNITS.toString() to if (!mCelsius) "Celsius" else "Fahrenheit"
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(ChangeTempUnits, params)
             val start: Int
             val end: Int
             if (mCelsius) {
