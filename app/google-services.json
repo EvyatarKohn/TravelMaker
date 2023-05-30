@@ -1,38 +1,76 @@
 {
   "project_info": {
-    "project_number": "334638354430",
-    "project_id": "travel-maker-cf64a",
-    "storage_bucket": "travel-maker-cf64a.appspot.com"
+    "project_number": "368735409643",
+    "project_id": "travel-maker-331608",
+    "storage_bucket": "travel-maker-331608.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:334638354430:android:95bcc949db2f5ecc5bbaaf",
+        "mobilesdk_app_id": "1:368735409643:android:27d0249041d54691e735ae",
         "android_client_info": {
-          "package_name": "com.evya.weatherapp"
+          "package_name": "com.evya.myweatherapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "334638354430-haipoae444ut7i4kklkr1i434i362chs.apps.googleusercontent.com",
+          "client_id": "368735409643-ds0q6kermfqmvpffl55hko9pis5ghvd5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.evya.myweatherapp",
+            "certificate_hash": "38fe0c97b7d64d69ad4621a90ad2e4e0caffb6ac"
+          }
+        },
+        {
+          "client_id": "368735409643-qu7id66m8psu27497f59uj2etiolb060.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyASXl4xbM2SxXyubBl2AJm-YGAGO9HagBk"
+          "current_key": "AIzaSyA5y3u8-G0ggIawgL-YdoFfiqwvKcFZCTU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "334638354430-haipoae444ut7i4kklkr1i434i362chs.apps.googleusercontent.com",
+              "client_id": "368735409643-qu7id66m8psu27497f59uj2etiolb060.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:368735409643:android:24918eb100c3dc11e735ae",
+        "android_client_info": {
+          "package_name": "com.evya.weatherapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "368735409643-qu7id66m8psu27497f59uj2etiolb060.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5y3u8-G0ggIawgL-YdoFfiqwvKcFZCTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "368735409643-qu7id66m8psu27497f59uj2etiolb060.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-9058418744370338~6033831169"
     }
   ],
   "configuration_version": "1"
