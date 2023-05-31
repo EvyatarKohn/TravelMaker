@@ -5,6 +5,7 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.OnClickListener
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -40,7 +41,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     private lateinit var mNavController: NavController
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mBinding: GoogleMapsFragmentLayoutBinding
-    private lateinit var address: Address
+    private lateinit var mAddress: Address
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,16 +102,16 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 val geocoder = activity?.applicationContext?.let { Geocoder(it) }
                 val list = geocoder?.getFromLocationName(location, 1) as ArrayList<Address>
                 if (list.size > 0) {
-                    address = list[0]
-                    lat = address.latitude.toString()
-                    long = address.longitude.toString()
-                    lat = address.latitude.toString()
-                    long = address.longitude.toString()
-                    val latLang = LatLng(address.latitude, address.longitude)
+                    mAddress = list[0]
+                    lat = mAddress.latitude.toString()
+                    long = mAddress.longitude.toString()
+                    lat = mAddress.latitude.toString()
+                    long = mAddress.longitude.toString()
+                    val latLang = LatLng(mAddress.latitude, mAddress.longitude)
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
                     val params = bundleOf(
-                        PARAMS_CITY_NAME.paramsName to address
+                        PARAMS_CITY_NAME.paramsName to mAddress.locality
                     )
                     FireBaseEvents.sendFireBaseCustomEvents(SEARCH_IN_GOOGLE_MAP.eventName, params)
                 }
@@ -122,6 +123,11 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         })
 
         mBinding.showWeatherBtn.setOnClickListener {
+            val address = try {
+                mAddress.locality
+            } catch (e: Exception) {
+                arguments?.getString("currentCity") ?: ""
+            }
             val params = bundleOf(
                 PARAMS_CITY_NAME.paramsName to address
             )

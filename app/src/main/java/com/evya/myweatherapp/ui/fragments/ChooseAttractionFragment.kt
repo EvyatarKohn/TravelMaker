@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.Constants.manipulatedList
 import com.evya.myweatherapp.MainData.attractionRadius
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
@@ -49,7 +49,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         val adapter = ArrayAdapter(
             activity?.applicationContext!!,
             android.R.layout.select_dialog_item,
-            Constants.manipulatedList()
+            manipulatedList()
         )
         mBinding.autoCompleteTextview.threshold = 1
         mBinding.autoCompleteTextview.setAdapter(adapter)

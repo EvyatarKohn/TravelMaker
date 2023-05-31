@@ -9,9 +9,17 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.Constants.CITY_NAME
+import com.evya.myweatherapp.Constants.FROM_FAVORITES
+import com.evya.myweatherapp.Constants.FROM_TOP_ADAPTER
 import com.evya.myweatherapp.Constants.IMPERIAL
+import com.evya.myweatherapp.Constants.LAT
+import com.evya.myweatherapp.Constants.LIGHT_RAIN
+import com.evya.myweatherapp.Constants.LIGHT_SNOW
+import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.Constants.METRIC
+import com.evya.myweatherapp.Constants.RAIN
+import com.evya.myweatherapp.Constants.SNOW
 import com.evya.myweatherapp.MainData.addedToFav
 import com.evya.myweatherapp.MainData.approvedPermissions
 import com.evya.myweatherapp.MainData.degreesUnits
@@ -72,17 +80,17 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             activity?.applicationContext
         )
 
-        if (arguments?.getBoolean(Constants.FROM_TOP_ADAPTER) == true) {
-            mCityName = arguments?.getString(Constants.CITY_NAME).toString()
+        if (arguments?.getBoolean(FROM_TOP_ADAPTER) == true) {
+            mCityName = arguments?.getString(CITY_NAME).toString()
             getWeather(mCityName, degreesUnits)
             getDailyWeather(mCityName, mCountryCode, degreesUnits)
         }
 
-        if (arguments?.getBoolean(Constants.FROM_FAVORITES) == true) {
+        if (arguments?.getBoolean(FROM_FAVORITES) == true) {
             mFromFavorites = true
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
-            lat = arguments?.getString(Constants.LAT).toString()
-            long = arguments?.getString(Constants.LONG).toString()
+            lat = arguments?.getString(LAT).toString()
+            long = arguments?.getString(LONG).toString()
             getCityByLocation(lat, long, degreesUnits)
             getDailyWeatherByLocation(lat, long, degreesUnits)
         }
@@ -174,8 +182,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun isRaining(description: String) =
-        description == Constants.RAIN || description == Constants.LIGHT_RAIN ||
-                description == Constants.SNOW || description == Constants.LIGHT_SNOW
+        description == RAIN || description == LIGHT_RAIN || description == SNOW || description == LIGHT_SNOW
 
     private fun isWinter(temp: Double) = if (degreesUnits == METRIC) {
         temp <= 10
@@ -295,8 +302,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mBinding.locationIcon.setOnClickListener {
             val bundle =
                 bundleOf(
-                    Constants.LAT to lat.toFloat(),
-                    Constants.LONG to long.toFloat()
+                    LAT to lat.toFloat(),
+                    LONG to long.toFloat(),
+                    "currentCity" to mCityName
                 )
             mNavController.navigate(R.id.action_cityFragment_to_googleMapsFragment, bundle)
             (activity as MainActivity).changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
