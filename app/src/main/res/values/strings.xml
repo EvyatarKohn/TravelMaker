@@ -78,7 +78,7 @@
     <string name="more_details">Long press on marker for more details</string>
 
     <!-- No attraction dialog  -->
-    <string name="There_is_no_attraction_in_your_area">There is no\n%1$s\nin your area</string>
+    <string name="There_is_no_attraction_in_your_area">There is no\n%1$s attractions\nin your area</string>
 
     <!-- Bottom navigation strings  -->
     <string name="bottom_navigation_weather">Weather</string>
