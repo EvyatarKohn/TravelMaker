@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mGraph: NavGraph
     private lateinit var mBinding: ActivityMainBinding
     private var mFirsTimeBack = true
+    val adRequest = AdRequest.Builder().build()
 
     companion object {
         private val TAG = MainActivity::class.toString()
@@ -326,40 +327,26 @@ class MainActivity : AppCompatActivity() {
             RequestConfiguration.Builder().setTestDeviceIds(listOf("ABCDEF012345")).build()
         )
 
-        val adRequest = AdRequest.Builder().build()
-
         mBinding.adView.loadAd(adRequest)
 
         mBinding.adView.adListener = object: AdListener() {
             override fun onAdClicked() {
                 // Code to be executed when the user clicks on an ad.
-                val params = bundleOf(
-
-                )
-                FireBaseEvents.sendFireBaseCustomEvents(CLICK_ON_AD.eventName, params)
-            }
-
-            override fun onAdClosed() {
-                // Code to be executed when the user is about to return
-                // to the app after tapping on an ad.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(CLICK_ON_BANNER_AD.eventName, params)
             }
 
             override fun onAdFailedToLoad(adError : LoadAdError) {
                 // Code to be executed when an ad request fails.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(ON_BANNER_AD_FAILED_TO_LOAD.eventName, params)
             }
 
             override fun onAdImpression() {
                 // Code to be executed when an impression is recorded
                 // for an ad.
-            }
-
-            override fun onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-            }
-
-            override fun onAdOpened() {
-                // Code to be executed when an ad opens an overlay that
-                // covers the screen.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(ON_BANNER_AD_IMPRESSION.eventName, params)
             }
         }
     }

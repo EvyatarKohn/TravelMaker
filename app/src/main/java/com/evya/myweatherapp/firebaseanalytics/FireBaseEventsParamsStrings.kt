@@ -6,5 +6,6 @@ enum class FireBaseEventsParamsStrings(val paramsName: String) {
     PARAMS_CITY_NAME("city_name"),
     PARAMS_WHAT_TO_DO("what_to_do"),
     PARAMS_NAVIGATE_TO("navigate_to"),
-    PARAMS_TEMPERATURE_UNITS("temperature_units")
+    PARAMS_TEMPERATURE_UNITS("temperature_units"),
+    PARAMS_FAILED_TO_LOAD_AD("params_failed_to_load_ad"),
 }

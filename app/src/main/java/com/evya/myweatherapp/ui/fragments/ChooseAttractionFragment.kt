@@ -18,9 +18,15 @@ import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
+import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,11 +43,13 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     private lateinit var mNavController: NavController
     private lateinit var mBinding: ChooseAttractionFragmentLayoutBinding
     private lateinit var mName: String
+    private var mInterstitialAd: InterstitialAd? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = ChooseAttractionFragmentLayoutBinding.bind(view)
+        loadInterstitialAd()
 
         mNavController = Navigation.findNavController(view)
         setOnClickListener()
@@ -54,7 +62,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         mBinding.autoCompleteTextview.threshold = 1
         mBinding.autoCompleteTextview.setAdapter(adapter)
         mBinding.autoCompleteTextview.setOnItemClickListener { _, _, _, _ ->
-            whatToDo(
+            handleInterstitialAd(
                 mBinding.autoCompleteTextview.text.toString().replace(" ", "_"),
                 R.string.general_error
             )
@@ -127,56 +135,144 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         }
     }
 
+    private fun loadInterstitialAd() {
+        val adRequest = (activity as MainActivity).adRequest
+
+        context?.let {
+            InterstitialAd.load(it, "ca-app-pub-9058418744370338/1048685069", adRequest, object : InterstitialAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        val params = bundleOf(
+                            PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                        )
+                        FireBaseEvents.sendFireBaseCustomEvents(
+                            ON_INTERSTITIAL_AD_FAILED_TO_LOAD.eventName,
+                            params
+                        )
+                        mInterstitialAd = null
+                    }
+
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        val params = bundleOf()
+                        FireBaseEvents.sendFireBaseCustomEvents(
+                            ON_INTERSTITIAL_AD_LOADED.eventName,
+                            params
+                        )
+                        mInterstitialAd = interstitialAd
+                    }
+                })
+        }
+    }
+
     private fun setOnClickListener() {
         mBinding.apply {
             getHotelBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_hotels_btn)
-                whatToDo("accomodations", R.string.accommodations_request_error)
+                handleInterstitialAd("accomodations", R.string.accommodations_request_error)
             }
 
             getNightlifeBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_night_life_btn)
-                whatToDo("adult", R.string.adults_request_error)
+                handleInterstitialAd("adult", R.string.adults_request_error)
             }
 
             getTransportBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_transport_btn)
-                whatToDo("transport", R.string.transports_request_error)
+                handleInterstitialAd("transport", R.string.transports_request_error)
             }
 
             getBanksBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_banks_btn)
-                whatToDo("banks", R.string.banks_request_error)
+                handleInterstitialAd("banks", R.string.banks_request_error)
             }
 
             getFoodBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_food_btn)
-                whatToDo("foods", R.string.food_request_error)
+                handleInterstitialAd("foods", R.string.food_request_error)
             }
 
             getMuseumsBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_museums_btn)
-                whatToDo("museums", R.string.museum_request_error)
+                handleInterstitialAd("museums", R.string.museum_request_error)
             }
 
             getHistoryBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_historic_btn)
-                whatToDo("historic", R.string.historic_request_error)
+                handleInterstitialAd("historic", R.string.historic_request_error)
             }
 
             getCultureBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_cultural_btn)
-                whatToDo("cultural", R.string.natural_request_error)
+                handleInterstitialAd("cultural", R.string.natural_request_error)
             }
 
             getNatureBtn.setOnClickListener {
                 mName = resources.getString(R.string.get_natural_btn)
-                whatToDo("natural", R.string.natural_request_error)
+                handleInterstitialAd("natural", R.string.natural_request_error)
             }
         }
     }
 
-    private fun whatToDo(kind: String, error: Int) {
+    private fun handleInterstitialAd(kind: String, error: Int) {
+        if (mInterstitialAd != null) {
+            activity?.let { mInterstitialAd?.show(it) }
+        } else {
+            whatToDo(kind, error)
+        }
+        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdClicked() {
+                // Called when a click is recorded for an ad.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    CLICK_ON_INTERSTITIAL_AD.eventName,
+                    params
+                )
+            }
+
+            override fun onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+                mInterstitialAd = null
+                whatToDo(kind, error)
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                // Called when ad fails to show.
+                val params = bundleOf(
+                    PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                )
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+                mInterstitialAd = null
+                whatToDo(kind, error)
+            }
+
+            override fun onAdImpression() {
+                // Called when an impression is recorded for an ad.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_IMPRESSION.eventName,
+                    params
+                )
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+            }
+        }
+    }
+
+    fun whatToDo(kind: String, error: Int) {
         val params = bundleOf(
             PARAMS_WHAT_TO_DO.paramsName to mName
         )
@@ -186,6 +282,4 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         mBinding.autoCompleteTextview.visibility = View.GONE
         mPlacesViewModel.getWhatToDo(lat, long, kind, error)
     }
-
-
 }
