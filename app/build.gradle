@@ -18,8 +18,8 @@ android {
         applicationId "com.evya.weatherapp"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 54
-        versionName "3.1.2"
+        versionCode 55
+        versionName "3.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -34,7 +34,6 @@ android {
 
     buildTypes {
         release {
-            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
