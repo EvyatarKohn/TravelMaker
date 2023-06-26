@@ -52,24 +52,25 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
 
         mBinding.deleteAllFavorites.setOnClickListener {
             activity?.supportFragmentManager?.let {
-                DeleteFavoritesDialog.newInstance(this, true, "").show(
+                DeleteFavoritesDialog.newInstance(this, true, "", -1).show(
                     it, "DELETE_FAVORITES_DIALOG"
                 )
             }
         }
     }
 
-    fun deleteSpecificCityFromDBPopUp(cityName: String) {
+    fun deleteSpecificCityFromDBPopUp(cityName: String, position: Int) {
         mCityName = cityName
         activity?.supportFragmentManager?.let {
-            DeleteFavoritesDialog.newInstance(this, false, cityName).show(
+            DeleteFavoritesDialog.newInstance(this, false, cityName, position).show(
                 it, "DELETE_FAVORITES_DIALOG"
             )
         }
     }
 
-    fun deleteSpecificCityFromDB() {
+    fun deleteSpecificCityFromDB(position: Int) {
         mFavoritesViewModel.removeCityDataFromDB(mCityName)
+        mFavoritesAdapter.notifyItemRemoved(position)
     }
 
     fun deleteAllCitiesFromDB() {
@@ -78,5 +79,6 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
         )
         FireBaseEvents.sendFireBaseCustomEvents(DELETE_ALL_CITIES_FROM_FAVORITES.eventName, params)
         mFavoritesViewModel.deleteAllFavoritesFromDB()
+        mFavoritesAdapter.notifyItemRangeRemoved(0, mFavoritesAdapter.itemCount)
     }
 }

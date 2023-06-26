@@ -3,7 +3,6 @@ package com.evya.myweatherapp.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
@@ -16,17 +15,20 @@ class DeleteFavoritesDialog : DialogFragment() {
     private lateinit var mFavoritesFragment: FavoritesFragment
     private var mDeleteAllFavorites: Boolean = false
     private lateinit var mCityName: String
+    private var mAbsoluteAdapterPosition: Int = -2
 
     companion object {
         fun newInstance(
             favoritesFragment: FavoritesFragment,
             deleteAllFavorites: Boolean,
-            cityName: String
+            cityName: String,
+            absoluteAdapterPosition: Int
         ) =
             DeleteFavoritesDialog().apply {
                 mFavoritesFragment = favoritesFragment
                 mDeleteAllFavorites = deleteAllFavorites
                 mCityName = cityName
+                mAbsoluteAdapterPosition = absoluteAdapterPosition
             }
     }
 
@@ -45,7 +47,7 @@ class DeleteFavoritesDialog : DialogFragment() {
             if (mDeleteAllFavorites) {
                 mFavoritesFragment.deleteAllCitiesFromDB()
             } else {
-                mFavoritesFragment.deleteSpecificCityFromDB()
+                mFavoritesFragment.deleteSpecificCityFromDB(mAbsoluteAdapterPosition)
             }
             dismiss()
         }

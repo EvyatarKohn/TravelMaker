@@ -73,7 +73,7 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
         }
 
         itemView.setOnLongClickListener {
-            favoritesFragment.deleteSpecificCityFromDBPopUp(cityName)
+            favoritesFragment.deleteSpecificCityFromDBPopUp(cityName, absoluteAdapterPosition)
             val params = bundleOf(
                 PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
             )
