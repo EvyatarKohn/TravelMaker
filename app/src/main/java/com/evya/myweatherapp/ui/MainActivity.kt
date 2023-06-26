@@ -337,7 +337,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAdFailedToLoad(adError : LoadAdError) {
                 // Code to be executed when an ad request fails.
-                val params = bundleOf()
+                val params = bundleOf(
+                    PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                )
                 FireBaseEvents.sendFireBaseCustomEvents(ON_BANNER_AD_FAILED_TO_LOAD.eventName, params)
             }
 
@@ -372,7 +374,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
         )
     }
