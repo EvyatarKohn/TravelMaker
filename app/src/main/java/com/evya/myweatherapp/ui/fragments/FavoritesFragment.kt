@@ -12,7 +12,6 @@ import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoriteFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.ui.adapters.FavoritesAdapter
 import com.evya.myweatherapp.ui.dialogs.DeleteFavoritesDialog
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
@@ -74,9 +73,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
     }
 
     fun deleteAllCitiesFromDB() {
-        val params = bundleOf(
-            PARAMS_CITY_NAME.paramsName to mCityName
-        )
+        val params = bundleOf()
         FireBaseEvents.sendFireBaseCustomEvents(DELETE_ALL_CITIES_FROM_FAVORITES.eventName, params)
         mFavoritesViewModel.deleteAllFavoritesFromDB()
         mFavoritesAdapter.notifyItemRangeRemoved(0, mFavoritesAdapter.itemCount)
