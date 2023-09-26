@@ -125,7 +125,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 showWeather(it.first!!)
                 checkIfAlreadyInFav()
             } else {
-                getCityByLocation(lat, long, degreesUnits)
+//                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
                     showToast(context?.getString(it1, mCityName), activity?.applicationContext)
                 }
@@ -137,7 +137,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 it.first?.list?.let { it1 -> setDailyAdapter(it1) }
                 mBinding.dailyWeather = it.first
             } else {
-                getDailyWeatherByLocation(lat, long, degreesUnits)
+//                getDailyWeatherByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
                     showToast(context?.resources?.getString(it1, mCityName), activity?.applicationContext)
                 }
