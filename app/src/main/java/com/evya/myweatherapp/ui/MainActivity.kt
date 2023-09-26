@@ -35,11 +35,15 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.util.UtilsFunctions
+import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -59,6 +63,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mBinding: ActivityMainBinding
     private var mFirsTimeBack = true
     val adRequest = AdRequest.Builder().build()
+    private var mInterstitialAd: InterstitialAd? = null
 
     companion object {
         private val TAG = MainActivity::class.toString()
@@ -74,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(mBinding.root)
 
         MobileAds.initialize(this) {}
+        loadInterstitialAd()
 
        /* val testDeviceIds = Arrays.asList("ca-app-pub-3940256099942544/6300978111\n")
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
@@ -306,7 +312,8 @@ class MainActivity : AppCompatActivity() {
 
     fun changeNavBarIndex(destination: Int, bottomNavId: Int) {
         mFirsTimeBack = true
-        startDestination(destination)
+        loadInterstitialAd()
+        handleInterstitialAd(destination)
         mNavHostFragment.navController.graph = mGraph
         mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
     }
@@ -347,6 +354,95 @@ class MainActivity : AppCompatActivity() {
                 // for an ad.
                 val params = bundleOf()
                 FireBaseEvents.sendFireBaseCustomEvents(ON_BANNER_AD_IMPRESSION.eventName, params)
+            }
+        }
+    }
+
+    private fun loadInterstitialAd() {
+        InterstitialAd.load(
+            this,
+            "ca-app-pub-9058418744370338/1048685069",
+            adRequest,
+            object : InterstitialAdLoadCallback() {
+
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    val params = bundleOf(
+                        PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                    )
+                    FireBaseEvents.sendFireBaseCustomEvents(
+                        ON_INTERSTITIAL_AD_FAILED_TO_LOAD.eventName,
+                        params
+                    )
+                    mInterstitialAd = null
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    val params = bundleOf()
+                    FireBaseEvents.sendFireBaseCustomEvents(
+                        ON_INTERSTITIAL_AD_LOADED.eventName,
+                        params
+                    )
+                    mInterstitialAd = interstitialAd
+                }
+            })
+    }
+
+    private fun handleInterstitialAd(destination: Int) {
+        if (mInterstitialAd != null) {
+            mInterstitialAd?.show(this)
+        } else {
+            startDestination(destination)
+        }
+        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdClicked() {
+                // Called when a click is recorded for an ad.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    CLICK_ON_INTERSTITIAL_AD.eventName,
+                    params
+                )
+            }
+
+            override fun onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+                mInterstitialAd = null
+                startDestination(destination)
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                // Called when ad fails to show.
+                val params = bundleOf(
+                    PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                )
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+                mInterstitialAd = null
+                startDestination(destination)
+            }
+
+            override fun onAdImpression() {
+                // Called when an impression is recorded for an ad.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_IMPRESSION.eventName,
+                    params
+                )
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
             }
         }
     }
