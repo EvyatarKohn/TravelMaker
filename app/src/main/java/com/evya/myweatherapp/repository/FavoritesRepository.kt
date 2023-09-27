@@ -10,10 +10,12 @@ class FavoritesRepository @Inject constructor(private val favoritesDao: Favorite
 
     val fetchAllCitiesFromDB = favoritesDao.fetchAllCities()
 
-    fun checkIfAlreadyAddedToDB(cityName: String) = favoritesDao.checkIfAlreadyAdded(cityName)
+    fun checkIfAlreadyAddedToDB(cityName: String?) =
+        favoritesDao.checkIfAlreadyAdded(cityName ?: "")
 
-    suspend fun removeCityDataFromDB(cityName: String) =
-        favoritesDao.deleteSpecificFavorite(cityName)
+    suspend fun removeCityDataFromDB(cityName: String?) =
+        favoritesDao.deleteSpecificFavorite(cityName ?: "")
+
 
     suspend fun deleteAllFavorites() = favoritesDao.deleteAllFavorites()
 }

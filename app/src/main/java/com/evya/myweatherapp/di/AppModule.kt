@@ -3,6 +3,8 @@ package com.evya.myweatherapp.di
 import android.app.Application
 import com.evya.myweatherapp.db.FavoritesDB
 import com.evya.myweatherapp.db.FavoritesDao
+import com.evya.myweatherapp.network.GeocodeApi
+import com.evya.myweatherapp.network.NewWeatherApi
 import com.evya.myweatherapp.network.TripApi
 import com.evya.myweatherapp.network.WeatherApi
 import com.google.gson.Gson
@@ -35,6 +37,25 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(WeatherApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideNewWeatherRetrofit(gson: Gson): NewWeatherApi =
+        Retrofit.Builder()
+            .baseUrl("https://api.openweathermap.org/data/3.0/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(NewWeatherApi::class.java)
+
+
+    @Singleton
+    @Provides
+    fun provideGeoCodeRetrofit(gson: Gson): GeocodeApi =
+        Retrofit.Builder()
+            .baseUrl("https://api.openweathermap.org/geo/1.0/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(GeocodeApi::class.java)
 
     @Singleton
     @Provides

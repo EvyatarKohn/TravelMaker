@@ -18,8 +18,8 @@ android {
         applicationId "com.evya.weatherapp"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 55
-        versionName "3.2.0"
+        versionCode 59
+        versionName "3.2.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -77,10 +77,10 @@ dependencies {
     // Google Maps
     api 'com.google.android.gms:play-services-maps:18.1.0'
     api 'com.google.maps:google-maps-services:2.2.0'
-    api 'com.google.maps.android:android-maps-utils:3.4.0'
+    api 'com.google.maps.android:android-maps-utils:3.5.3'
     api 'com.google.android.gms:play-services-places:17.0.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation 'com.google.android.libraries.places:places:3.1.0'
+    implementation 'com.google.android.libraries.places:places:3.2.0'
 
     // Hilt dependencies
     implementation 'com.google.dagger:hilt-android:2.46.1'

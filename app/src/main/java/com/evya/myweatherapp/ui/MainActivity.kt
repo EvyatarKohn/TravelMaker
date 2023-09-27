@@ -32,8 +32,10 @@ import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
+import com.evya.myweatherapp.model.weathermodel.Alerts
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
+import com.evya.myweatherapp.ui.fragments.AlertsFragment
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
@@ -195,12 +197,11 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     private fun getNewLocation() {
-        mLocationRequest = LocationRequest.create().apply {
-            priority = Priority.PRIORITY_HIGH_ACCURACY
-            interval = 0
-            fastestInterval = 0
-            numUpdates = 2
-        }
+        mLocationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0).apply {
+            setMinUpdateIntervalMillis(5000)
+            setMinUpdateIntervalMillis(2)
+
+        }.build()
         mFusedLocationProviderClient.requestLocationUpdates(
             mLocationRequest,
             locationCallback,
@@ -259,11 +260,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun turnGPSOn() {
-        val locationRequest = LocationRequest.create().apply {
-            priority = Priority.PRIORITY_HIGH_ACCURACY
-            interval = 30000
-            fastestInterval = 5000
-        }
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 30000).apply {
+            setMinUpdateIntervalMillis(5000)
+
+        }.build()
+
 
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
@@ -345,7 +346,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAdFailedToLoad(adError : LoadAdError) {
                 // Code to be executed when an ad request fails.
-                val params = bundleOf()
+                val params = bundleOf(
+                    PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                )
                 FireBaseEvents.sendFireBaseCustomEvents(ON_BANNER_AD_FAILED_TO_LOAD.eventName, params)
             }
 
@@ -469,8 +472,14 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
         )
+    }
+
+    fun openAlertFragment(alertsList: List<Alerts>) {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.container, AlertsFragment.newInstance(alertsList), "ALERTS_FRAGMENT")
+            .addToBackStack("ALERTS_FRAGMENT")
+            .commit()
     }
 }

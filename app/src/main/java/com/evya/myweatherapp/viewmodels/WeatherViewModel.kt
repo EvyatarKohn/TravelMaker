@@ -53,7 +53,7 @@ class WeatherViewModel @Inject constructor(
     fun getWeatherByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
         repository.getCityByLocation(lat, long, units).let { response ->
             if (response.isSuccessful) {
-                if (response.body()?.name.isNullOrEmpty() || response.body()?.sys?.country.isNullOrEmpty()) {
+                if (response.body()?.timezone?.substringAfter("/").isNullOrEmpty() || response.body()?.timezone?.substringBefore("/").isNullOrEmpty()) {
                     mWeatherLiveData.postValue(
                         Pair(null, R.string.city_not_found_error)
                     )

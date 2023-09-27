@@ -38,7 +38,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
             if (weatherList.isNullOrEmpty()) {
                 showToast(context?.getString(R.string.no_saved_favorites), activity?.applicationContext)
             } else {
-                mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.name }, mNavController, this)
+                mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.timezone.substringAfter("/") }, mNavController, this)
                 val layoutManager =
                     LinearLayoutManager(
                         activity?.applicationContext,
@@ -52,24 +52,25 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
 
         mBinding.deleteAllFavorites.setOnClickListener {
             activity?.supportFragmentManager?.let {
-                DeleteFavoritesDialog.newInstance(this, true, "").show(
+                DeleteFavoritesDialog.newInstance(this, true, "", -1).show(
                     it, "DELETE_FAVORITES_DIALOG"
                 )
             }
         }
     }
 
-    fun deleteSpecificCityFromDBPopUp(cityName: String) {
+    fun deleteSpecificCityFromDBPopUp(cityName: String, position: Int) {
         mCityName = cityName
         activity?.supportFragmentManager?.let {
-            DeleteFavoritesDialog.newInstance(this, false, cityName).show(
+            DeleteFavoritesDialog.newInstance(this, false, cityName, position).show(
                 it, "DELETE_FAVORITES_DIALOG"
             )
         }
     }
 
-    fun deleteSpecificCityFromDB() {
+    fun deleteSpecificCityFromDB(position: Int) {
         mFavoritesViewModel.removeCityDataFromDB(mCityName)
+        mFavoritesAdapter.notifyItemRemoved(position)
     }
 
     fun deleteAllCitiesFromDB() {

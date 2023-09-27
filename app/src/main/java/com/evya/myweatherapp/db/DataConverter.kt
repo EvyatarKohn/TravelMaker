@@ -1,96 +1,161 @@
 package com.evya.myweatherapp.db
 
 import androidx.room.TypeConverter
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.evya.myweatherapp.model.weathermodel.*
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import java.lang.reflect.Type
-import java.util.*
 
 class DataConverter {
     var gson = Gson()
 
     @TypeConverter
-    fun stringToClouds(data: String?): Clouds {
+    fun stringToAlerts(data: String?): List<Alerts>? {
         if (data == null) {
-            return Clouds(0)
+            return listOf(Alerts("", 0, "", "", 0, emptyList()))
         }
-        val listType: Type = object : TypeToken<Clouds>() {}.type
+        val listType: Type = object : TypeToken<List<Alerts>?>() {}.type
         return gson.fromJson(data, listType)
     }
 
     @TypeConverter
-    fun cloudsToString(someObjects: Clouds): String? {
+    fun alertsToString(someObjects: List<Alerts>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToCoord(data: String?): Coord {
+    fun stringToCurrent(data: String?): Current {
         if (data == null) {
-            return Coord(0.0, 0.0)
+            return Current(0, 0.0, 0, 0.0, 0, 0, 0, 0, 0.0, 0.0, 0, emptyList(), 0, 0.0, 0.0)
         }
-        val listType: Type = object : TypeToken<Coord>() {}.type
+        val listType: Type = object : TypeToken<Current>() {}.type
         return gson.fromJson(data, listType)
     }
 
     @TypeConverter
-    fun coordToString(someObjects: Coord): String? {
+    fun currentToString(someObjects: Current): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToMain(data: String?): Main {
+    fun stringToDaily(data: String?): List<Daily>? {
         if (data == null) {
-            return Main(0.0, 0, 0, 0.0, 0.0, 0.0)
+            return listOf(
+                Daily(
+                    0,
+                    0.0,
+                    0,
+                    FeelsLike(0.0, 0.0, 0.0, 0.0),
+                    0,
+                    0.0,
+                    0,
+                    0,
+                    0.0,
+                    0,
+                    0.0,
+                    "",
+                    0,
+                    0,
+                    Temp(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+                    0.0,
+                    listOf(WeatherX("", "", 0, "")),
+                    0,
+                    0.0,
+                    0.0
+                )
+            )
         }
-        val listType: Type = object : TypeToken<Main>() {}.type
+        val listType: Type = object : TypeToken<List<Daily>?>() {}.type
         return gson.fromJson(data, listType)
     }
 
     @TypeConverter
-    fun mainString(someObjects: Main): String? {
+    fun dailyToString(someObjects: List<Daily>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToSys(data: String?): Sys {
+    fun stringToHourly(data: String?): List<Hourly>? {
         if (data == null) {
-            return Sys("", 0, 0, 0, 0)
+            return listOf(
+                Hourly(
+                    0,
+                    0.0,
+                    0,
+                    0.0,
+                    0,
+                    0.0,
+                    0,
+                    0.0,
+                    0.0,
+                    0,
+                    listOf(WeatherX("", "", 0, "")),
+                    0,
+                    0.0,
+                    0.0
+                )
+            )
         }
-        val listType: Type = object : TypeToken<Sys>() {}.type
+        val listType: Type = object : TypeToken<List<Hourly>?>() {}.type
         return gson.fromJson(data, listType)
     }
 
     @TypeConverter
-    fun sysString(someObjects: Sys): String? {
+    fun hourlyString(someObjects: List<Hourly>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToWeatherX(data: String?): List<WeatherX> {
+    fun stringToMinutely(data: String?): List<Minutely>? {
         if (data == null) {
-            return Collections.emptyList()
+            return listOf(Minutely(0, 0.0))
         }
-        val listType: Type = object : TypeToken<List<WeatherX>>() {}.type
+        val listType: Type = object : TypeToken<List<Minutely>?>() {}.type
         return gson.fromJson(data, listType)
     }
 
     @TypeConverter
-    fun weatherXString(someObjects: List<WeatherX>): String? {
+    fun minutelyString(someObjects: List<Minutely>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToWind(data: String?): Wind {
+    fun stringToFeelsLike(data: String?): FeelsLike {
         if (data == null) {
-            return Wind(0, 0.0)
+            return FeelsLike(0.0, 0.0, 0.0, 0.0)
         }
-        val listType: Type = object : TypeToken<Wind>() {}.type
+        val listType: Type = object : TypeToken<FeelsLike>() {}.type
         return gson.fromJson(data, listType)
     }
 
     @TypeConverter
-    fun windString(someObjects: Wind): String? {
+    fun feelsLikeString(someObjects: FeelsLike): String? {
         return gson.toJson(someObjects)
+    }
+    @TypeConverter
+    fun stringToTemp(data: String?): Temp {
+        if (data == null) {
+            return Temp(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        }
+        val listType: Type = object : TypeToken<Temp>() {}.type
+        return gson.fromJson(data, listType)
+    }
+
+    @TypeConverter
+    fun tempsLikeString(someObjects: Temp): String? {
+        return gson.toJson(someObjects)
+    }
+}
+
+val MIGRATION_FORM_1_TO_2 = object : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+//        database.execSQL("ALTER TABLE favorites ADD COLUMN timezone")
+        database.execSQL("DROP TABLE IF EXISTS `favorites_temp`")
+        database.execSQL("CREATE TABLE IF NOT EXISTS `favorites_temp`(`alerts` TEXT NOT NULL, `current` TEXT NOT NULL, `daily` TEXT NOT NULL, `hourly` TEXT NOT NULL, `lat` DOUBLE NOT NULL, `lon` DOUBLE NOT NULL, `minutely` TEXT NOT NULL, `timezone` TEXT NOT NULL, `timezone_offset` INTEGER NOT NULL)")
+        database.execSQL("INSERT INTO favorites_temp(alerts, current, daily, hourly, lat, lon, minutely, timezone, timezone_offset)")
+        database.execSQL("DROP TABLE `favorites`")
+        database.execSQL("ALTER TABLE favorites_temp RENAME TO favorites")
     }
 }

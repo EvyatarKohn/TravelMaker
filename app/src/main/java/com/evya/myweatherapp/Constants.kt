@@ -23,6 +23,9 @@ object Constants {
     const val SNOW = "snow"
     const val LIGHT_SNOW = "light snow"
     const val DEFAULT_ATTRACTION_RADIUS = "1000"
+    const val WEATHER_REPOSITORY_API = "b2baa3886c9bf495a13704d6ce1523a5"
+    const val WEATHER_REPOSITORY_API2 = "df128db76f752a3e23d8a0735cde83e6"
+    const val PLACES_REPOSITORY_API = "5ae2e3f221c38a28845f05b64bacfee3164cdfa9999c5226a8a0508f"
 
     enum class AirQuality(var airQuality: String) {
         GOOD("Good"),

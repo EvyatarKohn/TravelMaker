@@ -10,12 +10,12 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.DailyWeatherItemBinding
-import com.evya.myweatherapp.model.dailyweathermodel.DailyWeatherData
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import com.evya.myweatherapp.model.weathermodel.Daily
+import java.time.Instant
+import java.time.ZoneId
 
 class DailyWeatherAdapter(
-    private var dailyWeatherList: List<DailyWeatherData>,
+    private var dailyWeatherList: List<Daily>,
     private var minTempArray: List<Int>,
     private var maxTempArray: List<Int>,
     private var context: Context?
@@ -51,14 +51,8 @@ class DailyWeatherAdapter(
         }
 
         holder.bind(
-            LocalDate.parse(
-                dailyWeatherList[position].dtTxt.substring(0, 10),
-                DateTimeFormatter.ISO_DATE
-            ).dayOfMonth.toString(),
-            LocalDate.parse(
-                dailyWeatherList[position].dtTxt.substring(0, 10),
-                DateTimeFormatter.ISO_DATE
-            ).monthValue.toString(),
+            Instant.ofEpochMilli(dailyWeatherList[position].dt * 1000L).atZone(ZoneId.systemDefault()).dayOfMonth.toString(),
+            Instant.ofEpochMilli(dailyWeatherList[position].dt * 1000L).atZone(ZoneId.systemDefault()).monthValue.toString(),
             weatherImage,
             minTempArray[position],
             maxTempArray[position].toString(),

@@ -31,9 +31,9 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         holder.bind(
-            weather[position].name,
-            weather[position].coord.lat,
-            weather[position].coord.lon,
+            weather[position].cityName,
+            weather[position].lat,
+            weather[position].lon,
             navController,
             favoritesFragment
         )
@@ -73,7 +73,7 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
         }
 
         itemView.setOnLongClickListener {
-            favoritesFragment.deleteSpecificCityFromDBPopUp(cityName)
+            favoritesFragment.deleteSpecificCityFromDBPopUp(cityName, absoluteAdapterPosition)
             val params = bundleOf(
                 PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
             )

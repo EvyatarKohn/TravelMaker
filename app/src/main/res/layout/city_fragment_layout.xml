@@ -67,9 +67,11 @@
                             android:contentDescription="@string/main_image_view_desc"
                             android:src="@drawable/ic_summer"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.0" />
 
                         <ImageView
                             android:id="@+id/favorite_img"
@@ -80,6 +82,17 @@
                             android:src="@drawable/ic_empty_heart"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
+
+                       <!-- <ImageView
+                            android:id="@+id/alert_sign_img"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="35dp"
+                            android:src="@drawable/ic_alert_sign"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/favorite_img" />
+-->
 
                         <ImageView
                             android:id="@+id/main_image_rain"
@@ -114,7 +127,7 @@
                             android:layout_marginLeft="25dp"
                             android:layout_marginTop="25dp"
                             android:fontFamily="@font/product_sans_bold"
-                            android:text="@{weather.name}"
+                            android:text="@{weather.getCityName()}"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             app:layout_constraintLeft_toLeftOf="parent"
@@ -127,7 +140,7 @@
                             android:layout_marginLeft="25dp"
                             android:layout_marginTop="5dp"
                             android:fontFamily="@font/product_sans_regular"
-                            android:text="@{String.valueOf(weather.changeDoubleToInt(weather.main.temp))}"
+                            android:text="@{String.valueOf(weather.changeDoubleToInt(weather.current.temp))}"
                             android:textColor="@color/black"
                             android:textSize="50sp"
                             app:layout_constraintLeft_toLeftOf="parent"
@@ -152,12 +165,25 @@
                             android:layout_marginLeft="25dp"
                             android:layout_marginTop="5dp"
                             android:fontFamily="@font/product_sans_regular"
-                            android:text='@{"Feels like :" + weather.getDegreeUnits(weather.main.feelsLike)}'
+                            android:text='@{"Feels like :" + weather.getDegreeUnits(weather.current.feelsLike)}'
                             android:textColor="@color/black"
                             android:textSize="14sp"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/temp" />
 
+
+                        <TextView
+                            android:id="@+id/daily_expectation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="25dp"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/feels_like" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -210,7 +236,7 @@
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/product_sans_regular"
                                     android:gravity="left"
-                                    android:text='@{"Sunrise:\n" + String.valueOf(weather.setTimeToHour(weather.sys.sunrise))}'
+                                    android:text='@{"Sunrise:\n" + String.valueOf(weather.setTimeToHour(weather.current.sunrise))}'
                                     android:textColor="@color/black"
                                     android:textSize="14sp" />
 
@@ -222,7 +248,7 @@
                                     android:gravity="left"
                                     android:paddingLeft="25dp"
                                     android:paddingRight="25dp"
-                                    android:text='@{"Sunset:\n" + String.valueOf(weather.setTimeToHour(weather.sys.sunset))}'
+                                    android:text='@{"Sunset:\n" + String.valueOf(weather.setTimeToHour(weather.current.sunset))}'
                                     android:textColor="@color/black"
                                     android:textSize="14sp" />
 
@@ -232,7 +258,7 @@
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/product_sans_regular"
                                     android:gravity="left"
-                                    android:text='@{"Humidity:\n" + String.valueOf(weather.main.humidity)+ "%"}'
+                                    android:text='@{"Humidity:\n" + String.valueOf(weather.current.humidity)+ "%"}'
                                     android:textColor="@color/black"
                                     android:textSize="14sp" />
 
@@ -251,7 +277,7 @@
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/product_sans_regular"
                                     android:gravity="left"
-                                    android:text='@{"Wind\nspeed:\n" + String.valueOf(weather.wind.speed) + weather.getWindSpeedDegree}'
+                                    android:text='@{"Wind\nspeed:\n" + String.valueOf(weather.current.windSpeed) + weather.getWindSpeedDegree}'
                                     android:textColor="@color/black"
                                     android:textSize="14sp" />
 
@@ -263,7 +289,7 @@
                                     android:gravity="left"
                                     android:paddingLeft="25dp"
                                     android:paddingRight="25dp"
-                                    android:text='@{"Weather:\n" + String.valueOf(weather.weather[0].description)}'
+                                    android:text='@{"Weather:\n" + String.valueOf(weather.current.weather[0].description)}'
                                     android:textColor="@color/black"
                                     android:textSize="14sp" />
 
@@ -273,7 +299,7 @@
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/product_sans_regular"
                                     android:gravity="left"
-                                    android:text='@{"Visibility:\n" + weather.getVisibilityUnits(weather.visibility)}'
+                                    android:text='@{"Visibility:\n" + weather.getVisibilityUnits(weather.current.visibility)}'
                                     android:textColor="@color/black"
                                     android:textSize="14sp" />
 
@@ -303,7 +329,7 @@
                                     android:gravity="left"
                                     android:paddingLeft="25dp"
                                     android:paddingRight="25dp"
-                                    android:text="@{dailyWeather.precipitationLast3H()}"
+                                    android:text="@{weather.precipitationToday()}"
                                     android:textColor="@color/black"
                                     android:textSize="14sp" />
 
