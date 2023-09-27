@@ -25,4 +25,5 @@ enum class FireBaseEventsNamesStrings(val eventName: String) {
     ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT("on_interstitial_ad_failed_to_show_full_screen_content"),
     ON_INTERSTITIAL_AD_IMPRESSION("on_interstitial_ad_impression"),
     ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT("on_interstitial_ad_showed_full_screen_content"),
+    SHOW_ALERT("show_alert"),
 }

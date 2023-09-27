@@ -31,9 +31,9 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         holder.bind(
-            weather[position].name,
-            weather[position].coord.lat,
-            weather[position].coord.lon,
+            weather[position].cityName,
+            weather[position].lat,
+            weather[position].lon,
             navController,
             favoritesFragment
         )

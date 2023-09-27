@@ -14,10 +14,10 @@ interface FavoritesDao {
     @Query("SELECT * FROM favorites")
     fun fetchAllCities(): Flow<List<Weather>>
 
-    @Query("SELECT EXISTS(SELECT * FROM favorites WHERE name = :cityName)")
+    @Query("SELECT EXISTS(SELECT * FROM favorites WHERE cityName = :cityName)")
     fun checkIfAlreadyAdded(cityName: String) : Flow<Boolean>
 
-    @Query("DELETE FROM favorites WHERE name = :cityName")
+    @Query("DELETE FROM favorites WHERE cityName = :cityName")
     suspend fun deleteSpecificFavorite(cityName: String)
 
     @Query("DELETE FROM favorites")

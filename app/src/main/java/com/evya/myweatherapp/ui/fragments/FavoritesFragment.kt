@@ -38,7 +38,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
             if (weatherList.isNullOrEmpty()) {
                 showToast(context?.getString(R.string.no_saved_favorites), activity?.applicationContext)
             } else {
-                mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.name }, mNavController, this)
+                mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.timezone.substringAfter("/") }, mNavController, this)
                 val layoutManager =
                     LinearLayoutManager(
                         activity?.applicationContext,

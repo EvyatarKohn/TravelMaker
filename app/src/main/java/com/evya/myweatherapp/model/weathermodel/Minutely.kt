@@ -4,12 +4,12 @@ package com.evya.myweatherapp.model.weathermodel
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class Wind(
-    @SerializedName("deg")
+data class Minutely(
+    @SerializedName("dt")
     @Expose
-    val deg: Int,
+    val dt: Int,
 
-    @SerializedName("speed")
+    @SerializedName("precipitation")
     @Expose
-    val speed: Double
+    val precipitation: Double
 )

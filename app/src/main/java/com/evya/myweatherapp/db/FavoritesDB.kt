@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.evya.myweatherapp.model.weathermodel.Weather
 
-@Database(entities = [Weather::class], version = 1, exportSchema = false)
+@Database(entities = [Weather::class], version = 6, exportSchema = false)
 @TypeConverters(DataConverter::class)
 abstract class FavoritesDB : RoomDatabase() {
 
@@ -25,7 +25,10 @@ abstract class FavoritesDB : RoomDatabase() {
                             context,
                             FavoritesDB::class.java,
                             "favorites.db"
-                        ).build()
+                        )
+//                            .addMigrations(MIGRATION_FORM_1_TO_2)
+                            .fallbackToDestructiveMigration()
+                            .build()
                 }
             }
             return INSTANCE!!
