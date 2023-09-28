@@ -71,6 +71,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
     fun deleteSpecificCityFromDB(position: Int) {
         mFavoritesViewModel.removeCityDataFromDB(mCityName)
         mFavoritesAdapter.notifyItemRemoved(position)
+        mFavoritesAdapter.notifyDataSetChanged()
     }
 
     fun deleteAllCitiesFromDB() {
@@ -83,6 +84,8 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
                 params
             )
             mFavoritesViewModel.deleteAllFavoritesFromDB()
+            mFavoritesAdapter.notifyItemRangeRemoved(0, mFavoritesAdapter.itemCount)
+            mFavoritesAdapter.notifyDataSetChanged()
         }
     }
 }
