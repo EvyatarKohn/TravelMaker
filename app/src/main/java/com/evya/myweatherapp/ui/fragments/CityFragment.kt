@@ -277,8 +277,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 } else {
                     favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
                     addedToFav = false
-                    mFavWeather?.timezone?.substringAfter("/")
-                        ?.let { it1 -> mFavoritesViewModel.removeCityDataFromDB(it1) }
+                    mFavWeather?.cityName?.let { cityName ->
+                        mFavoritesViewModel.removeCityDataFromDB(cityName)
+                    }
                 }
             }
         /*    alertSignImg.setOnClickListener {
