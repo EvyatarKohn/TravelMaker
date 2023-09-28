@@ -56,6 +56,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private var showAd: Int = 0
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
     private var mGpsIsOn = false
@@ -391,9 +392,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleInterstitialAd(destination: Int) {
-        if (mInterstitialAd != null) {
+        if (mInterstitialAd != null && showAd >= 3) {
+            showAd = 0
             mInterstitialAd?.show(this)
         } else {
+            showAd++
             startDestination(destination)
         }
         mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
