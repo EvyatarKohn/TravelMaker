@@ -392,7 +392,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleInterstitialAd(destination: Int) {
-        if (mInterstitialAd != null && showAd >= 3) {
+        if (mInterstitialAd != null && showAd >= 3 && destination != R.id.cityFragment) {
             showAd = 0
             mInterstitialAd?.show(this)
         } else {
