@@ -36,6 +36,7 @@ import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.safeLet
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
@@ -114,10 +115,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mWeatherViewModel.weatherData.observe(viewLifecycleOwner) {
             if (it.first != null) {
                 mFavWeather = it.first
-                mFavWeather?.lat?.let { lat ->
-                    mFavWeather?.lon?.let { long ->
-                        mWeatherViewModel.getCityNameByLocation(lat.toString(), long.toString())
-                    }
+                safeLet(mFavWeather?.lat, mFavWeather?.lon) { lat, lon ->
+                    mWeatherViewModel.getCityNameByLocation(lat.toString(), lon.toString())
                 }
                 mBinding.cityName.text = mFavWeather?.timezone?.substringAfter("/")
                 mBinding.dailyExpectation.text = mFavWeather?.daily?.get(0)?.summary ?: ""
@@ -137,7 +136,15 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
 
         mWeatherViewModel.cityNameData.observe(viewLifecycleOwner) {
-            mBinding.cityName.text = it.first?.get(0)?.name
+            it.first?.let { cityData ->
+                if (cityData.size > 0) {
+                    mBinding.cityName.text = cityData[0].name
+                } else {
+                    showToast(context?.getString(R.string.didnt_choose_city_error), context)
+                    (activity as MainActivity).getLastLocation()
+                }
+            }
+
         }
 
     }

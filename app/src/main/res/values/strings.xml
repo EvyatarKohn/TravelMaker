@@ -96,5 +96,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="didnt_choose_city_error">Did you choose a city? if you did we dont have data about this city</string>
 
 </resources>
