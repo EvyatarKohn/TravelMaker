@@ -30,7 +30,7 @@ class PermissionDeniedDialog : DialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
 
-        mBinding = PermissionDeniedDialogLayoutBinding.inflate(LayoutInflater.from(context))
+        mBinding = PermissionDeniedDialogLayoutBinding.inflate(layoutInflater)
         mBinding?.exitBtn?.setOnClickListener {
             activity?.finish()
         }

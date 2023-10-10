@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.evya.myweatherapp">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -31,11 +29,16 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB1jdeL-1TpkSlPndE-yxXiMkES2km-hdw" />
-
-<!--        <meta-data
+            android:value="AIzaSyDYdbe7A3sA_ukHH2C1uGH3sCJw6gdhMlw" />
+        <!--
+        <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="${MAPS_API_KEY}" />-->
+            android:value="${MAPS_API_KEY}" />
+        -->
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9058418744370338~6033831169"/>
 
         <activity
             android:name=".ui.MainActivity"

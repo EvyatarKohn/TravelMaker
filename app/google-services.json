@@ -7,20 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:368735409643:android:27d0249041d54691e735ae",
+        "mobilesdk_app_id": "1:368735409643:android:24918eb100c3dc11e735ae",
         "android_client_info": {
-          "package_name": "com.evya.myweatherapp"
+          "package_name": "com.evya.weatherapp"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "368735409643-43sb2d9mroptc1g3ckiqbiu204khimsq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.evya.myweatherapp",
-            "certificate_hash": "38fe0c97b7d64d69ad4621a90ad2e4e0caffb6ac"
-          }
-        },
         {
           "client_id": "368735409643-qu7id66m8psu27497f59uj2etiolb060.apps.googleusercontent.com",
           "client_type": 3
@@ -28,7 +20,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA5y3u8-G0ggIawgL-YdoFfiqwvKcFZCTU"
+          "current_key": "AIzaSyDYdbe7A3sA_ukHH2C1uGH3sCJw6gdhMlw"
         }
       ],
       "services": {
@@ -40,7 +32,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-9058418744370338~6033831169"
     }
   ],
   "configuration_version": "1"

@@ -6,12 +6,17 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
-import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.Constants.FROM_FAVORITES
+import com.evya.myweatherapp.Constants.LAT
+import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoritesItemLayoutBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CHOOSE_CITY_FROM_FAVORITES
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.DELETE_CITY_FROM_FAVORITES
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.fragments.FavoritesFragment
-import com.evya.myweatherapp.util.FireBaseEvents
 
 class FavoritesAdapter(
     private val weather: List<Weather>,
@@ -26,9 +31,9 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         holder.bind(
-            weather[position].name,
-            weather[position].coord.lat,
-            weather[position].coord.lon,
+            weather[position].cityName,
+            weather[position].lat,
+            weather[position].lon,
             navController,
             favoritesFragment
         )
@@ -56,17 +61,23 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
 
         itemView.setOnClickListener {
             val bundle = bundleOf(
-                Constants.LAT to lat.toFloat(),
-                Constants.LONG to long.toFloat(),
-                Constants.FROM_FAVORITES to true
+                LAT to lat.toFloat(),
+                LONG to long.toFloat(),
+                FROM_FAVORITES to true
             )
             navController.navigate(R.id.action_favoritesFragment_to_cityFragment, bundle)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromFavorites.toString() + mCityName?.text.toString())
+            val params = bundleOf(
+                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(CHOOSE_CITY_FROM_FAVORITES.eventName, params)
         }
 
         itemView.setOnLongClickListener {
-            favoritesFragment.deleteSpecificCityFromDBPopUp(cityName)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.DeleteCityFromFavorites.toString() + mCityName?.text.toString())
+            favoritesFragment.deleteSpecificCityFromDBPopUp(cityName, absoluteAdapterPosition)
+            val params = bundleOf(
+                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(DELETE_CITY_FROM_FAVORITES.eventName, params)
             true
         }
     }

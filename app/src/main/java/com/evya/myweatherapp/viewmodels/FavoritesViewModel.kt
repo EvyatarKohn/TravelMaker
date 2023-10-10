@@ -21,7 +21,7 @@ class FavoritesViewModel @Inject constructor(
     }
 
     val fetchAllCitiesFromDB: LiveData<List<Weather>>
-        get() = repository.fetchAllCitiesFromDB.flowOn(Dispatchers.Main)
+        get() = repository.fetchAllCitiesFromDB.flowOn(Dispatchers.IO)
             .asLiveData(context = viewModelScope.coroutineContext)
 
     fun addCityDataToDB(weather: Weather) = viewModelScope.launch {
@@ -29,7 +29,7 @@ class FavoritesViewModel @Inject constructor(
     }
 
     val checkIfAlreadyAddedToDB: LiveData<Boolean>
-        get() = repository.checkIfAlreadyAddedToDB(mWeather.name).flowOn(Dispatchers.Main)
+        get() = repository.checkIfAlreadyAddedToDB(mWeather.cityName).flowOn(Dispatchers.IO)
             .asLiveData(context = viewModelScope.coroutineContext)
 
     fun removeCityDataFromDB(cityName: String) = viewModelScope.launch {
