@@ -1,4 +1,4 @@
-package com.evya.myweatherapp.model.weathermodel
+package com.evya.myweatherapp.model.weathermodelold
 
 
 import com.google.gson.annotations.Expose

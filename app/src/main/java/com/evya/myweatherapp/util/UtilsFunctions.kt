@@ -13,12 +13,11 @@ import androidx.core.content.ContextCompat
 class UtilsFunctions {
 
     companion object {
-
-        fun showToast(error: Int, context: Context?) {
+        fun showToast(error: String?, context: Context?) {
             Toast.makeText(
                 context,
-                context?.resources?.getString(error),
-                Toast.LENGTH_LONG
+                error,
+                Toast.LENGTH_SHORT
             ).show()
         }
 
@@ -27,6 +26,13 @@ class UtilsFunctions {
             val font = Typeface.createFromAsset(context?.assets, "font/product_sans_bold.ttf")
             span.setSpan(CustomTypeFaceSpan("", font), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             textView.text = span
+        }
+
+        fun setSpanBold(string: String, context: Context?): SpannableString {
+            val span = SpannableString(string)
+            val font = Typeface.createFromAsset(context?.assets, "font/product_sans_bold.ttf")
+            span.setSpan(CustomTypeFaceSpan("", font), 0, string.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+            return span
         }
 
         fun setColorSpan(start: Int, end: Int, color: Int, text: Int, view: TextView, context: Context?) {

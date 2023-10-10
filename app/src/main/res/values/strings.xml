@@ -7,11 +7,14 @@
 
     <!-- Gate Fragment texts  -->
     <string name="icons_credit">Icons and images:</string>
-    <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/\nhttps://freeicons.io/user-interface-17/info-icon-109010\nhttps://unsplash.com/</string>
+    <string name="icons_credit_url">https://superdevresources.com/free-weather-icon-sets-apps/</string>
+    <string name="icons_credit_url2">https://freeicons.io/user-interface-17/info-icon-109010</string>
+    <string name="icons_credit_url3">https://unsplash.com/</string>
     <string name="lottie_credit">Lotties:</string>
     <string name="lottie_credit_url">https://lottiefiles.com/</string>
     <string name="privacy_policy">Privacy Policy:</string>
-    <string name="privacy_policy_url">https://www.termsfeed.com/live/e2e6d8ef-99f5-4abd-9eee-62e6af4c7928</string>
+    <string name="privacy_policy_url">https://www.termsfeed.com/live/e2e6d8ef–99f5–4abd–9eee–62e6af4c7928</string>
+    <string name="app_version">Version: %1$s</string>
 
     <!-- City Fragment texts  -->
     <string name="different_destination">Different destination</string>
@@ -38,8 +41,8 @@
     <string name="approve_permissions">Give permissions</string>
 
     <!-- Custom cities list dialog texts  -->
-    <string name="city_not_found_error">City not found, your location city will be shown</string>
-    <string name="daily_weather_error">Can\'t get Daily weather, your location daily weather will be shown</string>
+    <string name="city_not_found_error">Data for %1$s not found, your current location will be shown</string>
+    <string name="daily_weather_error">Can\'t get the weather for %1$s, your current location weather will be shown</string>
     <string name="cities_around_error">Can\'t find cities around you</string>
 
     <!-- Google maps strings -->
@@ -68,13 +71,14 @@
     <string name="get_historic_btn">Historic</string>
     <string name="get_cultural_btn">Cultural</string>
     <string name="get_night_life_btn">Night Life</string>
+    <string name="attraction_radius">attraction radius</string>
+    <string name="radius">Radius (in KM)</string>
 
     <!-- Google maps Attraction Fragment Strings  -->
     <string name="more_details">Long press on marker for more details</string>
 
     <!-- No attraction dialog  -->
-    <string name="There_is_no_attraction_in_your_area">There is no\n%1$s\nin your area</string>
-
+    <string name="There_is_no_attraction_in_your_area">There is no\n%1$s attractions\nin your area</string>
 
     <!-- Bottom navigation strings  -->
     <string name="bottom_navigation_weather">Weather</string>
@@ -82,7 +86,6 @@
     <string name="bottom_navigation_attractions">Attractions</string>
     <string name="bottom_navigation_favorites">Favorites</string>
     <string name="bottom_navigation_info">Info</string>
-
 
     <!-- General strings -->
     <string name="general_error">There been some error, please try again</string>
@@ -92,6 +95,6 @@
     <string name="are_you_sure_you_want_to_delete_all">Are you sure you\nwant to delete\n all favorites?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-
+    <string name="no_internet_connection">No internet connection</string>
 
 </resources>

@@ -30,6 +30,12 @@
             app:argType="boolean" />
 
         <argument
+            android:name="currentCity"
+            android:defaultValue="Tel-aviv"
+            app:argType="string" />
+
+
+<!--        <argument
             android:name="lat"
             android:defaultValue="32.083333"
             app:argType="float" />
@@ -39,7 +45,7 @@
             app:argType="float" />
         <argument
             android:name="latLong"
-            android:defaultValue="null" />
+            android:defaultValue="null" />-->
 
         <action
             android:id="@+id/action_cityFragment_self"
@@ -78,6 +84,12 @@
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+        <argument
+            android:name="currentCity"
+            android:defaultValue="Tel-aviv"
+            app:argType="string" />
+
     </fragment>
 
 

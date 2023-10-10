@@ -4,15 +4,20 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
-import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.Constants.CITY_NAME
+import com.evya.myweatherapp.Constants.FROM_TOP_ADAPTER
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.MainCitiesItemLayoutBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
-import com.evya.myweatherapp.util.FireBaseEvents
+
 
 class CitiesAroundAdapter(
     private val context: Context?,
@@ -27,7 +32,7 @@ class CitiesAroundAdapter(
     }
 
     override fun onBindViewHolder(holder: MainCitiesViewHolder, position: Int) {
-        holder.bind(context, citiesList[position].name, navController)
+        holder.bind(context, citiesList[position].name, position, navController)
     }
 
     override fun getItemCount() = citiesList.size
@@ -41,15 +46,24 @@ class MainCitiesViewHolder(itemBinding: MainCitiesItemLayoutBinding) :
         mCityName = itemBinding.name
     }
 
-    fun bind(context: Context?, cityName: String, navController: NavController) {
+    fun bind(context: Context?, cityName: String, position: Int, navController: NavController) {
         mCityName?.text = cityName.trim()
 
-        itemView.setOnClickListener {
+        if (0 == position) {
             val typeFace = context?.let { ResourcesCompat.getFont(it, R.font.product_sans_bold) }
             mCityName?.typeface = typeFace
-            val bundle = bundleOf(Constants.CITY_NAME to mCityName?.text.toString(), Constants.FROM_ADAPTER to true)
+            val colorBlue = context?.let { ContextCompat.getColor(it, R.color.blue) }
+            colorBlue?.let { mCityName?.setTextColor(it) }
+        }
+
+        itemView.setOnClickListener {
+            val bundle = bundleOf(CITY_NAME to mCityName?.text.toString(), FROM_TOP_ADAPTER to true)
             navController.navigate(R.id.action_cityFragment_self, bundle)
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ChooseCityFromTopAdapter.toString() + mCityName?.text.toString())
+
+            val params = bundleOf(
+                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(CHOOSE_CITY_FROM_TOP_ADAPTER.eventName, params)
         }
     }
 }
