@@ -10,7 +10,7 @@
 
         <variable
             name="dailyWeather"
-            type="com.evya.myweatherapp.model.dailyweathermodel.DailyWeather" />
+            type="com.evya.myweatherapp.model.dailyweathermodelold.DailyWeather" />
 
         <variable
             name="pollution"

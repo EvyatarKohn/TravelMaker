@@ -37,6 +37,7 @@ import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.safeLet
+import com.evya.myweatherapp.ui.dialogs.DailyDialog
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
@@ -61,6 +62,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private lateinit var mNavController: NavController
     private lateinit var mBinding: CityFragmentLayoutBinding
     private var mFromFavorites = false
+    var getSpecificDayWeather: ((time: Int) -> Unit)? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -135,6 +137,11 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             }
         }
 
+        mWeatherViewModel.dailyWeatherData.observe(viewLifecycleOwner) { response ->
+            activity?.supportFragmentManager?.let { it1 -> DailyDialog.newInstance(response.first, mBinding.cityName.text.toString()).show(it1, "DAILY_WEATHER_DIALOG") }
+
+        }
+
         mWeatherViewModel.cityNameData.observe(viewLifecycleOwner) {
             it.first?.let { cityData ->
                 if (cityData.size > 0) {
@@ -189,7 +196,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun setDailyAdapter(dailyWeatherList: List<Daily>) {
-
         val minTempRawArray: ArrayList<Int> = ArrayList()
         dailyWeatherList.forEach { dailyWeatherData ->
             minTempRawArray.add(dailyWeatherData.temp.min.toInt())
@@ -206,11 +212,15 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         val newList = dailyWeatherList.subList(0, 5)
 
         mDailyAdapter =
-            DailyWeatherAdapter(newList, minTempArray, maxTempArray, activity?.applicationContext)
+            DailyWeatherAdapter(this, newList, minTempArray, maxTempArray, activity?.applicationContext)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         mBinding.dailyWeatherRecyclerView.layoutManager = layoutManager
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
+
+        getSpecificDayWeather = { time ->
+            mWeatherViewModel.getWeatherForSpecificDay(lat, long, time, degreesUnits)
+        }
     }
 
     private fun setWeatherDataInTextViews(weather: Weather) {
