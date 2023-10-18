@@ -1,49 +1,27 @@
 package com.evya.myweatherapp.model.dailyweathermodel
 
 
-import com.evya.myweatherapp.Constants.INCH
-import com.evya.myweatherapp.Constants.METRIC
-import com.evya.myweatherapp.Constants.MM
-import com.evya.myweatherapp.MainData.degreesUnits
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class DailyWeather(
-    @SerializedName("city")
+    @SerializedName("data")
     @Expose
-    val city: City,
+    val data: List<Data>,
 
-    @SerializedName("cnt")
+    @SerializedName("lat")
     @Expose
-    val cnt: Int,
+    val lat: Double,
 
-    @SerializedName("cod")
+    @SerializedName("lon")
     @Expose
-    val cod: String,
+    val lon: Double,
 
-    @SerializedName("list")
+    @SerializedName("timezone")
     @Expose
-    val list: List<DailyWeatherData>,
+    val timezone: String,
 
+    @SerializedName("timezone_offset")
     @Expose
-    @SerializedName("message")
-    val message: Int
-) {
-
-    fun precipitationLast3H(): String {
-        var rainHeight = "0"
-        var text = "Rain last\n3h:\n"
-        if (list[0].rain != null) {
-            rainHeight = list[0].rain.h.toString()
-        } else if (list[0].snow != null) {
-            rainHeight = list[0].snow.h.toString()
-            text = "Snow last\n3h:\n"
-        }
-
-        return if (degreesUnits == METRIC) {
-            text + rainHeight + MM
-        } else {
-            text + (String.format("%.2f", rainHeight.toDouble() * 0.04)) + INCH
-        }
-    }
-}
+    val timezoneOffset: Int
+)

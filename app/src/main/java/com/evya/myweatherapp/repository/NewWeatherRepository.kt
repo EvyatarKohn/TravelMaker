@@ -8,9 +8,18 @@ class NewWeatherRepository @Inject constructor(private val newWeatherApi: NewWea
 
     suspend fun getWeatherByLocation(lat: String, long: String, units: String) =
         newWeatherApi.getWeatherByLocation(
-            lat,
-            long,
-            Constants.WEATHER_REPOSITORY_API,
-            units
+            lat = lat,
+            lon = long,
+            units = units,
+            appid = Constants.WEATHER_REPOSITORY_API,
+        )
+
+    suspend fun getWeatherForSpecificDay(lat: String, long: String, time: Int, units: String) =
+        newWeatherApi.getWeatherForSpecificDay(
+            lat = lat,
+            lon = long,
+            time = time,
+            units = units,
+            appid = Constants.WEATHER_REPOSITORY_API,
         )
 }

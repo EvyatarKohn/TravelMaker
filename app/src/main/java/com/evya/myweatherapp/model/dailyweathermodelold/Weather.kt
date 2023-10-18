@@ -1,8 +1,8 @@
-package com.evya.myweatherapp.model.dailyweathermodel
+package com.evya.myweatherapp.model.dailyweathermodelold
 
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.google.gson.annotations.Expose
 
 data class Weather(
     @SerializedName("description")

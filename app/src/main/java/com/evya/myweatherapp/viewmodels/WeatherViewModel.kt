@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAround
-import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.dailyweathermodelold.DailyWeather
 import com.evya.myweatherapp.model.pollution.Pollution
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.repository.WeatherRepository
