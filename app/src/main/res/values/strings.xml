@@ -91,10 +91,12 @@
     <string name="general_error">There been some error, please try again</string>
     <string name="pollution_error">Pollution request error</string>
     <string name="no_saved_favorites">There is no saved favorites</string>
+    <string name="delete_one_city_from_favorites">Long press to delete one city</string>
     <string name="are_you_sure_you_want_to_delete">Are you sure you\nwant to delete %1$s?</string>
     <string name="are_you_sure_you_want_to_delete_all">Are you sure you\nwant to delete\n all favorites?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="no_internet_connection">No internet connection</string>
+    <string name="didnt_choose_city_error">Did you choose a city? if you did we dont have data about this city</string>
 
 </resources>
