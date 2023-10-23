@@ -43,7 +43,7 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
             if (response.isSuccessful) {
                 mDailyWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
-                mDailyWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
+                mDailyWeatherLiveData.postValue(Pair(null, R.string.daily_error))
             }
         }
     }
