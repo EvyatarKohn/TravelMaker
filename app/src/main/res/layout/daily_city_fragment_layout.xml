@@ -92,7 +92,7 @@
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/city_name" />
 
-                    <TextView
+                  <!--  <TextView
                         android:id="@+id/feels_like"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
                         android:textSize="14sp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/temp" />
-
+-->
 
                     <TextView
                         android:id="@+id/daily_expectation"
@@ -117,7 +117,7 @@
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/feels_like" />
+                        app:layout_constraintTop_toBottomOf="@+id/temp" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -148,34 +148,24 @@
                             android:gravity="center">
 
                             <TextView
-                                android:id="@+id/sunrise"
+                                android:id="@+id/max_temprature"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/product_sans_regular"
                                 android:gravity="left"
-                                android:text="Sunrise:\n"
+                                android:paddingRight="50dp"
+                                android:text="max\ntemprature:\n"
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
 
                             <TextView
-                                android:id="@+id/sunset"
+                                android:id="@+id/min_temprature"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/product_sans_regular"
                                 android:gravity="left"
-                                android:paddingLeft="25dp"
-                                android:paddingRight="25dp"
-                                android:text="Sunset:\n"
-                                android:textColor="@color/black"
-                                android:textSize="14sp" />
-
-                            <TextView
-                                android:id="@+id/humidity"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/product_sans_regular"
-                                android:gravity="left"
-                                android:text="Humidity:\n"
+                                android:paddingLeft="50dp"
+                                android:text="min\ntemprature:\n"
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
 
@@ -194,23 +184,35 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/product_sans_regular"
                                 android:gravity="left"
+                                android:paddingRight="50dp"
                                 android:text="Wind\nspeed:\n"
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
 
                             <TextView
-                                android:id="@+id/description"
+                                android:id="@+id/humidity"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/product_sans_regular"
                                 android:gravity="left"
-                                android:paddingLeft="25dp"
-                                android:paddingRight="25dp"
-                                android:text="Weather:\n"
+                                android:paddingLeft="50dp"
+                                android:text="Humidity:\n"
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
 
-                            <TextView
+                            <!--  <TextView
+                                   android:id="@+id/description"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:fontFamily="@font/product_sans_regular"
+                                   android:gravity="left"
+                                   android:paddingLeft="25dp"
+                                   android:paddingRight="25dp"
+                                   android:text="Weather:\n"
+                                   android:textColor="@color/black"
+                                   android:textSize="14sp" />-->
+
+                <!--            <TextView
                                 android:id="@+id/visibility"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -218,7 +220,7 @@
                                 android:gravity="left"
                                 android:text="Visibility:\n"
                                 android:textColor="@color/black"
-                                android:textSize="14sp" />
+                                android:textSize="14sp" />-->
 
                         </TableRow>
                     </TableLayout>

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
 import com.evya.myweatherapp.model.geocode.GeoCode
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.repository.GeoCodeRepository
@@ -38,12 +39,12 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
         }
     }
 
-    fun getWeatherForSpecificDay(lat: String, long: String, time: Int, units: String) = viewModelScope.launch {
-        newWeatherRepository.getWeatherForSpecificDay(lat, long, time,  units).let { response ->
+    fun getWeatherForSpecificDay(lat: String, long: String, date: String, units: String) = viewModelScope.launch {
+        newWeatherRepository.getWeatherForSpecificDay(lat, long, date, units).let { response ->
             if (response.isSuccessful) {
                 mDailyWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
-                mDailyWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
+                mDailyWeatherLiveData.postValue(Pair(null, R.string.daily_error))
             }
         }
     }

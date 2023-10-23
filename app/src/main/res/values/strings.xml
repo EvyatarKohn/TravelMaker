@@ -44,6 +44,7 @@
     <string name="city_not_found_error">Data for %1$s not found, your current location will be shown</string>
     <string name="daily_weather_error">Can\'t get the weather for %1$s, your current location weather will be shown</string>
     <string name="cities_around_error">Can\'t find cities around you</string>
+    <string name="daily_error">Can\'t find data for this date</string>
 
     <!-- Google maps strings -->
     <string name="show_weather_btn">Show weather</string>
@@ -78,7 +79,7 @@
     <string name="more_details">Long press on marker for more details</string>
 
     <!-- No attraction dialog  -->
-    <string name="There_is_no_attraction_in_your_area">There is no\n%1$s attractions\nin your area</string>
+    <string name="There_is_no_attraction_in_your_area">There is no\n%1$s\nin your area</string>
 
     <!-- Bottom navigation strings  -->
     <string name="bottom_navigation_weather">Weather</string>
@@ -98,5 +99,6 @@
     <string name="no">No</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="didnt_choose_city_error">Did you choose a city? if you did we dont have data about this city</string>
+    <string name="daily_weather_info">Press for more info</string>
 
 </resources>

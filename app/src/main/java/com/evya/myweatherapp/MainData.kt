@@ -2,6 +2,7 @@ package com.evya.myweatherapp
 
 import com.evya.myweatherapp.Constants.DEFAULT_ATTRACTION_RADIUS
 import com.evya.myweatherapp.Constants.METRIC
+import com.evya.myweatherapp.model.weathermodel.Weather
 
 object MainData {
     var lat = ""//"32.083333"
@@ -10,4 +11,5 @@ object MainData {
     var degreesUnits = METRIC
     var attractionRadius = DEFAULT_ATTRACTION_RADIUS
     var approvedPermissions = false
+    var weather: Weather? = null
 }

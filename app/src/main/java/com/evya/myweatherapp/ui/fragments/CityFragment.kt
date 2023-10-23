@@ -20,6 +20,7 @@ import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.Constants.METRIC
 import com.evya.myweatherapp.Constants.RAIN
 import com.evya.myweatherapp.Constants.SNOW
+import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.MainData.addedToFav
 import com.evya.myweatherapp.MainData.approvedPermissions
 import com.evya.myweatherapp.MainData.degreesUnits
@@ -28,9 +29,13 @@ import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CHANGE_TEMP_UNITS
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_TEMPERATURE_UNITS
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
+import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
 import com.evya.myweatherapp.model.weathermodel.Daily
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
@@ -43,8 +48,14 @@ import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import com.evya.myweatherapp.viewmodels.NewWeatherViewModel
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.text.SimpleDateFormat
 
 
 @ExperimentalCoroutinesApi
@@ -63,14 +74,15 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private lateinit var mBinding: CityFragmentLayoutBinding
     private var mFromFavorites = false
     var getSpecificDayWeather: ((time: Int) -> Unit)? = null
-
+    private var mInterstitialAd: InterstitialAd? = null
+    private var showAd = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = CityFragmentLayoutBinding.bind(view)
 
         liveDataObservers()
-
+        loadInterstitialAd()
         mNavController = Navigation.findNavController(view)
         onClickListener()
         setColorSpan(
@@ -116,6 +128,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private fun liveDataObservers() {
         mWeatherViewModel.weatherData.observe(viewLifecycleOwner) {
             if (it.first != null) {
+                weather = it.first
                 mFavWeather = it.first
                 safeLet(mFavWeather?.lat, mFavWeather?.lon) { lat, lon ->
                     mWeatherViewModel.getCityNameByLocation(lat.toString(), lon.toString())
@@ -138,8 +151,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
 
         mWeatherViewModel.dailyWeatherData.observe(viewLifecycleOwner) { response ->
-            activity?.supportFragmentManager?.let { it1 -> DailyDialog.newInstance(response.first, mBinding.cityName.text.toString()).show(it1, "DAILY_WEATHER_DIALOG") }
-
+           handleInterstitialAd(response.first)
         }
 
         mWeatherViewModel.cityNameData.observe(viewLifecycleOwner) {
@@ -200,26 +212,29 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         dailyWeatherList.forEach { dailyWeatherData ->
             minTempRawArray.add(dailyWeatherData.temp.min.toInt())
         }
-        val minTempArray = minTempRawArray.sorted().take(5)
+//        val minTempArray = minTempRawArray.sorted().take(5)
+        val minTempArray = minTempRawArray.sorted()
 
         val maxTempRawArray: ArrayList<Int> = ArrayList()
         dailyWeatherList.forEach { dailyWeatherData ->
             maxTempRawArray.add(dailyWeatherData.temp.max.toInt())
         }
-        val maxTempArray = maxTempRawArray.sortedDescending().take(5)
+//        val maxTempArray = maxTempRawArray.sortedDescending().take(5)
+        val maxTempArray = maxTempRawArray.sortedDescending()
 
 //        val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
         val newList = dailyWeatherList.subList(0, 5)
 
         mDailyAdapter =
-            DailyWeatherAdapter(this, newList, minTempArray, maxTempArray, activity?.applicationContext)
+            DailyWeatherAdapter(this, dailyWeatherList, minTempArray, maxTempArray, activity?.applicationContext)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         mBinding.dailyWeatherRecyclerView.layoutManager = layoutManager
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
 
         getSpecificDayWeather = { time ->
-            mWeatherViewModel.getWeatherForSpecificDay(lat, long, time, degreesUnits)
+            val date = SimpleDateFormat("yyyy-MM-dd").format(time * 1000L)
+            mWeatherViewModel.getWeatherForSpecificDay(lat, long, date, degreesUnits)
         }
     }
 
@@ -308,13 +323,17 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun checkIfAlreadyInFav() {
-        mFavWeather?.let { mFavoritesViewModel.setWeather(it) }
-        mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner) {
-            if (it) {
-                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
-            } else {
-                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
+        try {
+            mFavoritesViewModel.setCityName(mBinding.cityName.text.toString())
+            mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner) {
+                if (it) {
+                    mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
+                } else {
+                    mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
+                }
             }
+        } catch (_: Exception) {
+
         }
     }
 
@@ -325,4 +344,104 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             getWeatherData()
         }
     }
+
+    private fun loadInterstitialAd() {
+        val adRequest = (activity as MainActivity).adRequest
+
+        context?.let {
+            InterstitialAd.load(it, "ca-app-pub-9058418744370338/1048685069", adRequest, object : InterstitialAdLoadCallback() {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    val params = bundleOf(
+                        FireBaseEventsParamsStrings.PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                    )
+                    FireBaseEvents.sendFireBaseCustomEvents(
+                        FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_LOAD.eventName,
+                        params
+                    )
+                    mInterstitialAd = null
+                }
+
+                override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    val params = bundleOf()
+                    FireBaseEvents.sendFireBaseCustomEvents(
+                        FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_LOADED.eventName,
+                        params
+                    )
+                    mInterstitialAd = interstitialAd
+                }
+            })
+        }
+    }
+
+    private fun handleInterstitialAd(dailyWeather: DailyWeather?) {
+        if (mInterstitialAd != null && showAd >= 3) {
+            showAd = 0
+            activity?.let { mInterstitialAd?.show(it) }
+        } else {
+            showAd++
+            showDialog(dailyWeather)
+        }
+        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+            override fun onAdClicked() {
+                // Called when a click is recorded for an ad.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    FireBaseEventsNamesStrings.CLICK_ON_INTERSTITIAL_AD.eventName,
+                    params
+                )
+            }
+
+            override fun onAdDismissedFullScreenContent() {
+                // Called when ad is dismissed.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+                mInterstitialAd = null
+                showDialog(dailyWeather)
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                // Called when ad fails to show.
+                val params = bundleOf(
+                    FireBaseEventsParamsStrings.PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                )
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+                mInterstitialAd = null
+                showDialog(dailyWeather)
+            }
+
+            override fun onAdImpression() {
+                // Called when an impression is recorded for an ad.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_IMPRESSION.eventName,
+                    params
+                )
+            }
+
+            override fun onAdShowedFullScreenContent() {
+                // Called when ad is shown.
+                val params = bundleOf()
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT.eventName,
+                    params
+                )
+            }
+        }
+    }
+
+    private fun showDialog(dailyWeather: DailyWeather?) {
+        activity?.supportFragmentManager?.let { fm ->
+            DailyDialog.newInstance(
+                dailyWeather,
+                mBinding.cityName.text.toString()
+            ).show(fm, "DAILY_WEATHER_DIALOG")
+        }
+    }
+
 }
