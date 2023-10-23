@@ -15,9 +15,9 @@ class FavoritesViewModel @Inject constructor(
     private val repository: FavoritesRepository
 ) : ViewModel() {
 
-    private lateinit var mWeather: Weather
-    fun setWeather(weather: Weather) {
-        mWeather = weather
+    private lateinit var mCityName: String
+    fun setCityName(cityName: String) {
+        mCityName = cityName
     }
 
     val fetchAllCitiesFromDB: LiveData<List<Weather>>
@@ -29,7 +29,7 @@ class FavoritesViewModel @Inject constructor(
     }
 
     val checkIfAlreadyAddedToDB: LiveData<Boolean>
-        get() = repository.checkIfAlreadyAddedToDB(mWeather.cityName).flowOn(Dispatchers.IO)
+        get() = repository.checkIfAlreadyAddedToDB(mCityName).flowOn(Dispatchers.IO)
             .asLiveData(context = viewModelScope.coroutineContext)
 
     fun removeCityDataFromDB(cityName: String) = viewModelScope.launch {

@@ -20,6 +20,7 @@ import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.Constants.METRIC
 import com.evya.myweatherapp.Constants.RAIN
 import com.evya.myweatherapp.Constants.SNOW
+import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.MainData.addedToFav
 import com.evya.myweatherapp.MainData.approvedPermissions
 import com.evya.myweatherapp.MainData.degreesUnits
@@ -116,6 +117,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     private fun liveDataObservers() {
         mWeatherViewModel.weatherData.observe(viewLifecycleOwner) {
             if (it.first != null) {
+                weather = it.first
                 mFavWeather = it.first
                 safeLet(mFavWeather?.lat, mFavWeather?.lon) { lat, lon ->
                     mWeatherViewModel.getCityNameByLocation(lat.toString(), lon.toString())
@@ -138,8 +140,12 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
 
         mWeatherViewModel.dailyWeatherData.observe(viewLifecycleOwner) { response ->
-            activity?.supportFragmentManager?.let { it1 -> DailyDialog.newInstance(response.first, mBinding.cityName.text.toString()).show(it1, "DAILY_WEATHER_DIALOG") }
-
+            activity?.supportFragmentManager?.let { fm ->
+                DailyDialog.newInstance(
+                    response.first,
+                    mBinding.cityName.text.toString()
+                ).show(fm, "DAILY_WEATHER_DIALOG")
+            }
         }
 
         mWeatherViewModel.cityNameData.observe(viewLifecycleOwner) {
@@ -308,13 +314,17 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun checkIfAlreadyInFav() {
-        mFavWeather?.let { mFavoritesViewModel.setWeather(it) }
-        mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner) {
-            if (it) {
-                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
-            } else {
-                mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
+        try {
+            mFavoritesViewModel.setCityName(mBinding.cityName.text.toString())
+            mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner) {
+                if (it) {
+                    mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
+                } else {
+                    mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
+                }
             }
+        } catch (_: Exception) {
+
         }
     }
 
