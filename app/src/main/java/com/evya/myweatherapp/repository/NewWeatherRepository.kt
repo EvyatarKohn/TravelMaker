@@ -14,11 +14,11 @@ class NewWeatherRepository @Inject constructor(private val newWeatherApi: NewWea
             appid = Constants.WEATHER_REPOSITORY_API,
         )
 
-    suspend fun getWeatherForSpecificDay(lat: String, long: String, time: Int, units: String) =
+    suspend fun getWeatherForSpecificDay(lat: String, long: String, date: String, units: String) =
         newWeatherApi.getWeatherForSpecificDay(
             lat = lat,
             lon = long,
-            time = time,
+            date = date,
             units = units,
             appid = Constants.WEATHER_REPOSITORY_API,
         )

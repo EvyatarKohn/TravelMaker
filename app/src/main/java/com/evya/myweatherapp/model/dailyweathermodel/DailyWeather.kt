@@ -5,9 +5,17 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class DailyWeather(
-    @SerializedName("data")
+    @SerializedName("cloud_cover")
     @Expose
-    val data: List<Data>,
+    val cloudCover: CloudCover,
+
+    @SerializedName("date")
+    @Expose
+    val date: String,
+
+    @SerializedName("humidity")
+    @Expose
+    val humidity: Humidity,
 
     @SerializedName("lat")
     @Expose
@@ -17,11 +25,27 @@ data class DailyWeather(
     @Expose
     val lon: Double,
 
-    @SerializedName("timezone")
+    @SerializedName("precipitation")
     @Expose
-    val timezone: String,
+    val precipitation: Precipitation,
 
-    @SerializedName("timezone_offset")
+    @SerializedName("pressure")
     @Expose
-    val timezoneOffset: Int
+    val pressure: Pressure,
+
+    @SerializedName("temperature")
+    @Expose
+    val temperature: Temperature,
+
+    @SerializedName("tz")
+    @Expose
+    val tz: String,
+
+    @SerializedName("units")
+    @Expose
+    val units: String,
+
+    @SerializedName("wind")
+    @Expose
+    val wind: Wind
 )

@@ -15,6 +15,7 @@ import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.DailyCityFragmentLayoutBinding
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -47,34 +48,36 @@ class DailyDialog: DialogFragment() {
     }
 
     private fun setDataToTextViews() {
-        val data = mWeather?.data?.firstOrNull()
+//        val data = mWeather?.data?.firstOrNull()
         mBinding?.apply {
             cityName.text = mCityName
-            temp.text = getDegreeUnits(data?.temp ?: 0.0)
-            feelsLike.text = "Feels like: " + getDegreeUnits(data?.feelsLike ?: 0.0)
-            dailyExpectation.text = data?.weather?.firstOrNull()?.description
-            if (isWinter(data?.temp ?: 15.0)) {
+            temp.text = getDegreeUnits(mWeather?.temperature?.max ?: 0.0)
+//            feelsLike.text = "Feels like: " + getDegreeUnits(mWeather?.feelsLike ?: 0.0)
+            mWeather?.cloudCover?.afternoon?.let {
+                dailyExpectation.text = if (it <= 50.0) "Clear sky" else "Cloudy"
+            }
+            if (isWinter(mWeather?.temperature?.max ?: 15.0)) {
                 mainImage.setImageResource(R.drawable.ic_winter)
             } else {
                 mainImage.setImageResource(R.drawable.ic_summer)
             }
-            val day = Instant.ofEpochMilli(data?.dt?.times(1000L) ?: 0).atZone(ZoneId.systemDefault()).dayOfMonth.toString()
-            val month = Instant.ofEpochMilli(data?.dt?.times(1000L) ?: 0).atZone(ZoneId.systemDefault()).monthValue.toString()
+            val day = mWeather?.date?.substringAfterLast("-")
+            val month = mWeather?.date?.substringAfter("-")?.substringBeforeLast("-")
             date.text = "Date: $day/$month"
-            sunrise.text = "sunrise:\n" + setTimeToHour(data?.sunrise ?: 0)
-            sunset.text = "sunset:\n" + setTimeToHour(data?.sunset ?: 0)
-            humidity.text = "Humidity:\n" + data?.humidity.toString() + "%"
-            windSpeed.text = getWindSpeedDegree(data?.windSpeed)
-            description.text = "Weather:\n" + data?.weather?.firstOrNull()?.main
-            visibility.text = getVisibilityUnits(data?.visibility ?: 0)
+            maxTemprature.text = "max\ntemprature:\n" + getDegreeUnits(mWeather?.temperature?.max)
+            minTemprature.text = "min\ntemprature:\n" + getDegreeUnits(mWeather?.temperature?.min)
+            humidity.text = "Humidity:\n" + mWeather?.humidity?.afternoon?.toInt() + "%"
+            windSpeed.text = getWindSpeedDegree(mWeather?.wind?.max?.speed)
+//            description.text = "Weather:\n" + data?.weather?.firstOrNull()?.main
+//            visibility.text = getVisibilityUnits(data?.visibility ?: 0)
         }
     }
 
-    private fun getDegreeUnits(temp: Double): String {
+    private fun getDegreeUnits(temp: Double?): String {
         return if (degreesUnits == IMPERIAL) {
-            temp.toInt().toString() + " \u2109"
+            (temp ?: 0.0).toInt().toString() + " \u2109"
         } else {
-            temp.toInt().toString() + " \u2103"
+            (temp ?: 0.0).toInt().toString() + " \u2103"
         }
     }
 

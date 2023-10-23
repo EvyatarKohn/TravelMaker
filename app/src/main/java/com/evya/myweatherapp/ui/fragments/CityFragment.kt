@@ -35,6 +35,7 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_TEMPERATURE_UNITS
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
 import com.evya.myweatherapp.model.weathermodel.Daily
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
@@ -54,6 +55,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.text.SimpleDateFormat
 
 
 @ExperimentalCoroutinesApi
@@ -210,26 +212,29 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         dailyWeatherList.forEach { dailyWeatherData ->
             minTempRawArray.add(dailyWeatherData.temp.min.toInt())
         }
-        val minTempArray = minTempRawArray.sorted().take(5)
+//        val minTempArray = minTempRawArray.sorted().take(5)
+        val minTempArray = minTempRawArray.sorted()
 
         val maxTempRawArray: ArrayList<Int> = ArrayList()
         dailyWeatherList.forEach { dailyWeatherData ->
             maxTempRawArray.add(dailyWeatherData.temp.max.toInt())
         }
-        val maxTempArray = maxTempRawArray.sortedDescending().take(5)
+//        val maxTempArray = maxTempRawArray.sortedDescending().take(5)
+        val maxTempArray = maxTempRawArray.sortedDescending()
 
 //        val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
         val newList = dailyWeatherList.subList(0, 5)
 
         mDailyAdapter =
-            DailyWeatherAdapter(this, newList, minTempArray, maxTempArray, activity?.applicationContext)
+            DailyWeatherAdapter(this, dailyWeatherList, minTempArray, maxTempArray, activity?.applicationContext)
         val layoutManager =
             LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
         mBinding.dailyWeatherRecyclerView.layoutManager = layoutManager
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
 
         getSpecificDayWeather = { time ->
-            mWeatherViewModel.getWeatherForSpecificDay(lat, long, time, degreesUnits)
+            val date = SimpleDateFormat("yyyy-MM-dd").format(time * 1000L)
+            mWeatherViewModel.getWeatherForSpecificDay(lat, long, date, degreesUnits)
         }
     }
 
