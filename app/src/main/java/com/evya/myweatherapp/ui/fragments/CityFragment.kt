@@ -20,12 +20,12 @@ import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.Constants.METRIC
 import com.evya.myweatherapp.Constants.RAIN
 import com.evya.myweatherapp.Constants.SNOW
-import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.MainData.addedToFav
 import com.evya.myweatherapp.MainData.approvedPermissions
 import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
+import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
@@ -35,14 +35,13 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_TEMPERATURE_UNITS
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
-import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
 import com.evya.myweatherapp.model.weathermodel.Daily
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
-import com.evya.myweatherapp.util.UtilsFunctions.Companion.safeLet
 import com.evya.myweatherapp.ui.dialogs.DailyDialog
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.safeLet
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
@@ -56,6 +55,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @ExperimentalCoroutinesApi
@@ -222,8 +222,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 //        val maxTempArray = maxTempRawArray.sortedDescending().take(5)
         val maxTempArray = maxTempRawArray.sortedDescending()
 
-//        val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
-        val newList = dailyWeatherList.subList(0, 5)
+/*//        val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
+        val newList = dailyWeatherList.subList(0, 5)*/
 
         mDailyAdapter =
             DailyWeatherAdapter(this, dailyWeatherList, minTempArray, maxTempArray, activity?.applicationContext)
@@ -233,7 +233,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
 
         getSpecificDayWeather = { time ->
-            val date = SimpleDateFormat("yyyy-MM-dd").format(time * 1000L)
+            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(time * 1000L)
             mWeatherViewModel.getWeatherForSpecificDay(lat, long, date, degreesUnits)
         }
     }

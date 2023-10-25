@@ -26,5 +26,5 @@ data class Alerts(
 
     @SerializedName("tags")
     @Expose
-    val tags: List<Tags>
+    val tags: List<String>
 )
