@@ -1,6 +1,8 @@
 package com.evya.myweatherapp.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -9,7 +11,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.evya.myweatherapp.Constants.ALERTS
 import com.evya.myweatherapp.Constants.CITY_NAME
+import com.evya.myweatherapp.Constants.FROM_ALERTS
 import com.evya.myweatherapp.Constants.FROM_FAVORITES
 import com.evya.myweatherapp.Constants.FROM_TOP_ADAPTER
 import com.evya.myweatherapp.Constants.IMPERIAL
@@ -107,6 +111,12 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             long = arguments?.getFloat(LONG).toString()
             mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
         }
+
+        if (arguments?.getBoolean(FROM_ALERTS) == true) {
+            lat = arguments?.getFloat(LAT).toString()
+            long = arguments?.getFloat(LONG).toString()
+            mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
+        }
     }
 
     private fun getWeatherData() {
@@ -133,6 +143,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 safeLet(mFavWeather?.lat, mFavWeather?.lon) { lat, lon ->
                     mWeatherViewModel.getCityNameByLocation(lat.toString(), lon.toString())
                 }
+
+                mBinding.alertSignImg.isVisible = !mFavWeather?.alerts.isNullOrEmpty()
+
                 mBinding.cityName.text = mFavWeather?.timezone?.substringAfter("/")
                 mBinding.dailyExpectation.text = mFavWeather?.daily?.get(0)?.summary ?: ""
                 lat = mFavWeather?.lat.toString()
@@ -163,9 +176,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     (activity as MainActivity).getLastLocation()
                 }
             }
-
         }
-
     }
 
     private fun setBoldSpan() {
@@ -314,11 +325,17 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     }
                 }
             }
-        /*    alertSignImg.setOnClickListener {
+            alertSignImg.setOnClickListener {
+                Log.i("Evyatar", "${mFavWeather?.alerts}" )
                 mFavWeather?.alerts?.let { alertsList ->
-                    (activity as MainActivity).openAlertFragment(alertsList)
-                } ?: showToast("No alerts in this area", (activity as MainActivity))
-            }*/
+                    val bundle = bundleOf(
+                        CITY_NAME to mCityName,
+                        ALERTS to alertsList
+                    )
+                    mNavController.navigate(R.id.action_cityFragment_to_alertsFragment, bundle)
+
+                } ?: showToast("No alerts in this area", requireContext())
+            }
         }
     }
 

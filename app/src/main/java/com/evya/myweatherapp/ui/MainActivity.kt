@@ -478,11 +478,4 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
-
-    fun openAlertFragment(alertsList: List<Alerts>) {
-        supportFragmentManager.beginTransaction()
-            .add(R.id.container, AlertsFragment.newInstance(alertsList), "ALERTS_FRAGMENT")
-            .addToBackStack("ALERTS_FRAGMENT")
-            .commit()
-    }
 }

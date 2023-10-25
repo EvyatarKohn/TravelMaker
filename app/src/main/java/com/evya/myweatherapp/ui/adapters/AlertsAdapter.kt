@@ -1,21 +1,17 @@
 package com.evya.myweatherapp.ui.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.AlertItemBinding
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.model.weathermodel.Alerts
-import com.evya.myweatherapp.ui.dialogs.AlertsDialog
-import java.time.Instant
-import java.time.ZoneId
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class AlertsAdapter(private val fm: FragmentManager, private val alerts: List<Alerts>): RecyclerView.Adapter<AlertsViewHolder>() {
+class AlertsAdapter(private val context: Context, private val alerts: List<Alerts>): RecyclerView.Adapter<AlertsViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlertsViewHolder {
         val itemBinding = AlertItemBinding.inflate(LayoutInflater.from(parent.context))
 
@@ -23,7 +19,7 @@ class AlertsAdapter(private val fm: FragmentManager, private val alerts: List<Al
     }
 
     override fun onBindViewHolder(holder: AlertsViewHolder, position: Int) {
-        holder.bind(fm, alerts[position].event, alerts[position].start, alerts[position].description)
+        holder.bind(context, alerts[position].event, alerts[position].start, alerts[position].end,  alerts[position].description)
     }
 
     override fun getItemCount() = alerts.size
@@ -32,32 +28,22 @@ class AlertsAdapter(private val fm: FragmentManager, private val alerts: List<Al
 class AlertsViewHolder(itemBinding: AlertItemBinding) :
     RecyclerView.ViewHolder(itemBinding.root) {
     private var title: TextView? = null
+    private var desc: TextView? = null
 
     init {
         title = itemBinding.alertTitle
+        desc = itemBinding.alertDesc
     }
 
-    fun bind(fm: FragmentManager, alertsEvent: String, alertsStart: Int, alertsDescription: String) {
-        title?.text = alertsEvent
-
-        itemView.setOnClickListener {
-
-            val params = bundleOf(
-                PARAMS_ALERT_DAY.paramsName to getAlertDay(alertsStart),
-                PARAMS_ALERT_DESCRIPTION.paramsName to alertsDescription
-            )
-            FireBaseEvents.sendFireBaseCustomEvents(CHOOSE_CITY_FROM_TOP_ADAPTER.eventName, params)
-
-            AlertsDialog.newInstance(alertsDescription).show(fm, "Alert_DIALOG")
-
-        }
+    fun bind(
+        context: Context,
+        alertsEvent: String,
+        alertsStart: Int,
+        alertsEnd: Int,
+        alertsDescription: String
+    ) {
+        title?.text = context.resources.getString(R.string.alerts_item, alertsEvent, getAlertTime(alertsStart), getAlertTime(alertsEnd))
+        desc?.text = alertsDescription
     }
-
-    private fun getAlertDay(alertsStart: Int): String {
-        val day = Instant.ofEpochMilli(alertsStart.toLong()).atZone(ZoneId.systemDefault()).dayOfMonth.toString()
-        val month = Instant.ofEpochMilli(alertsStart.toLong()).atZone(ZoneId.systemDefault()).monthValue.toString()
-
-        return "$day/$month"
-
-    }
+    private fun getAlertTime(alertTime: Int) = SimpleDateFormat("dd/MM  HH:mm", Locale.getDefault()).format(alertTime * 1000L)
 }

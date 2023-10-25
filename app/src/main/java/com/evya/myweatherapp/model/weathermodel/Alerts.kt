@@ -1,8 +1,11 @@
 package com.evya.myweatherapp.model.weathermodel
 
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Alerts(
     @SerializedName("description")
     @Expose
@@ -26,5 +29,5 @@ data class Alerts(
 
     @SerializedName("tags")
     @Expose
-    val tags: List<String>
-)
+    val tags: List<String>?
+): Parcelable

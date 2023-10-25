@@ -109,4 +109,8 @@
     <string name="daily_dialog_wind_speed">Wind\nspeed:\n%1$s</string>
     <string name="daily_dialog_visibility">Visibility:\n%1$s</string>
 
+    <!--  Alerts   -->
+    <string name="alerts_list">Alerts List</string>
+    <string name="alerts_item">%1$s from %2$s to %3$s</string>
+
 </resources>
