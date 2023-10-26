@@ -117,6 +117,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             long = arguments?.getFloat(LONG).toString()
             mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
         }
+        mBinding.rightScrollArrow.visibility = View.VISIBLE
+        mBinding.leftScrollArrow.visibility = View.GONE
     }
 
     private fun getWeatherData() {
@@ -325,8 +327,31 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     }
                 }
             }
+            leftScrollArrow.setOnClickListener {
+                mBinding.rightScrollArrow.visibility = View.VISIBLE
+                if ((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 0) {
+                    mBinding.dailyWeatherRecyclerView.smoothScrollToPosition((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() - 3)
+                } else {
+                    mBinding.dailyWeatherRecyclerView.smoothScrollToPosition(0)
+                }
+
+                if((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() == 0) {
+                    mBinding.leftScrollArrow.visibility = View.GONE
+                }
+            }
+
+            rightScrollArrow.setOnClickListener{
+                val layoutManager = (dailyWeatherRecyclerView.layoutManager as LinearLayoutManager)
+                mBinding.leftScrollArrow.visibility = View.VISIBLE
+                dailyWeatherRecyclerView.smoothScrollToPosition(
+                    (dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() + 3
+                )
+                if(layoutManager.findLastCompletelyVisibleItemPosition() == (dailyWeatherRecyclerView.adapter?.itemCount?.minus(1) ?: false)) {
+                    mBinding.rightScrollArrow.visibility = View.GONE
+                }
+            }
+
             alertSignImg.setOnClickListener {
-                Log.i("Evyatar", "${mFavWeather?.alerts}" )
                 mFavWeather?.alerts?.let { alertsList ->
                     val bundle = bundleOf(
                         CITY_NAME to mCityName,
