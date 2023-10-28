@@ -34,7 +34,7 @@ class AlertsFragment : Fragment(R.layout.alert_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = AlertFragmentBinding.bind(view)
-        val alertsList = arguments?.get("alerts") as ArrayList<Alerts>
+        val alertsList = arguments?.get("alerts") as? ArrayList<Alerts>
         val cityName = arguments?.getString("cityName")
 
         alertsAdapter = AlertsAdapter(requireContext(), alertsList)

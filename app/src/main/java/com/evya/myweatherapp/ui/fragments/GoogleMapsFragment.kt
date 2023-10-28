@@ -5,7 +5,6 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.View.OnClickListener
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -15,8 +14,9 @@ import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SEARCH_IN_GOOGLE_MAP
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SHOW_WEATHER
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.google.android.gms.common.api.Status

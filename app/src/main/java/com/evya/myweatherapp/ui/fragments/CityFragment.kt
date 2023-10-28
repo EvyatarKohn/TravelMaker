@@ -1,8 +1,6 @@
 package com.evya.myweatherapp.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible

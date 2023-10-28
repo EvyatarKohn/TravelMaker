@@ -32,10 +32,8 @@ import com.evya.myweatherapp.databinding.ActivityMainBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
-import com.evya.myweatherapp.model.weathermodel.Alerts
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
-import com.evya.myweatherapp.ui.fragments.AlertsFragment
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
