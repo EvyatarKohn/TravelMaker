@@ -321,6 +321,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startDestination(id: Int) {
+        if (mNavHostFragment.navController.currentDestination?.id == id) {
+            return
+        }
         mGraph.startDestination = id
         mNavHostFragment.navController.graph = mGraph
         mNavHostFragment.navController.navigate(id)
