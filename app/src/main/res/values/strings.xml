@@ -101,4 +101,16 @@
     <string name="didnt_choose_city_error">Did you choose a city? if you did we dont have data about this city</string>
     <string name="daily_weather_info">Press for more info</string>
 
+    <!--  DailyDialog   -->
+    <string name="daily_dialog_date">Date: %1$s</string>
+    <string name="daily_dialog_max_temp">max\ntemprature:\n%1$s</string>
+    <string name="daily_dialog_min_temp">min\ntemprature:\n%1$s</string>
+    <string name="daily_dialog_humidity">Humidity:\n%1$s</string>
+    <string name="daily_dialog_wind_speed">Wind\nspeed:\n%1$s</string>
+    <string name="daily_dialog_visibility">Visibility:\n%1$s</string>
+
+    <!--  Alerts   -->
+    <string name="alerts_list">Alerts List</string>
+    <string name="alerts_item">%1$s from %2$s to %3$s</string>
+
 </resources>

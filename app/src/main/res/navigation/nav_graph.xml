@@ -61,6 +61,23 @@
             android:defaultValue="Tel-aviv"
             app:argType="string" />
         <action
+            android:id="@+id/action_cityFragment_to_alertsFragment"
+            app:destination="@id/alertsFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <argument
+            android:name="cityName"
+            android:defaultValue="Tel-aviv"
+            app:argType="string" />
+
+        <argument
+            android:name="alerts"
+            app:argType="com.evya.myweatherapp.model.weathermodel.Alerts" />
+
+        <action
             android:id="@+id/action_cityFragment_to_chooseAttractionFragment"
             app:destination="@id/chooseAttractionFragment"
             app:enterAnim="@anim/slide_in_left"
@@ -130,6 +147,31 @@
         <action
             android:id="@+id/action_favoritesFragment_to_cityFragment"
             app:destination="@id/cityFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/alertsFragment"
+        android:name="com.evya.myweatherapp.ui.fragments.AlertsFragment"
+        android:label="alertsFragment">
+        <action
+            android:id="@+id/action_alertsFragment_to_cityFragment"
+            app:destination="@+id/cityFragment"
+            />
+
+        <argument
+            android:name="fromAlerts"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="lat"
+            android:defaultValue="32.083333"
+            app:argType="float" />
+        <argument
+            android:name="long"
+            android:defaultValue="34.7999968"
+            app:argType="float" />
+
     </fragment>
 
 </navigation>

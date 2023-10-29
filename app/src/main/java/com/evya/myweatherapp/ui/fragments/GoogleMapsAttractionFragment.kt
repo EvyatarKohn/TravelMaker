@@ -13,7 +13,6 @@ import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.model.placesmodel.Places
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment

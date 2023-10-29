@@ -150,12 +150,12 @@ class DataConverter {
 }
 
 val MIGRATION_FORM_1_TO_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(db: SupportSQLiteDatabase) {
 //        database.execSQL("ALTER TABLE favorites ADD COLUMN timezone")
-        database.execSQL("DROP TABLE IF EXISTS `favorites_temp`")
-        database.execSQL("CREATE TABLE IF NOT EXISTS `favorites_temp`(`alerts` TEXT NOT NULL, `current` TEXT NOT NULL, `daily` TEXT NOT NULL, `hourly` TEXT NOT NULL, `lat` DOUBLE NOT NULL, `lon` DOUBLE NOT NULL, `minutely` TEXT NOT NULL, `timezone` TEXT NOT NULL, `timezone_offset` INTEGER NOT NULL)")
-        database.execSQL("INSERT INTO favorites_temp(alerts, current, daily, hourly, lat, lon, minutely, timezone, timezone_offset)")
-        database.execSQL("DROP TABLE `favorites`")
-        database.execSQL("ALTER TABLE favorites_temp RENAME TO favorites")
+        db.execSQL("DROP TABLE IF EXISTS `favorites_temp`")
+        db.execSQL("CREATE TABLE IF NOT EXISTS `favorites_temp`(`alerts` TEXT NOT NULL, `current` TEXT NOT NULL, `daily` TEXT NOT NULL, `hourly` TEXT NOT NULL, `lat` DOUBLE NOT NULL, `lon` DOUBLE NOT NULL, `minutely` TEXT NOT NULL, `timezone` TEXT NOT NULL, `timezone_offset` INTEGER NOT NULL)")
+        db.execSQL("INSERT INTO favorites_temp(alerts, current, daily, hourly, lat, lon, minutely, timezone, timezone_offset)")
+        db.execSQL("DROP TABLE `favorites`")
+        db.execSQL("ALTER TABLE favorites_temp RENAME TO favorites")
     }
 }

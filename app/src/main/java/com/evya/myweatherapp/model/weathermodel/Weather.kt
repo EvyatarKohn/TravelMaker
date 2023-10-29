@@ -62,18 +62,16 @@ data class Weather(
     }
 
     fun setTimeToHour(time: Int): String {
-        val calendar = Calendar.getInstance()
-        val tz = TimeZone.getDefault()
-        calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.timeInMillis))
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return sdf.format(Date(time.toLong() * 1000))
+        sdf.timeZone = TimeZone.getTimeZone(timezone)
+        return sdf.format(Date((time.toLong() * 1000) + timezoneOffset))
     }
 
     fun getDegreeUnits(temp: Double): String {
         return if (MainData.degreesUnits == Constants.IMPERIAL) {
-            temp.toInt().toString() + " \u2109"
+            temp.toInt().toString() + " \u2109" // Fahrenheit symbol
         } else {
-            temp.toInt().toString() + " \u2103"
+            temp.toInt().toString() + " \u2103" // Celsius symbol
         }
     }
 

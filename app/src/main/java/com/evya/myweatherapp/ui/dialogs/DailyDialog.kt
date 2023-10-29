@@ -15,10 +15,7 @@ import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.DailyCityFragmentLayoutBinding
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
-import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -63,10 +60,10 @@ class DailyDialog: DialogFragment() {
             }
             val day = mWeather?.date?.substringAfterLast("-")
             val month = mWeather?.date?.substringAfter("-")?.substringBeforeLast("-")
-            date.text = "Date: $day/$month"
-            maxTemprature.text = "max\ntemprature:\n" + getDegreeUnits(mWeather?.temperature?.max)
-            minTemprature.text = "min\ntemprature:\n" + getDegreeUnits(mWeather?.temperature?.min)
-            humidity.text = "Humidity:\n" + mWeather?.humidity?.afternoon?.toInt() + "%"
+            date.text = resources.getString(R.string.daily_dialog_date, "$day/$month")
+            maxTemprature.text = resources.getString(R.string.daily_dialog_max_temp, getDegreeUnits(mWeather?.temperature?.max))
+            minTemprature.text = resources.getString(R.string.daily_dialog_min_temp, getDegreeUnits(mWeather?.temperature?.min))
+            humidity.text = resources.getString(R.string.daily_dialog_humidity, "${mWeather?.humidity?.afternoon?.toInt()}% ")
             windSpeed.text = getWindSpeedDegree(mWeather?.wind?.max?.speed)
 //            description.text = "Weather:\n" + data?.weather?.firstOrNull()?.main
 //            visibility.text = getVisibilityUnits(data?.visibility ?: 0)
@@ -75,9 +72,9 @@ class DailyDialog: DialogFragment() {
 
     private fun getDegreeUnits(temp: Double?): String {
         return if (degreesUnits == IMPERIAL) {
-            (temp ?: 0.0).toInt().toString() + " \u2109"
+            (temp ?: 0.0).toInt().toString() + " \u2109" // Fahrenheit symbol
         } else {
-            (temp ?: 0.0).toInt().toString() + " \u2103"
+            (temp ?: 0.0).toInt().toString() + " \u2103" // Celsius symbol
         }
     }
 
@@ -96,19 +93,23 @@ class DailyDialog: DialogFragment() {
     }
 
     private fun getWindSpeedDegree(windSpeed: Double?): String {
-        return "Wind\nspeed:\n" + windSpeed.toString() + if (degreesUnits == IMPERIAL) {
-            IMPERIAL_DEGREE
-        } else {
-            METRIC_DEGREE
-        }
+        return resources.getString(
+            R.string.daily_dialog_wind_speed, windSpeed.toString() + if (degreesUnits == IMPERIAL) {
+                IMPERIAL_DEGREE
+            } else {
+                METRIC_DEGREE
+            }
+        )
     }
 
     private fun getVisibilityUnits(visibility: Int): String {
-        return "Visibility:\n" + if (degreesUnits == IMPERIAL) {
-            (visibility / 1609).toString() + Constants.MILE
-        } else {
-            (visibility / 1000).toString() + Constants.KM
-        }
+        return resources.getString(
+            R.string.daily_dialog_visibility, if (degreesUnits == IMPERIAL) {
+                (visibility / 1609).toString() + Constants.MILE
+            } else {
+                (visibility / 1000).toString() + Constants.KM
+            }
+        )
     }
 
     override fun onResume() {

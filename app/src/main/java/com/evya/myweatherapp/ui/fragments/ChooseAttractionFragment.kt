@@ -35,10 +35,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_layout) {
 
-    companion object {
-        private val TAG = ChooseAttractionFragment::class.toString()
-    }
-
     private val mPlacesViewModel: PlacesViewModel by viewModels()
     private lateinit var mNavController: NavController
     private lateinit var mBinding: ChooseAttractionFragmentLayoutBinding

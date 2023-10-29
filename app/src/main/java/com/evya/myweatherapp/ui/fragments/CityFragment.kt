@@ -9,7 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.evya.myweatherapp.Constants.ALERTS
 import com.evya.myweatherapp.Constants.CITY_NAME
+import com.evya.myweatherapp.Constants.FROM_ALERTS
 import com.evya.myweatherapp.Constants.FROM_FAVORITES
 import com.evya.myweatherapp.Constants.FROM_TOP_ADAPTER
 import com.evya.myweatherapp.Constants.IMPERIAL
@@ -20,12 +22,12 @@ import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.Constants.METRIC
 import com.evya.myweatherapp.Constants.RAIN
 import com.evya.myweatherapp.Constants.SNOW
-import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.MainData.addedToFav
 import com.evya.myweatherapp.MainData.approvedPermissions
 import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
+import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
@@ -35,14 +37,13 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_TEMPERATURE_UNITS
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
-import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
 import com.evya.myweatherapp.model.weathermodel.Daily
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
-import com.evya.myweatherapp.util.UtilsFunctions.Companion.safeLet
 import com.evya.myweatherapp.ui.dialogs.DailyDialog
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.safeLet
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
@@ -56,6 +57,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 @ExperimentalCoroutinesApi
@@ -107,6 +109,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             long = arguments?.getFloat(LONG).toString()
             mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
         }
+
+        if (arguments?.getBoolean(FROM_ALERTS) == true) {
+            lat = arguments?.getFloat(LAT).toString()
+            long = arguments?.getFloat(LONG).toString()
+            mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
+        }
+        mBinding.rightScrollArrow.visibility = View.VISIBLE
+        mBinding.leftScrollArrow.visibility = View.GONE
     }
 
     private fun getWeatherData() {
@@ -133,6 +143,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 safeLet(mFavWeather?.lat, mFavWeather?.lon) { lat, lon ->
                     mWeatherViewModel.getCityNameByLocation(lat.toString(), lon.toString())
                 }
+
+                mBinding.alertSignImg.isVisible = !mFavWeather?.alerts.isNullOrEmpty()
+
                 mBinding.cityName.text = mFavWeather?.timezone?.substringAfter("/")
                 mBinding.dailyExpectation.text = mFavWeather?.daily?.get(0)?.summary ?: ""
                 lat = mFavWeather?.lat.toString()
@@ -141,7 +154,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mFavWeather?.let { it1 -> showWeather(it1) }
                 mFavWeather?.daily?.let { it1 -> setDailyAdapter(it1) }
                 mFavWeather?.let { it1 -> setWeatherDataInTextViews(it1) }
-                checkIfAlreadyInFav()
             } else {
 //                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
@@ -158,14 +170,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             it.first?.let { cityData ->
                 if (cityData.size > 0) {
                     mBinding.cityName.text = cityData[0].name
+                    checkIfAlreadyInFav(cityData[0].name)
+
                 } else {
                     showToast(context?.getString(R.string.didnt_choose_city_error), context)
                     (activity as MainActivity).getLastLocation()
                 }
             }
-
         }
-
     }
 
     private fun setBoldSpan() {
@@ -222,8 +234,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 //        val maxTempArray = maxTempRawArray.sortedDescending().take(5)
         val maxTempArray = maxTempRawArray.sortedDescending()
 
-//        val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
-        val newList = dailyWeatherList.subList(0, 5)
+/*//        val newList = dailyWeatherList.filterIndexed { index, _ -> index % 8 == 0 }
+        val newList = dailyWeatherList.subList(0, 5)*/
 
         mDailyAdapter =
             DailyWeatherAdapter(this, dailyWeatherList, minTempArray, maxTempArray, activity?.applicationContext)
@@ -233,7 +245,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
 
         getSpecificDayWeather = { time ->
-            val date = SimpleDateFormat("yyyy-MM-dd").format(time * 1000L)
+            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(time * 1000L)
             mWeatherViewModel.getWeatherForSpecificDay(lat, long, date, degreesUnits)
         }
     }
@@ -314,17 +326,46 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     }
                 }
             }
-        /*    alertSignImg.setOnClickListener {
+            leftScrollArrow.setOnClickListener {
+                mBinding.rightScrollArrow.visibility = View.VISIBLE
+                if ((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 0) {
+                    mBinding.dailyWeatherRecyclerView.smoothScrollToPosition((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() - 3)
+                } else {
+                    mBinding.dailyWeatherRecyclerView.smoothScrollToPosition(0)
+                }
+
+                if((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() == 0) {
+                    mBinding.leftScrollArrow.visibility = View.GONE
+                }
+            }
+
+            rightScrollArrow.setOnClickListener{
+                val layoutManager = (dailyWeatherRecyclerView.layoutManager as LinearLayoutManager)
+                mBinding.leftScrollArrow.visibility = View.VISIBLE
+                dailyWeatherRecyclerView.smoothScrollToPosition(
+                    (dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() + 3
+                )
+                if(layoutManager.findLastCompletelyVisibleItemPosition() == (dailyWeatherRecyclerView.adapter?.itemCount?.minus(1) ?: false)) {
+                    mBinding.rightScrollArrow.visibility = View.GONE
+                }
+            }
+
+            alertSignImg.setOnClickListener {
                 mFavWeather?.alerts?.let { alertsList ->
-                    (activity as MainActivity).openAlertFragment(alertsList)
-                } ?: showToast("No alerts in this area", (activity as MainActivity))
-            }*/
+                    val bundle = bundleOf(
+                        CITY_NAME to mCityName,
+                        ALERTS to alertsList
+                    )
+                    mNavController.navigate(R.id.action_cityFragment_to_alertsFragment, bundle)
+
+                } ?: showToast("No alerts in this area", requireContext())
+            }
         }
     }
 
-    private fun checkIfAlreadyInFav() {
+    private fun checkIfAlreadyInFav(cityName: String) {
         try {
-            mFavoritesViewModel.setCityName(mBinding.cityName.text.toString())
+            mFavoritesViewModel.setCityName(cityName)
             mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner) {
                 if (it) {
                     mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
