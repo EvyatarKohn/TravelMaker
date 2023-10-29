@@ -154,7 +154,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mFavWeather?.let { it1 -> showWeather(it1) }
                 mFavWeather?.daily?.let { it1 -> setDailyAdapter(it1) }
                 mFavWeather?.let { it1 -> setWeatherDataInTextViews(it1) }
-                checkIfAlreadyInFav()
             } else {
 //                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
@@ -171,6 +170,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             it.first?.let { cityData ->
                 if (cityData.size > 0) {
                     mBinding.cityName.text = cityData[0].name
+                    checkIfAlreadyInFav(cityData[0].name)
+
                 } else {
                     showToast(context?.getString(R.string.didnt_choose_city_error), context)
                     (activity as MainActivity).getLastLocation()
@@ -362,9 +363,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
     }
 
-    private fun checkIfAlreadyInFav() {
+    private fun checkIfAlreadyInFav(cityName: String) {
         try {
-            mFavoritesViewModel.setCityName(mBinding.cityName.text.toString())
+            mFavoritesViewModel.setCityName(cityName)
             mFavoritesViewModel.checkIfAlreadyAddedToDB.observe(viewLifecycleOwner) {
                 if (it) {
                     mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
