@@ -69,9 +69,9 @@ data class Weather(
 
     fun getDegreeUnits(temp: Double): String {
         return if (MainData.degreesUnits == Constants.IMPERIAL) {
-            temp.toInt().toString() + " \u2109"
+            temp.toInt().toString() + " \u2109" // Fahrenheit symbol
         } else {
-            temp.toInt().toString() + " \u2103"
+            temp.toInt().toString() + " \u2103" // Celsius symbol
         }
     }
 

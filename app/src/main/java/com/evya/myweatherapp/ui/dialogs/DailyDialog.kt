@@ -72,9 +72,9 @@ class DailyDialog: DialogFragment() {
 
     private fun getDegreeUnits(temp: Double?): String {
         return if (degreesUnits == IMPERIAL) {
-            (temp ?: 0.0).toInt().toString() + " \u2109"
+            (temp ?: 0.0).toInt().toString() + " \u2109" // Fahrenheit symbol
         } else {
-            (temp ?: 0.0).toInt().toString() + " \u2103"
+            (temp ?: 0.0).toInt().toString() + " \u2103" // Celsius symbol
         }
     }
 
