@@ -24,7 +24,8 @@ class AlertsAdapter(private val context: Context, private val alerts: List<Alert
             alerts?.get(position)?.event,
             alerts?.get(position)?.start,
             alerts?.get(position)?.end,
-            alerts?.get(position)?.description
+            alerts?.get(position)?.description,
+            alerts?.get(position)?.senderName
         )
     }
 
@@ -35,10 +36,12 @@ class AlertsViewHolder(itemBinding: AlertItemBinding) :
     RecyclerView.ViewHolder(itemBinding.root) {
     private var title: TextView? = null
     private var desc: TextView? = null
+    private var sender: TextView? = null
 
     init {
         title = itemBinding.alertTitle
         desc = itemBinding.alertDesc
+        sender = itemBinding.senderName
     }
 
     fun bind(
@@ -46,10 +49,12 @@ class AlertsViewHolder(itemBinding: AlertItemBinding) :
         alertsEvent: String?,
         alertsStart: Int?,
         alertsEnd: Int?,
-        alertsDescription: String?
+        alertsDescription: String?,
+        senderName: String?
     ) {
-        title?.text = context.resources.getString(R.string.alerts_item, alertsEvent, getAlertTime(alertsStart), getAlertTime(alertsEnd))
+        title?.text = context.resources.getString(R.string.alerts_item, alertsEvent, getAlertTime(alertsStart), getAlertTime(alertsEnd) + ": ")
         desc?.text = alertsDescription
+        sender?.text = senderName
     }
     private fun getAlertTime(alertTime: Int?) = SimpleDateFormat("dd/MM  HH:mm", Locale.getDefault()).format((alertTime ?: 1) * 1000L)
 }
