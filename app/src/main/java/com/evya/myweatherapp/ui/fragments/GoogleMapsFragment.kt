@@ -2,9 +2,11 @@ package com.evya.myweatherapp.ui.fragments
 
 import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -92,7 +94,6 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
 
         // Set up a PlaceSelectionListener to handle the response.
-        // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 // TODO: Get info about the selected place.
@@ -100,30 +101,15 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 mGoogleMap.clear()
                 val location = place.name
                 val geocoder = activity?.applicationContext?.let { Geocoder(it) }
-                val list = location?.let { geocoder?.getFromLocationName(it, 1) } as ArrayList<Address>?
-                list?.size?.let { listSize ->
-                    if (listSize > 0) {
-                        mAddress = list[0]
-                        lat = mAddress.latitude.toString()
-                        long = mAddress.longitude.toString()
-                        lat = mAddress.latitude.toString()
-                        long = mAddress.longitude.toString()
-                        val latLang = LatLng(mAddress.latitude, mAddress.longitude)
-                        mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
-                        val params = bundleOf(
-                            PARAMS_CITY_NAME.paramsName to mAddress.locality
-                        )
-                        FireBaseEvents.sendFireBaseCustomEvents(
-                            SEARCH_IN_GOOGLE_MAP.eventName,
-                            params
-                        )
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    getAddressForTiramisuAndAbove(location, geocoder)
+                } else {
+                    getAddressForSdkEarlierTheTiramisu(location, geocoder)
                 }
             }
 
             override fun onError(status: Status) {
-                showToast("${context?.resources?.getString(R.string.google_search_error)}: ${status.statusMessage}", activity?.applicationContext)
+                showToast("${context?.resources?.getString(R.string.google_search_error)}: ${status.statusMessage}")
             }
         })
 
@@ -139,6 +125,56 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             FireBaseEvents.sendFireBaseCustomEvents(SHOW_WEATHER.eventName, params)
             mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment)
             (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
+        }
+    }
+
+    private fun getAddressForSdkEarlierTheTiramisu(location: String?, geocoder: Geocoder?) {
+        val list = location?.let {
+            geocoder?.getFromLocationName(it, 1)
+        }
+        list?.size?.let { listSize ->
+            if (listSize > 0) {
+                mAddress = list[0]
+                lat = mAddress.latitude.toString()
+                long = mAddress.longitude.toString()
+                lat = mAddress.latitude.toString()
+                long = mAddress.longitude.toString()
+                val latLang = LatLng(mAddress.latitude, mAddress.longitude)
+                mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                val params = bundleOf(
+                    PARAMS_CITY_NAME.paramsName to mAddress.locality
+                )
+                FireBaseEvents.sendFireBaseCustomEvents(
+                    SEARCH_IN_GOOGLE_MAP.eventName,
+                    params
+                )
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun getAddressForTiramisuAndAbove(location: String?, geocoder: Geocoder?) {
+        location?.let {
+            geocoder?.getFromLocationName(it, 1) { list ->
+                if (list.size > 0) {
+                    mAddress = list[0]
+                    lat = mAddress.latitude.toString()
+                    long = mAddress.longitude.toString()
+                    lat = mAddress.latitude.toString()
+                    long = mAddress.longitude.toString()
+                    val latLang = LatLng(mAddress.latitude, mAddress.longitude)
+                    mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                    val params = bundleOf(
+                        PARAMS_CITY_NAME.paramsName to mAddress.locality
+                    )
+                    FireBaseEvents.sendFireBaseCustomEvents(
+                        SEARCH_IN_GOOGLE_MAP.eventName,
+                        params
+                    )
+                }
+            }
         }
     }
 }

@@ -125,7 +125,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
                 }
             } else {
                 it.second?.let { it1 ->
-                    showToast(context?.resources?.getString(it1), activity?.applicationContext)
+                    showToast(context?.resources?.getString(it1))
                 }
             }
         }

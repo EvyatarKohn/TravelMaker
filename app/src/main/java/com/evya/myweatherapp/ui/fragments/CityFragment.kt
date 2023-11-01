@@ -9,6 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.evya.myweatherapp.Constants.ALERTS
 import com.evya.myweatherapp.Constants.CITY_NAME
 import com.evya.myweatherapp.Constants.FROM_ALERTS
@@ -78,6 +80,27 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     var getSpecificDayWeather: ((time: Int) -> Unit)? = null
     private var mInterstitialAd: InterstitialAd? = null
     private var showAd = 0
+    private val linearLayoutManager =  LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
+    private val scrollListener = object : OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            mBinding.apply {
+                linearLayoutManager.let {
+                    if (it.findFirstCompletelyVisibleItemPosition() == 0) {
+                        leftScrollArrow.visibility = View.GONE
+                    } else {
+                        leftScrollArrow.visibility = View.VISIBLE
+                    }
+
+                    if (it.findLastCompletelyVisibleItemPosition() == (mDailyAdapter.itemCount - 1)) {
+                        rightScrollArrow.visibility = View.GONE
+                    } else {
+                        rightScrollArrow.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -93,9 +116,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             R.color.turquoise,
             R.string.units,
             mBinding.units,
-            activity?.applicationContext
         )
-
         if (arguments?.getBoolean(FROM_TOP_ADAPTER) == true) {
             mCityName = arguments?.getString(CITY_NAME).toString()
            /* getWeather(mCityName, degreesUnits)
@@ -157,7 +178,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             } else {
 //                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
-                    showToast(context?.getString(it1, mCityName), activity?.applicationContext)
+                    showToast(context?.getString(it1, mCityName))
                 }
             }
         }
@@ -171,9 +192,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 if (cityData.size > 0) {
                     mBinding.cityName.text = cityData[0].name
                     checkIfAlreadyInFav(cityData[0].name)
-
+                    setBoldSpan()
                 } else {
-                    showToast(context?.getString(R.string.didnt_choose_city_error), context)
+                    showToast(context?.getString(R.string.didnt_choose_city_error))
                     (activity as MainActivity).getLastLocation()
                 }
             }
@@ -181,17 +202,24 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun setBoldSpan() {
-        setSpanBold(0, 8, mBinding.humidity, activity?.applicationContext)
-        setSpanBold(0, 11, mBinding.windSpeed, activity?.applicationContext)
-        setSpanBold(0, 7, mBinding.sunrise, activity?.applicationContext)
-        setSpanBold(0, 6, mBinding.sunset, activity?.applicationContext)
-        setSpanBold(0, 7, mBinding.description, activity?.applicationContext)
-        setSpanBold(0, 10, mBinding.visibility, activity?.applicationContext)
-        setSpanBold(
-            0, 26, mBinding.probabilityOfPrecipitation, activity?.applicationContext
-        )
-        setSpanBold(0, 13, mBinding.rain3h, activity?.applicationContext)
-        setSpanBold(0, 14, mBinding.airPollution, activity?.applicationContext)
+        val humidity = mBinding.humidity
+        val windSpeed = mBinding.windSpeed
+        val sunrise = mBinding.sunrise
+        val sunset = mBinding.sunset
+        val description = mBinding.description
+        val visibility = mBinding.visibility
+        val probabilityOfPrecipitation = mBinding.probabilityOfPrecipitation
+        val rain3h = mBinding.rain3h
+        val airPollution = mBinding.airPollution
+        setSpanBold(0, humidity, humidity.text.toString().substringBefore(":"))
+        setSpanBold(0, windSpeed, windSpeed.text.toString().substringBefore(":"))
+        setSpanBold(0, sunrise, sunrise.text.toString().substringBefore(":"))
+        setSpanBold(0, sunset, sunset.text.toString().substringBefore(":"))
+        setSpanBold(0, description, description.text.toString().substringBefore(":"))
+        setSpanBold(0, visibility, visibility.text.toString().substringBefore(":"))
+        setSpanBold(0, probabilityOfPrecipitation, probabilityOfPrecipitation.text.toString().substringBefore(":"))
+        setSpanBold(0, rain3h, rain3h.text.toString().substringBefore(":"))
+        setSpanBold(0, airPollution, airPollution.text.toString().substringBefore(":"))
     }
 
     private fun isRaining(description: String) =
@@ -213,9 +241,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun setTopAdapter(list: List<CitiesAroundData>) {
         mMainCitiesAdapter = CitiesAroundAdapter(activity?.applicationContext, list, mNavController)
-        val layoutManager =
-            LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        mBinding.mainCitiesRecyclerView.layoutManager = layoutManager
+        mBinding.mainCitiesRecyclerView.layoutManager = linearLayoutManager
         mBinding.mainCitiesRecyclerView.adapter = mMainCitiesAdapter
     }
 
@@ -239,10 +265,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mDailyAdapter =
             DailyWeatherAdapter(this, dailyWeatherList, minTempArray, maxTempArray, activity?.applicationContext)
-        val layoutManager =
-            LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        mBinding.dailyWeatherRecyclerView.layoutManager = layoutManager
+        mBinding.dailyWeatherRecyclerView.layoutManager = linearLayoutManager
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
+        mBinding.dailyWeatherRecyclerView.addOnScrollListener(scrollListener)
 
         getSpecificDayWeather = { time ->
             val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(time * 1000L)
@@ -293,7 +318,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     R.color.turquoise,
                     R.string.units,
                     units,
-                    activity?.applicationContext
                 )
                 units.text
                 /*            getWeather(mCityName, degreesUnits)
@@ -358,7 +382,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     )
                     mNavController.navigate(R.id.action_cityFragment_to_alertsFragment, bundle)
 
-                } ?: showToast("No alerts in this area", requireContext())
+                } ?: showToast("No alerts in this area")
             }
         }
     }

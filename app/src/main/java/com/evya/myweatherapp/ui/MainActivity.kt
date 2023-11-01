@@ -35,6 +35,7 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.util.UtilsFunctions
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.setContext
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
-
+        setContext(this)
         MobileAds.initialize(this) {}
         loadInterstitialAd()
 
@@ -95,7 +96,6 @@ class MainActivity : AppCompatActivity() {
             R.color.black,
             R.string.app_name_title,
             mBinding.appName,
-            applicationContext
         )
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)

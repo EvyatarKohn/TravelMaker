@@ -13,7 +13,13 @@ import androidx.core.content.ContextCompat
 class UtilsFunctions {
 
     companion object {
-        fun showToast(error: String?, context: Context?) {
+
+        private var context: Context? = null
+
+        fun setContext(context: Context) {
+            this.context = context
+        }
+        fun showToast(error: String?) {
             Toast.makeText(
                 context,
                 error,
@@ -21,21 +27,22 @@ class UtilsFunctions {
             ).show()
         }
 
-        fun setSpanBold(start: Int, end: Int, textView: TextView, context: Context?) {
+        fun setSpanBold(start: Int, textView: TextView, string: String? = null) {
+            val length = string?.length ?: textView.text.length
             val span = SpannableString(textView.text.toString())
             val font = Typeface.createFromAsset(context?.assets, "font/product_sans_bold.ttf")
-            span.setSpan(CustomTypeFaceSpan("", font), start, end, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
+            span.setSpan(CustomTypeFaceSpan("", font), start, length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             textView.text = span
         }
 
-        fun setSpanBold(string: String, context: Context?): SpannableString {
+        fun setSpanBold(string: String): SpannableString {
             val span = SpannableString(string)
             val font = Typeface.createFromAsset(context?.assets, "font/product_sans_bold.ttf")
             span.setSpan(CustomTypeFaceSpan("", font), 0, string.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             return span
         }
 
-        fun setColorSpan(start: Int, end: Int, color: Int, text: Int, view: TextView, context: Context?) {
+        fun setColorSpan(start: Int, end: Int, color: Int, text: Int, view: TextView) {
             val span = SpannableString(context?.resources?.getString(text))
             span.setSpan(
                 ForegroundColorSpan(
