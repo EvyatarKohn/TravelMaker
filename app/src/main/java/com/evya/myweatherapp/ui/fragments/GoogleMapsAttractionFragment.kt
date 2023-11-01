@@ -3,6 +3,7 @@ package com.evya.myweatherapp.ui.fragments
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -46,7 +47,11 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
                 lat.toDouble(),
                 long.toDouble()
             )
-            mPlaces = arguments?.getParcelable("places")!!
+            mPlaces = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arguments?.getParcelable("places", Places::class.java) ?: Places(emptyList(), "")
+            } else {
+                arguments?.getParcelable("places") ?: Places(emptyList(), "")
+            }
 
             val markerOptions = MarkerOptions()
             mPlaces.features.forEach {

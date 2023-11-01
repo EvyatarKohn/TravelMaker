@@ -9,6 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.evya.myweatherapp.Constants.ALERTS
 import com.evya.myweatherapp.Constants.CITY_NAME
 import com.evya.myweatherapp.Constants.FROM_ALERTS
@@ -78,6 +80,27 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     var getSpecificDayWeather: ((time: Int) -> Unit)? = null
     private var mInterstitialAd: InterstitialAd? = null
     private var showAd = 0
+    private val linearLayoutManager =  LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
+    private val scrollListener = object : OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            mBinding.apply {
+                linearLayoutManager.let {
+                    if (it.findFirstCompletelyVisibleItemPosition() == 0) {
+                        leftScrollArrow.visibility = View.GONE
+                    } else {
+                        leftScrollArrow.visibility = View.VISIBLE
+                    }
+
+                    if (it.findLastCompletelyVisibleItemPosition() == (mDailyAdapter.itemCount - 1)) {
+                        rightScrollArrow.visibility = View.GONE
+                    } else {
+                        rightScrollArrow.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -218,9 +241,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun setTopAdapter(list: List<CitiesAroundData>) {
         mMainCitiesAdapter = CitiesAroundAdapter(activity?.applicationContext, list, mNavController)
-        val layoutManager =
-            LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        mBinding.mainCitiesRecyclerView.layoutManager = layoutManager
+        mBinding.mainCitiesRecyclerView.layoutManager = linearLayoutManager
         mBinding.mainCitiesRecyclerView.adapter = mMainCitiesAdapter
     }
 
@@ -244,10 +265,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mDailyAdapter =
             DailyWeatherAdapter(this, dailyWeatherList, minTempArray, maxTempArray, activity?.applicationContext)
-        val layoutManager =
-            LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        mBinding.dailyWeatherRecyclerView.layoutManager = layoutManager
+        mBinding.dailyWeatherRecyclerView.layoutManager = linearLayoutManager
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
+        mBinding.dailyWeatherRecyclerView.addOnScrollListener(scrollListener)
 
         getSpecificDayWeather = { time ->
             val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(time * 1000L)

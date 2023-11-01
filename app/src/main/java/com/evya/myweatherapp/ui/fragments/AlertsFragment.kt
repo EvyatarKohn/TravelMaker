@@ -1,5 +1,6 @@
 package com.evya.myweatherapp.ui.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
@@ -20,10 +21,8 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.model.weathermodel.Alerts
 import com.evya.myweatherapp.ui.adapters.AlertsAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
-@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class AlertsFragment : Fragment(R.layout.alert_fragment) {
 
@@ -34,7 +33,11 @@ class AlertsFragment : Fragment(R.layout.alert_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = AlertFragmentBinding.bind(view)
-        val alertsList = arguments?.get("alerts") as? ArrayList<Alerts>
+        val alertsList =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelableArrayList("alerts", Alerts::class.java)
+        } else {
+            arguments?.get("alerts") as? ArrayList<Alerts>
+        }
         val cityName = arguments?.getString("cityName")
 
         alertsAdapter = AlertsAdapter(requireContext(), alertsList)
