@@ -179,17 +179,24 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private fun setBoldSpan() {
-        setSpanBold(0, 8, mBinding.humidity, activity?.applicationContext)
-        setSpanBold(0, 11, mBinding.windSpeed, activity?.applicationContext)
-        setSpanBold(0, 7, mBinding.sunrise, activity?.applicationContext)
-        setSpanBold(0, 6, mBinding.sunset, activity?.applicationContext)
-        setSpanBold(0, 7, mBinding.description, activity?.applicationContext)
-        setSpanBold(0, 10, mBinding.visibility, activity?.applicationContext)
-        setSpanBold(
-            0, 26, mBinding.probabilityOfPrecipitation, activity?.applicationContext
-        )
-        setSpanBold(0, 13, mBinding.rain3h, activity?.applicationContext)
-        setSpanBold(0, 14, mBinding.airPollution, activity?.applicationContext)
+        val humidity = mBinding.humidity
+        val windSpeed = mBinding.windSpeed
+        val sunrise = mBinding.sunrise
+        val sunset = mBinding.sunset
+        val description = mBinding.description
+        val visibility = mBinding.visibility
+        val probabilityOfPrecipitation = mBinding.probabilityOfPrecipitation
+        val rain3h = mBinding.rain3h
+        val airPollution = mBinding.airPollution
+        setSpanBold(0, humidity, humidity.text.toString().substringBefore(":"))
+        setSpanBold(0, windSpeed, windSpeed.text.toString().substringBefore(":"))
+        setSpanBold(0, sunrise, sunrise.text.toString().substringBefore(":"))
+        setSpanBold(0, sunset, sunset.text.toString().substringBefore(":"))
+        setSpanBold(0, description, description.text.toString().substringBefore(":"))
+        setSpanBold(0, visibility, visibility.text.toString().substringBefore(":"))
+        setSpanBold(0, probabilityOfPrecipitation, probabilityOfPrecipitation.text.toString().substringBefore(":"))
+        setSpanBold(0, rain3h, rain3h.text.toString().substringBefore(":"))
+        setSpanBold(0, airPollution, airPollution.text.toString().substringBefore(":"))
     }
 
     private fun isRaining(description: String) =
