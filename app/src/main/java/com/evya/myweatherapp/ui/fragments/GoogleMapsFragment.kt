@@ -123,7 +123,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             }
 
             override fun onError(status: Status) {
-                showToast("${context?.resources?.getString(R.string.google_search_error)}: ${status.statusMessage}", activity?.applicationContext)
+                showToast("${context?.resources?.getString(R.string.google_search_error)}: ${status.statusMessage}")
             }
         })
 

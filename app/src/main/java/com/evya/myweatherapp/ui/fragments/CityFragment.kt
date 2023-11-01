@@ -93,9 +93,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             R.color.turquoise,
             R.string.units,
             mBinding.units,
-            activity?.applicationContext
         )
-
         if (arguments?.getBoolean(FROM_TOP_ADAPTER) == true) {
             mCityName = arguments?.getString(CITY_NAME).toString()
            /* getWeather(mCityName, degreesUnits)
@@ -157,7 +155,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             } else {
 //                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
-                    showToast(context?.getString(it1, mCityName), activity?.applicationContext)
+                    showToast(context?.getString(it1, mCityName))
                 }
             }
         }
@@ -171,9 +169,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 if (cityData.size > 0) {
                     mBinding.cityName.text = cityData[0].name
                     checkIfAlreadyInFav(cityData[0].name)
-
+                    setBoldSpan()
                 } else {
-                    showToast(context?.getString(R.string.didnt_choose_city_error), context)
+                    showToast(context?.getString(R.string.didnt_choose_city_error))
                     (activity as MainActivity).getLastLocation()
                 }
             }
@@ -293,7 +291,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     R.color.turquoise,
                     R.string.units,
                     units,
-                    activity?.applicationContext
                 )
                 units.text
                 /*            getWeather(mCityName, degreesUnits)
@@ -358,7 +355,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     )
                     mNavController.navigate(R.id.action_cityFragment_to_alertsFragment, bundle)
 
-                } ?: showToast("No alerts in this area", requireContext())
+                } ?: showToast("No alerts in this area")
             }
         }
     }

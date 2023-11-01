@@ -36,7 +36,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
 
         mFavoritesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner) { weatherList ->
             if (weatherList.isNullOrEmpty()) {
-                showToast(context?.getString(R.string.no_saved_favorites), activity?.applicationContext)
+                showToast(context?.getString(R.string.no_saved_favorites))
             } else {
                 mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.timezone.substringAfter("/") }, mNavController, this)
                 val layoutManager =
