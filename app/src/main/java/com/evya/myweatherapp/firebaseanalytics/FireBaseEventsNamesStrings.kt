@@ -26,4 +26,5 @@ enum class FireBaseEventsNamesStrings(val eventName: String) {
     ON_INTERSTITIAL_AD_IMPRESSION("on_interstitial_ad_impression"),
     ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT("on_interstitial_ad_showed_full_screen_content"),
     SHOW_ALERT("show_alert"),
+    PRESS_ON_ATTRACTION_ON_GOOGLE_MAPS("press_on_attraction_on_google_maps"),
 }

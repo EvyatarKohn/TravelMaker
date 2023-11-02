@@ -61,7 +61,7 @@ class AlertsFragment : Fragment(R.layout.alert_fragment) {
 
         val params = bundleOf(
             PARAMS_CITY_NAME.paramsName to cityName,
-            PARAMS_ALERT_DAY.paramsName to alertsList,
+            PARAMS_ALERT.paramsName to alertsList,
         )
         FireBaseEvents.sendFireBaseCustomEvents(SHOW_ALERT.eventName, params)
 

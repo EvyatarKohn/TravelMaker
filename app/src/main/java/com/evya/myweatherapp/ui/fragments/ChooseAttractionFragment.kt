@@ -138,7 +138,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             InterstitialAd.load(it, "ca-app-pub-9058418744370338/1048685069", adRequest, object : InterstitialAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         val params = bundleOf(
-                            PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                            PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to adError.message
                         )
                         FireBaseEvents.sendFireBaseCustomEvents(
                             ON_INTERSTITIAL_AD_FAILED_TO_LOAD.eventName,
@@ -238,7 +238,7 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 // Called when ad fails to show.
                 val params = bundleOf(
-                    PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                    PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to adError.message
                 )
                 FireBaseEvents.sendFireBaseCustomEvents(
                     ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT.eventName,
