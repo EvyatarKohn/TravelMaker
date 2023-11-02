@@ -12,4 +12,5 @@ object MainData {
     var attractionRadius = DEFAULT_ATTRACTION_RADIUS
     var approvedPermissions = false
     var weather: Weather? = null
+    var counter = 0
 }

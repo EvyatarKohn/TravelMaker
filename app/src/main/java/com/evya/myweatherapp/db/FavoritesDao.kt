@@ -1,5 +1,6 @@
 package com.evya.myweatherapp.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -10,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 interface FavoritesDao {
     @Insert
     suspend fun addFavorites(weather: Weather)
+
+    @Query("SELECT * FROM favorites WHERE cityName = :cityName")
+    fun fetchSpecificCity(cityName: String): LiveData<Weather>
 
     @Query("SELECT * FROM favorites")
     fun fetchAllCities(): Flow<List<Weather>>

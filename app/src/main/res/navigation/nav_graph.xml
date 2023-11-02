@@ -31,7 +31,7 @@
 
         <argument
             android:name="currentCity"
-            android:defaultValue="Tel-aviv"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
 
 
@@ -58,7 +58,7 @@
 
         <argument
             android:name="cityName"
-            android:defaultValue="Tel-aviv"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
         <action
             android:id="@+id/action_cityFragment_to_alertsFragment"
@@ -70,7 +70,7 @@
 
         <argument
             android:name="cityName"
-            android:defaultValue="Tel-aviv"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
 
         <argument
@@ -104,7 +104,7 @@
 
         <argument
             android:name="currentCity"
-            android:defaultValue="Tel-aviv"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
 
     </fragment>
@@ -147,6 +147,25 @@
         <action
             android:id="@+id/action_favoritesFragment_to_cityFragment"
             app:destination="@id/cityFragment" />
+
+        <argument
+            android:name="fromFavorites"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="cityName"
+            android:defaultValue="Ramat Gan"
+            app:argType="string" />
+
+        <argument
+            android:name="lat"
+            android:defaultValue="32.083333"
+            app:argType="float" />
+        <argument
+            android:name="long"
+            android:defaultValue="34.7999968"
+            app:argType="float" />
     </fragment>
 
     <fragment

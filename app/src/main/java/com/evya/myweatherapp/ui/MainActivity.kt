@@ -113,30 +113,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToRelevantScreen(id: Int) {
+     fun navigateToRelevantScreen(id: Int, shouldCallApiAgain: Boolean = true) {
         var firebaseEvent = NAVIGATE_TO_WEATHER
         var navigateTo = "weather"
 
         when (id) {
             R.id.weather -> {
                 approvedPermissions = true
-                changeNavBarIndex(R.id.cityFragment, R.id.weather)
+                changeNavBarIndex(R.id.cityFragment, R.id.weather, shouldCallApiAgain)
                 firebaseEvent = NAVIGATE_TO_WEATHER
                 navigateTo = "weather"
             }
             R.id.map -> {
-                changeNavBarIndex(R.id.googleMapsFragment, R.id.map)
+                changeNavBarIndex(R.id.googleMapsFragment, R.id.map, shouldCallApiAgain)
                 firebaseEvent = NAVIGATE_TO_GOOGLE_MAP
                 navigateTo = "map"
             }
             R.id.attractions -> {
-                changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
+                changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions, shouldCallApiAgain)
                 firebaseEvent = NAVIGATE_TO_ATTRACTIONS
                 navigateTo = "attractions"
             }
 
             R.id.favorites -> {
-                changeNavBarIndex(R.id.favoritesFragment, R.id.favorites)
+                changeNavBarIndex(R.id.favoritesFragment, R.id.favorites, shouldCallApiAgain)
                 firebaseEvent = NAVIGATE_TO_FAVORITES
                 navigateTo = "favorites"
             }
@@ -310,12 +310,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun changeNavBarIndex(destination: Int, bottomNavId: Int) {
+    fun changeNavBarIndex(destination: Int, bottomNavId: Int, shouldCallApiAgain: Boolean = true) {
         mFirsTimeBack = true
-        loadInterstitialAd()
-        handleInterstitialAd(destination)
+        if (shouldCallApiAgain) {
+            loadInterstitialAd()
+            handleInterstitialAd(destination)
+        }
         mNavHostFragment.navController.graph = mGraph
         mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
+    }
+
+    fun setItemSelected(destination: Int, bottomNavId: Int, isSelected: Boolean) {
+
+        mBinding.bottomNavigationBar.setItemSelected(bottomNavId, isSelected)
+        mGraph.startDestination = destination
+        mNavHostFragment.navController.graph = mGraph
+        mNavHostFragment.navController.navigate(destination)
     }
 
     private fun startDestination(id: Int) {

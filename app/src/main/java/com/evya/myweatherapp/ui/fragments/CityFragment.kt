@@ -33,9 +33,15 @@ import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CHANGE_TEMP_UNITS
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CLICK_ON_INTERSTITIAL_AD
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_LOAD
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_IMPRESSION
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_LOADED
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_TEMPERATURE_UNITS
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAroundData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
@@ -105,7 +111,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = CityFragmentLayoutBinding.bind(view)
-
         liveDataObservers()
         loadInterstitialAd()
         mNavController = Navigation.findNavController(view)
@@ -125,15 +130,23 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         if (arguments?.getBoolean(FROM_FAVORITES) == true) {
             mFromFavorites = true
-            (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
+            (activity as MainActivity).setItemSelected(R.id.cityFragment, R.id.weather, false)
             lat = arguments?.getFloat(LAT).toString()
             long = arguments?.getFloat(LONG).toString()
-            mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
+            mBinding.cityName.text = arguments?.getString("cityName") ?: ""
+            mFavoritesViewModel.fetchSpecificCity(arguments?.getString("cityName") ?: "")
+                .observe(requireActivity()) {
+                    weather = it
+                    setWeatherData(weather)
+                }
+//            mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
         }
+
 
         if (arguments?.getBoolean(FROM_ALERTS) == true) {
             lat = arguments?.getFloat(LAT).toString()
             long = arguments?.getFloat(LONG).toString()
+            if (mFavoritesViewModel.fetchSpecificCity(mCityName))
             mWeatherViewModel.getWeatherByLocation(lat, long, degreesUnits)
         }
         mBinding.rightScrollArrow.visibility = View.VISIBLE
@@ -164,17 +177,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 safeLet(mFavWeather?.lat, mFavWeather?.lon) { lat, lon ->
                     mWeatherViewModel.getCityNameByLocation(lat.toString(), lon.toString())
                 }
+                setWeatherData(mFavWeather)
 
-                mBinding.alertSignImg.isVisible = !mFavWeather?.alerts.isNullOrEmpty()
-
-                mBinding.cityName.text = mFavWeather?.timezone?.substringAfter("/")
-                mBinding.dailyExpectation.text = mFavWeather?.daily?.get(0)?.summary ?: ""
-                lat = mFavWeather?.lat.toString()
-                long = mFavWeather?.lon.toString()
-//                mWeatherViewModel.getCitiesAround(lat, long, degreesUnits)
-                mFavWeather?.let { it1 -> showWeather(it1) }
-                mFavWeather?.daily?.let { it1 -> setDailyAdapter(it1) }
-                mFavWeather?.let { it1 -> setWeatherDataInTextViews(it1) }
             } else {
 //                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
@@ -199,6 +203,19 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 }
             }
         }
+    }
+
+    private fun setWeatherData(weather: Weather?) {
+        mBinding.alertSignImg.isVisible = !mFavWeather?.alerts.isNullOrEmpty()
+
+        mBinding.cityName.text = mFavWeather?.timezone?.substringAfter("/")
+        mBinding.dailyExpectation.text = mFavWeather?.daily?.get(0)?.summary ?: ""
+        lat = mFavWeather?.lat.toString()
+        long = mFavWeather?.lon.toString()
+//                mWeatherViewModel.getCitiesAround(lat, long, degreesUnits)
+        weather?.let { it1 -> showWeather(it1) }
+        weather?.daily?.let { it1 -> setDailyAdapter(it1) }
+        weather?.let { it1 -> setWeatherDataInTextViews(it1) }
     }
 
     private fun setBoldSpan() {

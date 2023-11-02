@@ -1,9 +1,11 @@
 package com.evya.myweatherapp.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
@@ -32,6 +34,7 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
     fun getWeatherByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
         newWeatherRepository.getWeatherByLocation(lat, long, units).let { response ->
             if (response.isSuccessful) {
+                Log.i("Evyatar", "getWeatherByLocation   API calls : ${MainData.counter++}")
                 mWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
                 mWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
@@ -42,6 +45,7 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
     fun getWeatherForSpecificDay(lat: String, long: String, date: String, units: String) = viewModelScope.launch {
         newWeatherRepository.getWeatherForSpecificDay(lat, long, date, units).let { response ->
             if (response.isSuccessful) {
+                Log.i("Evyatar", "getWeatherForSpecificDay  API calls : ${MainData.counter++}")
                 mDailyWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
                 mDailyWeatherLiveData.postValue(Pair(null, R.string.daily_error))
@@ -52,11 +56,11 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
     fun getCityNameByLocation(lat: String, long: String) = viewModelScope.launch {
         geoCodeRepo.getCityNameByLocation(lat, long).let { response ->
             if (response.isSuccessful) {
+                Log.i("Evyatar", "getWeatherForSpecificDay  API calls : ${MainData.counter++}")
                 mCityNameLiveData.postValue(Pair(response.body(), null))
             } else {
                 mCityNameLiveData.postValue(Pair(null, R.string.city_not_found_error))
             }
         }
     }
-
 }

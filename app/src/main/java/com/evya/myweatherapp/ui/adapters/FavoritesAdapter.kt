@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.evya.myweatherapp.Constants.CITY_NAME
 import com.evya.myweatherapp.Constants.FROM_FAVORITES
 import com.evya.myweatherapp.Constants.LAT
 import com.evya.myweatherapp.Constants.LONG
@@ -63,6 +64,7 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
             val bundle = bundleOf(
                 LAT to lat.toFloat(),
                 LONG to long.toFloat(),
+                CITY_NAME to mCityName?.text.toString(),
                 FROM_FAVORITES to true
             )
             navController.navigate(R.id.action_favoritesFragment_to_cityFragment, bundle)

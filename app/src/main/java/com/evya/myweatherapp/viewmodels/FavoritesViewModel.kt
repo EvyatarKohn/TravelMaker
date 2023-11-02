@@ -28,6 +28,9 @@ class FavoritesViewModel @Inject constructor(
         repository.addCityDataToDB(weather)
     }
 
+    fun fetchSpecificCity(cityName: String) = repository.fetchSpecificCity(cityName)
+
+
     val checkIfAlreadyAddedToDB: LiveData<Boolean>
         get() = repository.checkIfAlreadyAddedToDB(mCityName).flowOn(Dispatchers.IO)
             .asLiveData(context = viewModelScope.coroutineContext)

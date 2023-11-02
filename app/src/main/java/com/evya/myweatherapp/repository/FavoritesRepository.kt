@@ -8,6 +8,8 @@ class FavoritesRepository @Inject constructor(private val favoritesDao: Favorite
 
     suspend fun addCityDataToDB(weather: Weather) = favoritesDao.addFavorites(weather)
 
+    fun fetchSpecificCity(cityName: String?) = favoritesDao.fetchSpecificCity(cityName ?: "")
+
     val fetchAllCitiesFromDB = favoritesDao.fetchAllCities()
 
     fun checkIfAlreadyAddedToDB(cityName: String?) =
