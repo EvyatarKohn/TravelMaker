@@ -417,10 +417,10 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             InterstitialAd.load(it, "ca-app-pub-9058418744370338/1048685069", adRequest, object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     val params = bundleOf(
-                        FireBaseEventsParamsStrings.PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                        PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to adError.message
                     )
                     FireBaseEvents.sendFireBaseCustomEvents(
-                        FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_LOAD.eventName,
+                        ON_INTERSTITIAL_AD_FAILED_TO_LOAD.eventName,
                         params
                     )
                     mInterstitialAd = null
@@ -429,7 +429,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
                     val params = bundleOf()
                     FireBaseEvents.sendFireBaseCustomEvents(
-                        FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_LOADED.eventName,
+                        ON_INTERSTITIAL_AD_LOADED.eventName,
                         params
                     )
                     mInterstitialAd = interstitialAd
@@ -450,17 +450,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             override fun onAdClicked() {
                 // Called when a click is recorded for an ad.
                 val params = bundleOf()
-                FireBaseEvents.sendFireBaseCustomEvents(
-                    FireBaseEventsNamesStrings.CLICK_ON_INTERSTITIAL_AD.eventName,
-                    params
-                )
+                FireBaseEvents.sendFireBaseCustomEvents(CLICK_ON_INTERSTITIAL_AD.eventName, params)
             }
 
             override fun onAdDismissedFullScreenContent() {
                 // Called when ad is dismissed.
                 val params = bundleOf()
                 FireBaseEvents.sendFireBaseCustomEvents(
-                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT.eventName,
+                    ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT.eventName,
                     params
                 )
                 mInterstitialAd = null
@@ -470,10 +467,10 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 // Called when ad fails to show.
                 val params = bundleOf(
-                    FireBaseEventsParamsStrings.PARAMS_FAILED_TO_LOAD_AD.paramsName to adError.message
+                    PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to adError.message
                 )
                 FireBaseEvents.sendFireBaseCustomEvents(
-                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT.eventName,
+                    ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT.eventName,
                     params
                 )
                 mInterstitialAd = null
@@ -484,7 +481,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 // Called when an impression is recorded for an ad.
                 val params = bundleOf()
                 FireBaseEvents.sendFireBaseCustomEvents(
-                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_IMPRESSION.eventName,
+                    ON_INTERSTITIAL_AD_IMPRESSION.eventName,
                     params
                 )
             }
@@ -493,7 +490,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 // Called when ad is shown.
                 val params = bundleOf()
                 FireBaseEvents.sendFireBaseCustomEvents(
-                    FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT.eventName,
+                    ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT.eventName,
                     params
                 )
             }

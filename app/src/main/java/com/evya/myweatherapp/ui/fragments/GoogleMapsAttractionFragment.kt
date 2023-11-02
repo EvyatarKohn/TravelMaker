@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -13,6 +14,9 @@ import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsAttractionFragmentLayoutBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents.Companion.sendFireBaseCustomEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.model.placesmodel.Places
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -76,7 +80,10 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
             }
 
             mGoogleMap.setOnMapLongClickListener {
-//                FireBaseEvents.sendFireBaseCustomEvents()
+                val params = bundleOf(
+                    PARAMS_CLICKED_ATTRACTION.paramsName to mMarkerTitle
+                )
+                sendFireBaseCustomEvents(PRESS_ON_ATTRACTION_ON_GOOGLE_MAPS.eventName, params)
                 val googleSearchIntent = Intent(Intent.ACTION_WEB_SEARCH)
                 googleSearchIntent.putExtra(SearchManager.QUERY, mMarkerTitle)
                 googleSearchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
