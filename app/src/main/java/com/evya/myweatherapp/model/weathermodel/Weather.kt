@@ -53,9 +53,17 @@ data class Weather(
     @Expose
     val timezoneOffset: Int,
 
-    @SerializedName("cityName")
+    @SerializedName("city")
     @Expose
-    var cityName: String
+    var cityName: String?,
+
+    @SerializedName("isInFavorites")
+    @Expose
+    var isInFavorites: Boolean,
+
+    @SerializedName("callTime")
+    @Expose
+    var callTime: Long
 ) {
     fun changeDoubleToInt(double: Double): Int {
         return double.toInt()

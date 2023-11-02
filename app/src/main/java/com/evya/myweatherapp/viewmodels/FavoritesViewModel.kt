@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.repository.FavoritesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -15,8 +16,8 @@ class FavoritesViewModel @Inject constructor(
     private val repository: FavoritesRepository
 ) : ViewModel() {
 
-    private lateinit var mCityName: String
-    fun setCityName(cityName: String) {
+    private var mCityName: String? = null
+    fun setCityName(cityName: String?) {
         mCityName = cityName
     }
 
@@ -30,9 +31,12 @@ class FavoritesViewModel @Inject constructor(
 
     fun fetchSpecificCity(cityName: String) = repository.fetchSpecificCity(cityName)
 
-
-    val checkIfAlreadyAddedToDB: LiveData<Boolean>
+/*    val checkIfAlreadyAddedToDB: LiveData<Boolean>
         get() = repository.checkIfAlreadyAddedToDB(mCityName).flowOn(Dispatchers.IO)
+            .asLiveData(context = viewModelScope.coroutineContext)*/
+
+    val checkIfAlreadyInFav: LiveData<Boolean>
+        get() = repository.checkIfAlreadyInFav(mCityName).flowOn(Dispatchers.IO)
             .asLiveData(context = viewModelScope.coroutineContext)
 
     fun removeCityDataFromDB(cityName: String) = viewModelScope.launch {
@@ -43,5 +47,9 @@ class FavoritesViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             repository.deleteAllFavorites()
         }
+    }
+
+    fun update(isInFavorites: Boolean, cityName: String) = CoroutineScope(Dispatchers.IO).launch {
+        repository.update(isInFavorites, cityName)
     }
 }

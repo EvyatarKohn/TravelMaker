@@ -32,7 +32,7 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         holder.bind(
-            weather[position].cityName,
+            weather[position].cityName ?: "",
             weather[position].lat,
             weather[position].lon,
             navController,
