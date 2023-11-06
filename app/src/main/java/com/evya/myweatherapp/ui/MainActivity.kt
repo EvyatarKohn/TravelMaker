@@ -16,9 +16,11 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
@@ -36,6 +38,7 @@ import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setContext
+import com.evya.myweatherapp.viewmodels.FavoritesViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -55,6 +58,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private var showAd: Int = 0
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
@@ -309,6 +313,12 @@ class MainActivity : AppCompatActivity() {
             getLastLocation()
         }
     }
+
+    override fun onDestroy() {
+//        mFavoritesViewModel.nukeTable()
+        super.onDestroy()
+    }
+
 
     fun changeNavBarIndex(destination: Int, bottomNavId: Int, shouldCallApiAgain: Boolean = true) {
         mFirsTimeBack = true

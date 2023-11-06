@@ -8,7 +8,7 @@ class FavoritesRepository @Inject constructor(private val favoritesDao: Favorite
 
     suspend fun addCityDataToDB(weather: Weather) = favoritesDao.addCityDataToDB(weather)
 
-    fun fetchSpecificCity(cityName: String?) = favoritesDao.fetchSpecificCity(cityName ?: "")
+    suspend fun fetchSpecificCity(cityName: String?) = favoritesDao.fetchSpecificCity(cityName ?: "")
 
     val fetchAllCitiesFromDB = favoritesDao.fetchAllCities()
 
@@ -20,9 +20,11 @@ class FavoritesRepository @Inject constructor(private val favoritesDao: Favorite
     suspend fun removeCityDataFromDB(cityName: String?) =
         favoritesDao.deleteSpecificFavorite(cityName ?: "")
 
+    suspend fun deleteAllFavorite(isInFavorites: Boolean) =
+        favoritesDao.deleteAllFavorite(isInFavorites)
 
-    suspend fun deleteAllFavorites() = favoritesDao.deleteAllFavorites()
+    suspend fun nukeTable() = favoritesDao.nukeTable()
 
-    fun update(isInFavorites: Boolean, cityName: String?) =
-        favoritesDao.update(isInFavorites, cityName ?: "")
+    fun updateFavorites(isInFavorites: Boolean, cityName: String?) =
+        favoritesDao.updateFavorites(isInFavorites, cityName ?: "")
 }

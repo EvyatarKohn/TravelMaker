@@ -61,6 +61,11 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
         mCityName?.text = cityName.trim()
 
         itemView.setOnClickListener {
+            val params = bundleOf(
+                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(CHOOSE_CITY_FROM_FAVORITES.eventName, params)
+
             val bundle = bundleOf(
                 LAT to lat.toFloat(),
                 LONG to long.toFloat(),
@@ -68,10 +73,7 @@ class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
                 FROM_FAVORITES to true
             )
             navController.navigate(R.id.action_favoritesFragment_to_cityFragment, bundle)
-            val params = bundleOf(
-                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
-            )
-            FireBaseEvents.sendFireBaseCustomEvents(CHOOSE_CITY_FROM_FAVORITES.eventName, params)
+
         }
 
         itemView.setOnLongClickListener {

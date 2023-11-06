@@ -1,20 +1,22 @@
 package com.evya.myweatherapp.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.evya.myweatherapp.model.weathermodel.Weather
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoritesDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCityDataToDB(weather: Weather)
 
     @Query("SELECT * FROM favorites WHERE cityName = :cityName")
-    fun fetchSpecificCity(cityName: String): LiveData<Weather>
+    suspend fun fetchSpecificCity(cityName: String): Weather
+
+/*    @Query("SELECT EXISTS(SELECT * FROM favorites WHERE cityName = :cityName)")
+    fun fetchSpecificCity(cityName: String): Flow<Weather>*/
 
     @Query("SELECT * FROM favorites")
     fun fetchAllCities(): Flow<List<Weather>>
@@ -31,9 +33,12 @@ interface FavoritesDao {
     @Query("DELETE FROM favorites WHERE cityName = :cityName")
     suspend fun deleteSpecificFavorite(cityName: String)
 
+    @Query("DELETE FROM favorites where isInFavorites = :isInFavorites")
+    suspend fun deleteAllFavorite(isInFavorites: Boolean)
+
     @Query("DELETE FROM favorites")
-    suspend fun deleteAllFavorites()
+    suspend fun nukeTable()
 
     @Query("UPDATE favorites SET isInFavorites = :isInFavorites WHERE cityName = :cityName")
-    fun update(isInFavorites: Boolean, cityName: String)
+    fun updateFavorites(isInFavorites: Boolean, cityName: String)
 }

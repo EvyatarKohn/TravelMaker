@@ -29,7 +29,9 @@ class FavoritesViewModel @Inject constructor(
         repository.addCityDataToDB(weather)
     }
 
-    fun fetchSpecificCity(cityName: String) = repository.fetchSpecificCity(cityName)
+//    val fetchSpecificCity = repository.fetchSpecificCity(mCityName)
+
+    suspend fun fetchSpecificCity(cityName: String) = repository.fetchSpecificCity(cityName)
 
 /*    val checkIfAlreadyAddedToDB: LiveData<Boolean>
         get() = repository.checkIfAlreadyAddedToDB(mCityName).flowOn(Dispatchers.IO)
@@ -43,13 +45,18 @@ class FavoritesViewModel @Inject constructor(
         repository.removeCityDataFromDB(cityName)
     }
 
-    fun deleteAllFavoritesFromDB() = viewModelScope.launch {
+    fun deleteAllFavorite(isInFavorites: Boolean) = viewModelScope.launch {
+        repository.deleteAllFavorite(isInFavorites)
+    }
+
+
+    fun nukeTable() = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            repository.deleteAllFavorites()
+            repository.nukeTable()
         }
     }
 
-    fun update(isInFavorites: Boolean, cityName: String) = CoroutineScope(Dispatchers.IO).launch {
-        repository.update(isInFavorites, cityName)
+    fun updateFavorites(isInFavorites: Boolean, cityName: String) = CoroutineScope(Dispatchers.IO).launch {
+        repository.updateFavorites(isInFavorites, cityName)
     }
 }

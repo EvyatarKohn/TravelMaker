@@ -55,7 +55,7 @@ data class Weather(
 
     @SerializedName("city")
     @Expose
-    var cityName: String?,
+    var cityName: String,
 
     @SerializedName("isInFavorites")
     @Expose
