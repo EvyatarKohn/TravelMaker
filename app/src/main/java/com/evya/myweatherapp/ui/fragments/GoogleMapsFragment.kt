@@ -11,6 +11,10 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.evya.myweatherapp.Constants.CITY_NAME
+import com.evya.myweatherapp.Constants.FROM_GOOGLE_MAPS
+import com.evya.myweatherapp.Constants.LAT
+import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
@@ -34,6 +38,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.Locale
 
 
 @ExperimentalCoroutinesApi
@@ -44,6 +49,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mBinding: GoogleMapsFragmentLayoutBinding
     private lateinit var mAddress: Address
+    private var mLocation: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -79,7 +85,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             activity?.applicationContext?.let {
                 Places.initialize(
                     it,
-                    getString(R.string.google_maps_key)
+                    getString(R.string.google_maps_key),
+                    Locale.US
                 )
                 Places.createClient(it)
             }
@@ -99,12 +106,12 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 // TODO: Get info about the selected place.
                 Log.i("GoogleMapsFragment", "Place: ${place.name}, ${place.id}")
                 mGoogleMap.clear()
-                val location = place.name
-                val geocoder = activity?.applicationContext?.let { Geocoder(it) }
+                mLocation = place.name
+                val geocoder = activity?.applicationContext?.let { Geocoder(it, Locale.ENGLISH) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    getAddressForTiramisuAndAbove(location, geocoder)
+                    getAddressForTiramisuAndAbove(mLocation, geocoder)
                 } else {
-                    getAddressForSdkEarlierTheTiramisu(location, geocoder)
+                    getAddressForSdkEarlierTheTiramisu(mLocation, geocoder)
                 }
             }
 
@@ -115,16 +122,24 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
         mBinding.showWeatherBtn.setOnClickListener {
             val address = try {
-                mAddress.locality
+                mLocation
             } catch (e: Exception) {
-                arguments?.getString("currentCity") ?: ""
+                arguments?.getString("cityName") ?: ""
             }
+
             val params = bundleOf(
-                PARAMS_CITY_NAME.paramsName to address
+                PARAMS_CITY_NAME.paramsName to address,
             )
+
             FireBaseEvents.sendFireBaseCustomEvents(SHOW_WEATHER.eventName, params)
-            mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment)
-            (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
+
+            val bundle = bundleOf(
+                LAT to mAddress.latitude.toFloat(),
+                LONG to mAddress.longitude.toFloat(),
+                CITY_NAME to mLocation,
+                FROM_GOOGLE_MAPS to true
+            )
+            mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
         }
     }
 
@@ -135,8 +150,6 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         list?.size?.let { listSize ->
             if (listSize > 0) {
                 mAddress = list[0]
-                lat = mAddress.latitude.toString()
-                long = mAddress.longitude.toString()
                 lat = mAddress.latitude.toString()
                 long = mAddress.longitude.toString()
                 val latLang = LatLng(mAddress.latitude, mAddress.longitude)
@@ -159,8 +172,6 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             geocoder?.getFromLocationName(it, 1) { list ->
                 if (list.size > 0) {
                     mAddress = list[0]
-                    lat = mAddress.latitude.toString()
-                    long = mAddress.longitude.toString()
                     lat = mAddress.latitude.toString()
                     long = mAddress.longitude.toString()
                     val latLang = LatLng(mAddress.latitude, mAddress.longitude)

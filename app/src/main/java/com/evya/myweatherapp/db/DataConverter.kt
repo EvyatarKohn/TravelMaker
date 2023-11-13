@@ -3,6 +3,14 @@ package com.evya.myweatherapp.db
 import androidx.room.TypeConverter
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.evya.myweatherapp.model.dailyweathermodel.CloudCover
+import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.dailyweathermodel.Humidity
+import com.evya.myweatherapp.model.dailyweathermodel.Max
+import com.evya.myweatherapp.model.dailyweathermodel.Precipitation
+import com.evya.myweatherapp.model.dailyweathermodel.Pressure
+import com.evya.myweatherapp.model.dailyweathermodel.Temperature
+import com.evya.myweatherapp.model.dailyweathermodel.Wind
 import com.evya.myweatherapp.model.weathermodel.*
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
@@ -145,6 +153,33 @@ class DataConverter {
 
     @TypeConverter
     fun tempsLikeString(someObjects: Temp): String? {
+        return gson.toJson(someObjects)
+    }
+
+    @TypeConverter
+    fun stringToDailyWeather(data: String?): DailyWeather? {
+        if (data == null) {
+            return DailyWeather(
+                CloudCover(0.0),
+                "",
+                Humidity(0.0),
+                0.0,
+                0.0,
+                Precipitation(0.0),
+                Pressure(0.0),
+                Temperature(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+                "",
+                "",
+                Wind(Max(0.0, 0.0))
+            )
+        }
+        val listType: Type = object : TypeToken<DailyWeather?>() {}.type
+        return gson.fromJson(data, listType)
+    }
+
+
+    @TypeConverter
+    fun dailyWeatherToString(someObjects: DailyWeather?): String? {
         return gson.toJson(someObjects)
     }
 }

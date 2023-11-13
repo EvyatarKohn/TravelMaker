@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
@@ -53,9 +54,14 @@ data class Weather(
     @Expose
     val timezoneOffset: Int,
 
-    @SerializedName("cityName")
-    @Expose
-    var cityName: String
+    var cityName: String,
+
+    var isInFavorites: Boolean,
+
+    var callTime: Long,
+
+    var dailyWeather: DailyWeather?
+
 ) {
     fun changeDoubleToInt(double: Double): Int {
         return double.toInt()
