@@ -34,7 +34,6 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
     fun getWeatherByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
         newWeatherRepository.getWeatherByLocation(lat, long, units).let { response ->
             if (response.isSuccessful) {
-                Log.i("Evyatar", "getWeatherByLocation   API calls : ${++MainData.counter}")
                 mWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
                 mWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
@@ -45,7 +44,6 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
     fun getWeatherForSpecificDay(lat: String, long: String, date: String, units: String) = viewModelScope.launch {
         newWeatherRepository.getWeatherForSpecificDay(lat, long, date, units).let { response ->
             if (response.isSuccessful) {
-                Log.i("Evyatar", "getWeatherForSpecificDay  API calls : ${++MainData.counter}")
                 mDailyWeatherLiveData.postValue(Pair(response.body(), null))
             } else {
                 mDailyWeatherLiveData.postValue(Pair(null, R.string.daily_error))
@@ -56,7 +54,6 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
     fun getCityNameByLocation(lat: String, long: String) = viewModelScope.launch {
         geoCodeRepo.getCityNameByLocation(lat, long).let { response ->
             if (response.isSuccessful) {
-                Log.i("Evyatar", "getCityNameByLocation  API calls : ${++MainData.counter}")
                 mCityNameLiveData.postValue(Pair(response.body(), null))
             } else {
                 mCityNameLiveData.postValue(Pair(null, R.string.city_not_found_error))

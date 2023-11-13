@@ -122,10 +122,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
         mBinding.showWeatherBtn.setOnClickListener {
             val address = try {
-                Log.i("Evyatar", "Address: $mLocation")
                 mLocation
             } catch (e: Exception) {
-                Log.i("Evyatar", "Exception: $mLocation")
                 arguments?.getString("cityName") ?: ""
             }
 
@@ -174,7 +172,6 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             geocoder?.getFromLocationName(it, 1) { list ->
                 if (list.size > 0) {
                     mAddress = list[0]
-                    Log.i("Evyatar", "Address: $mAddress")
                     lat = mAddress.latitude.toString()
                     long = mAddress.longitude.toString()
                     val latLang = LatLng(mAddress.latitude, mAddress.longitude)
