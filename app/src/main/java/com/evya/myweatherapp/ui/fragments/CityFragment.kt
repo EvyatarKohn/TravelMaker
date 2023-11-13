@@ -201,7 +201,9 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         }
 
         mWeatherViewModel.dailyWeatherData.observe(viewLifecycleOwner) { response ->
-           handleInterstitialAd(response.first)
+            mFavWeather?.dailyWeather = response.first
+            weather?.dailyWeather = response.first
+            handleInterstitialAd(response.first)
         }
 
         mWeatherViewModel.cityNameData.observe(viewLifecycleOwner) {
@@ -341,7 +343,11 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         getSpecificDayWeather = { time ->
             val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(time * 1000L)
-            mWeatherViewModel.getWeatherForSpecificDay(lat, long, date, degreesUnits)
+            if (weather?.dailyWeather?.date != date) {
+                mWeatherViewModel.getWeatherForSpecificDay(lat, long, date, degreesUnits)
+            } else {
+                handleInterstitialAd(weather?.dailyWeather)
+            }
         }
     }
 
