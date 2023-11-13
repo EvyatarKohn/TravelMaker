@@ -38,7 +38,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
             if (weatherList.isNullOrEmpty()) {
                 showToast(context?.getString(R.string.no_saved_favorites))
             } else {
-                mFavoritesAdapter = FavoritesAdapter(weatherList.sortedBy { it.timezone.substringAfter("/") }, mNavController, this)
+                mFavoritesAdapter = FavoritesAdapter(weatherList.filter { it.isInFavorites }.sortedBy { it.timezone.substringAfter("/") }, mNavController, this)
                 val layoutManager =
                     LinearLayoutManager(
                         activity?.applicationContext,
@@ -75,17 +75,14 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
     }
 
     fun deleteAllCitiesFromDB() {
-        if (this::mCityName.isInitialized) {
-            val params = bundleOf(
-                PARAMS_CITY_NAME.paramsName to mCityName
-            )
-            FireBaseEvents.sendFireBaseCustomEvents(
-                DELETE_ALL_CITIES_FROM_FAVORITES.eventName,
-                params
-            )
-            mFavoritesViewModel.deleteAllFavoritesFromDB()
-            mFavoritesAdapter.notifyItemRangeRemoved(0, mFavoritesAdapter.itemCount)
-            mFavoritesAdapter.notifyDataSetChanged()
-        }
+        val params = bundleOf()
+        FireBaseEvents.sendFireBaseCustomEvents(
+            DELETE_ALL_CITIES_FROM_FAVORITES.eventName,
+            params
+        )
+        mFavoritesViewModel.deleteAllFavorite(true)
+        mFavoritesAdapter.notifyItemRangeRemoved(0, mFavoritesAdapter.itemCount)
+        mFavoritesAdapter.notifyDataSetChanged()
+
     }
 }

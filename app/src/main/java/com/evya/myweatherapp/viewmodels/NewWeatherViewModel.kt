@@ -1,9 +1,11 @@
 package com.evya.myweatherapp.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.evya.myweatherapp.model.timemachinemodel.TimeMachineWeather
@@ -58,5 +60,4 @@ class NewWeatherViewModel@Inject constructor(private val newWeatherRepository: N
             }
         }
     }
-
 }

@@ -25,27 +25,27 @@
             android:defaultValue="34.7999968"
             app:argType="float" />
         <argument
-            android:name="fromMaps"
+            android:name="fromGoogleMaps"
             android:defaultValue="false"
             app:argType="boolean" />
 
         <argument
-            android:name="currentCity"
-            android:defaultValue="Tel-aviv"
+            android:name="cityName"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
 
 
-<!--        <argument
-            android:name="lat"
-            android:defaultValue="32.083333"
-            app:argType="float" />
-        <argument
-            android:name="long"
-            android:defaultValue="34.7999968"
-            app:argType="float" />
-        <argument
-            android:name="latLong"
-            android:defaultValue="null" />-->
+        <!--        <argument
+                    android:name="lat"
+                    android:defaultValue="32.083333"
+                    app:argType="float" />
+                <argument
+                    android:name="long"
+                    android:defaultValue="34.7999968"
+                    app:argType="float" />
+                <argument
+                    android:name="latLong"
+                    android:defaultValue="null" />-->
 
         <action
             android:id="@+id/action_cityFragment_self"
@@ -58,7 +58,7 @@
 
         <argument
             android:name="cityName"
-            android:defaultValue="Tel-aviv"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
         <action
             android:id="@+id/action_cityFragment_to_alertsFragment"
@@ -70,7 +70,7 @@
 
         <argument
             android:name="cityName"
-            android:defaultValue="Tel-aviv"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
 
         <argument
@@ -96,17 +96,26 @@
         android:label="GoogleMapsFragment">
         <action
             android:id="@+id/action_googleMapsFragment_to_cityFragment"
-            app:destination="@id/cityFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:destination="@id/cityFragment" />
 
         <argument
-            android:name="currentCity"
-            android:defaultValue="Tel-aviv"
+            android:name="fromGoogleMaps"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="cityName"
+            android:defaultValue="Ramat Gan"
             app:argType="string" />
 
+        <argument
+            android:name="lat"
+            android:defaultValue="32.083333"
+            app:argType="float" />
+        <argument
+            android:name="long"
+            android:defaultValue="34.7999968"
+            app:argType="float" />
     </fragment>
 
 
@@ -147,6 +156,25 @@
         <action
             android:id="@+id/action_favoritesFragment_to_cityFragment"
             app:destination="@id/cityFragment" />
+
+        <argument
+            android:name="fromFavorites"
+            android:defaultValue="false"
+            app:argType="boolean" />
+
+        <argument
+            android:name="cityName"
+            android:defaultValue="Ramat Gan"
+            app:argType="string" />
+
+        <argument
+            android:name="lat"
+            android:defaultValue="32.083333"
+            app:argType="float" />
+        <argument
+            android:name="long"
+            android:defaultValue="34.7999968"
+            app:argType="float" />
     </fragment>
 
     <fragment
@@ -155,8 +183,7 @@
         android:label="alertsFragment">
         <action
             android:id="@+id/action_alertsFragment_to_cityFragment"
-            app:destination="@+id/cityFragment"
-            />
+            app:destination="@+id/cityFragment" />
 
         <argument
             android:name="fromAlerts"

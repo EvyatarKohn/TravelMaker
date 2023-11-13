@@ -17,6 +17,7 @@ object Constants {
     const val CITY_NAME = "cityName"
     const val FROM_FAVORITES = "fromFavorites"
     const val FROM_ALERTS = "fromAlerts"
+    const val FROM_GOOGLE_MAPS = "fromGoogleMaps"
     const val LAT = "lat"
     const val LONG = "long"
     const val RAIN = "rain"
