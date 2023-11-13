@@ -20,12 +20,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
 import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
 import com.evya.myweatherapp.Constants.THREE_SEC
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.MainData.approvedPermissions
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
@@ -39,6 +39,7 @@ import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setContext
 import com.evya.myweatherapp.viewmodels.FavoritesViewModel
+import com.evya.myweatherapp.viewmodels.NewWeatherViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -52,12 +53,16 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
+    private val mWeatherViewModel: NewWeatherViewModel by viewModels()
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private var showAd: Int = 0
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
@@ -86,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         setContext(this)
         MobileAds.initialize(this) {}
         loadInterstitialAd()
-
+        initObservers()
        /* val testDeviceIds = Arrays.asList("ca-app-pub-3940256099942544/6300978111\n")
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
         MobileAds.setRequestConfiguration(configuration)*/
@@ -117,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-     fun navigateToRelevantScreen(id: Int, shouldCallApiAgain: Boolean = true) {
+    private fun navigateToRelevantScreen(id: Int, shouldCallApiAgain: Boolean = true) {
         var firebaseEvent = NAVIGATE_TO_WEATHER
         var navigateTo = "weather"
 
@@ -172,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                         approvedPermissions = true
                         lat = location.latitude.toString()
                         long = location.longitude.toString()
-                        startFlow()
+                        mWeatherViewModel.getCityNameByLocation(lat, long)
                     }
                 }
             } else {
@@ -185,6 +190,24 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             requestPermissions()
+        }
+    }
+
+    private fun initObservers() {
+        mWeatherViewModel.cityNameData.observe(this) {
+            it.first?.let { cityData ->
+                if (cityData.size > 0) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val weather = mFavoritesViewModel.fetchSpecificCity(cityData[0].localNames.en)
+                        withContext(Dispatchers.Main) {
+                            if (weather != null) {
+                                MainData.weather = weather
+                            }
+                            startFlow()
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -312,11 +335,6 @@ class MainActivity : AppCompatActivity() {
         if (approvedPermissions && !mGpsIsOn) {
             getLastLocation()
         }
-    }
-
-    override fun onDestroy() {
-//        mFavoritesViewModel.nukeTable()
-        super.onDestroy()
     }
 
 

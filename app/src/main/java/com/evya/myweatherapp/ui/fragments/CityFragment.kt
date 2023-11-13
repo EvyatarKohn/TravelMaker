@@ -74,6 +74,11 @@ import java.util.Locale
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class CityFragment : Fragment(R.layout.city_fragment_layout) {
+
+    companion object {
+        private const val TWO_HOURS = 7200000  // every 2 hour (7200000 milisec) make a new call
+    }
+
     private val mWeatherViewModel: NewWeatherViewModel by viewModels()
     private val mFavoritesViewModel: FavoritesViewModel by viewModels()
     private var mCityName = "Ramat Gan"
@@ -220,14 +225,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             }
         }
         CoroutineScope(Dispatchers.IO).launch {
-            val tempWeather = mFavoritesViewModel.fetchSpecificCity(arguments?.getString("cityName") ?: weather?.cityName ?: "")
+            val tempWeather = mFavoritesViewModel.fetchSpecificCity(weather?.cityName ?: arguments?.getString("cityName") ?:  "")
             if (tempWeather == null) {
                 getWeatherByLocation(lat, long, degreesUnits)
             } else {
                 mFavWeather = tempWeather
                 weather = tempWeather
-                // every 2 hour (7200000 milisec) make a call
-                if ((System.currentTimeMillis() - tempWeather.callTime) > 7200000) {
+                // every 2 hour (7200000 milisec) make a new call
+                if ((System.currentTimeMillis() - tempWeather.callTime) > TWO_HOURS) {
                     mFavoritesViewModel.removeCityDataFromDB(tempWeather.cityName)
                     getWeatherByLocation(lat, long, degreesUnits)
 //                    mFavoritesViewModel.addCityDataToDB(tempWeather)
