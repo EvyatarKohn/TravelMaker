@@ -5,6 +5,7 @@ import com.evya.myweatherapp.Constants.METRIC
 import com.evya.myweatherapp.model.weathermodel.Weather
 
 object MainData {
+    var cityName = ""
     var lat = ""//"32.083333"
     var long = ""// "34.7999968"
     var addedToFav = false

@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoriteFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.DELETE_ALL_CITIES_FROM_FAVORITES
 import com.evya.myweatherapp.ui.adapters.FavoritesAdapter
 import com.evya.myweatherapp.ui.dialogs.DeleteFavoritesDialog
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast

@@ -15,6 +15,7 @@ import com.evya.myweatherapp.Constants.CITY_NAME
 import com.evya.myweatherapp.Constants.FROM_GOOGLE_MAPS
 import com.evya.myweatherapp.Constants.LAT
 import com.evya.myweatherapp.Constants.LONG
+import com.evya.myweatherapp.MainData.cityName
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
@@ -23,7 +24,6 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SEARCH_IN_GOOGLE_MAP
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SHOW_WEATHER
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
-import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -155,6 +155,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 val latLang = LatLng(mAddress.latitude, mAddress.longitude)
                 mGoogleMap.addMarker(MarkerOptions().position(latLang))
                 mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                cityName = mAddress.locality
                 val params = bundleOf(
                     PARAMS_CITY_NAME.paramsName to mAddress.locality
                 )
@@ -177,6 +178,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                     val latLang = LatLng(mAddress.latitude, mAddress.longitude)
                     mGoogleMap.addMarker(MarkerOptions().position(latLang))
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                    cityName = mAddress.locality
                     val params = bundleOf(
                         PARAMS_CITY_NAME.paramsName to mAddress.locality
                     )

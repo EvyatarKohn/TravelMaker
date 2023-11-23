@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
@@ -27,6 +28,7 @@ import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
 import com.evya.myweatherapp.Constants.THREE_SEC
 import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.MainData.approvedPermissions
+import com.evya.myweatherapp.MainData.cityName
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
@@ -58,6 +60,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -177,7 +180,17 @@ class MainActivity : AppCompatActivity() {
                         approvedPermissions = true
                         lat = location.latitude.toString()
                         long = location.longitude.toString()
-                        mWeatherViewModel.getCityNameByLocation(lat, long)
+                        // mWeatherViewModel.getCityNameByLocation(lat, long)
+                        cityName = Geocoder(applicationContext, Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)?.get(0)?.locality.toString()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val weather = mFavoritesViewModel.fetchSpecificCity(cityName)
+                            withContext(Dispatchers.Main) {
+                                if (weather != null) {
+                                    MainData.weather = weather
+                                }
+                                startFlow()
+                            }
+                        }
                     }
                 }
             } else {

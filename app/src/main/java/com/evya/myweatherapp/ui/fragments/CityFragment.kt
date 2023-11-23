@@ -27,6 +27,7 @@ import com.evya.myweatherapp.Constants.RAIN
 import com.evya.myweatherapp.Constants.SNOW
 import com.evya.myweatherapp.MainData.addedToFav
 import com.evya.myweatherapp.MainData.approvedPermissions
+import com.evya.myweatherapp.MainData.cityName
 import com.evya.myweatherapp.MainData.degreesUnits
 import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
@@ -145,6 +146,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             mBinding.cityName.text = arguments?.getString("cityName") ?: ""
             mFavWeather?.cityName = arguments?.getString("cityName") ?: ""
             weather?.cityName = arguments?.getString("cityName") ?: ""
+            cityName = arguments?.getString("cityName") ?: ""
             mFavoritesViewModel.setCityName(arguments?.getString("cityName") ?: "")
         }
 
@@ -185,10 +187,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             if (it.first != null) {
                 weather = it.first
                 mFavWeather = it.first
-                mWeatherViewModel.getCityNameByLocation(lat, long)
+                weather?.cityName = cityName
+                mFavWeather?.cityName = cityName
+//                mWeatherViewModel.getCityNameByLocation(lat, long)
                 mFavWeather?.callTime = System.currentTimeMillis()
                 weather?.callTime = System.currentTimeMillis()
                 setWeatherData(mFavWeather)
+                weather?.let { it1 -> mFavoritesViewModel.addCityDataToDB(it1) }
                 weather?.cityName?.let { cityName ->
                     checkIfAlreadyInFav(cityName)
                 }

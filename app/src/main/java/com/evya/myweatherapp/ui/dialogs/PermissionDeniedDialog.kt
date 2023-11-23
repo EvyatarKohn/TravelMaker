@@ -3,7 +3,6 @@ package com.evya.myweatherapp.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
