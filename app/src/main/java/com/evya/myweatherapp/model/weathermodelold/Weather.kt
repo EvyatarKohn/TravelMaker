@@ -14,7 +14,7 @@ import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Entity(tableName = "favorites")
+@Entity(tableName = "cities")
 data class Weather(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 

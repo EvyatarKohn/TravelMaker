@@ -8,17 +8,17 @@ import com.evya.myweatherapp.model.weathermodel.Weather
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FavoritesDao {
+interface CitiesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addCityDataToDB(weather: Weather)
 
-    @Query("SELECT * FROM favorites WHERE cityName = :cityName")
+    @Query("SELECT * FROM cities WHERE cityName = :cityName")
     suspend fun fetchSpecificCity(cityName: String): Weather
 
 /*    @Query("SELECT EXISTS(SELECT * FROM favorites WHERE cityName = :cityName)")
     fun fetchSpecificCity(cityName: String): Flow<Weather>*/
 
-    @Query("SELECT * FROM favorites")
+    @Query("SELECT * FROM cities")
     fun fetchAllCities(): Flow<List<Weather>>
 
    /* @Query("SELECT EXISTS(SELECT * FROM favorites WHERE cityName = :cityName)")
@@ -27,18 +27,18 @@ interface FavoritesDao {
     /*@Query("SELECT * FROM favorites WHERE cityName = :cityName")
     fun checkIfAlreadyAddedToDB(cityName: String) : Flow<Boolean>
 */
-    @Query("SELECT isInFavorites FROM favorites WHERE cityName = :cityName")
+    @Query("SELECT isInFavorites FROM cities WHERE cityName = :cityName")
     fun checkIfAlreadyInFav(cityName: String) : Flow<Boolean>
 
-    @Query("DELETE FROM favorites WHERE cityName = :cityName")
+    @Query("DELETE FROM cities WHERE cityName = :cityName")
     suspend fun deleteSpecificFavorite(cityName: String)
 
-    @Query("DELETE FROM favorites where isInFavorites = :isInFavorites")
+    @Query("DELETE FROM cities where isInFavorites = :isInFavorites")
     suspend fun deleteAllFavorite(isInFavorites: Boolean)
 
-    @Query("DELETE FROM favorites")
+    @Query("DELETE FROM cities")
     suspend fun nukeTable()
 
-    @Query("UPDATE favorites SET isInFavorites = :isInFavorites WHERE cityName = :cityName")
+    @Query("UPDATE cities SET isInFavorites = :isInFavorites WHERE cityName = :cityName")
     fun updateFavorites(isInFavorites: Boolean, cityName: String)
 }

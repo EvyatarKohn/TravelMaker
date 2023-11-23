@@ -15,14 +15,14 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.DELETE
 import com.evya.myweatherapp.ui.adapters.FavoritesAdapter
 import com.evya.myweatherapp.ui.dialogs.DeleteFavoritesDialog
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
-import com.evya.myweatherapp.viewmodels.FavoritesViewModel
+import com.evya.myweatherapp.viewmodels.CitiesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
 
-    private val mFavoritesViewModel: FavoritesViewModel by viewModels()
+    private val mCitiesViewModel: CitiesViewModel by viewModels()
     private lateinit var mBinding: FavoriteFragmentLayoutBinding
     private lateinit var mFavoritesAdapter: FavoritesAdapter
     private lateinit var mNavController: NavController
@@ -33,7 +33,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
         mBinding = FavoriteFragmentLayoutBinding.bind(view)
         mNavController = Navigation.findNavController(view)
 
-        mFavoritesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner) { weatherList ->
+        mCitiesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner) { weatherList ->
             if (weatherList.isNullOrEmpty()) {
                 showToast(context?.getString(R.string.no_saved_favorites))
             } else {
@@ -68,7 +68,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
     }
 
     fun deleteSpecificCityFromDB(position: Int) {
-        mFavoritesViewModel.removeCityDataFromDB(mCityName)
+        mCitiesViewModel.removeCityDataFromDB(mCityName)
         mFavoritesAdapter.notifyItemRemoved(position)
         mFavoritesAdapter.notifyDataSetChanged()
     }
@@ -79,7 +79,7 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
             DELETE_ALL_CITIES_FROM_FAVORITES.eventName,
             params
         )
-        mFavoritesViewModel.deleteAllFavorite(true)
+        mCitiesViewModel.deleteAllFavorite(true)
         mFavoritesAdapter.notifyItemRangeRemoved(0, mFavoritesAdapter.itemCount)
         mFavoritesAdapter.notifyDataSetChanged()
 

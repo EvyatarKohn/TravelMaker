@@ -56,7 +56,7 @@ import com.evya.myweatherapp.ui.dialogs.DailyDialog
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
-import com.evya.myweatherapp.viewmodels.FavoritesViewModel
+import com.evya.myweatherapp.viewmodels.CitiesViewModel
 import com.evya.myweatherapp.viewmodels.NewWeatherViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -81,7 +81,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }
 
     private val mWeatherViewModel: NewWeatherViewModel by viewModels()
-    private val mFavoritesViewModel: FavoritesViewModel by viewModels()
+    private val mCitiesViewModel: CitiesViewModel by viewModels()
     private var mCityName = "Ramat Gan"
     private var mCountryCode = "IL"
     private lateinit var mMainCitiesAdapter: CitiesAroundAdapter
@@ -147,7 +147,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             mFavWeather?.cityName = arguments?.getString("cityName") ?: ""
             weather?.cityName = arguments?.getString("cityName") ?: ""
             cityName = arguments?.getString("cityName") ?: ""
-            mFavoritesViewModel.setCityName(arguments?.getString("cityName") ?: "")
+            mCitiesViewModel.setCityName(arguments?.getString("cityName") ?: "")
         }
 
         if (arguments?.getBoolean(FROM_ALERTS) == true) {
@@ -193,7 +193,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mFavWeather?.callTime = System.currentTimeMillis()
                 weather?.callTime = System.currentTimeMillis()
                 setWeatherData(mFavWeather)
-                weather?.let { it1 -> mFavoritesViewModel.addCityDataToDB(it1) }
+                weather?.let { it1 -> mCitiesViewModel.addCityDataToDB(it1) }
                 weather?.cityName?.let { cityName ->
                     checkIfAlreadyInFav(cityName)
                 }
@@ -218,8 +218,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     mFavWeather?.cityName = cityData[0].localNames.en
                     weather?.cityName = cityData[0].localNames.en
                     CoroutineScope(Dispatchers.IO).launch {
-                        if (mFavoritesViewModel.fetchSpecificCity(cityData[0].localNames.en) == null) {
-                            weather?.let { mFavoritesViewModel.addCityDataToDB(it) }
+                        if (mCitiesViewModel.fetchSpecificCity(cityData[0].localNames.en) == null) {
+                            weather?.let { mCitiesViewModel.addCityDataToDB(it) }
                         }
                     }
 //                    checkIfAlreadyInDB(cityData[0].localNames.en)
@@ -232,7 +232,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             }
         }
         CoroutineScope(Dispatchers.IO).launch {
-            val tempWeather = mFavoritesViewModel.fetchSpecificCity(weather?.cityName ?: arguments?.getString("cityName") ?:  "")
+            val tempWeather = mCitiesViewModel.fetchSpecificCity(weather?.cityName ?: arguments?.getString("cityName") ?:  "")
             if (tempWeather == null) {
                 getWeatherByLocation(lat, long, degreesUnits)
             } else {
@@ -240,7 +240,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 weather = tempWeather
                 // every 2 hour (7200000 milisec) make a new call
                 if ((System.currentTimeMillis() - tempWeather.callTime) > TWO_HOURS) {
-                    mFavoritesViewModel.removeCityDataFromDB(tempWeather.cityName)
+                    mCitiesViewModel.removeCityDataFromDB(tempWeather.cityName)
                     getWeatherByLocation(lat, long, degreesUnits)
 //                    mFavoritesViewModel.addCityDataToDB(tempWeather)
                 } else {
@@ -425,13 +425,13 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     weather?.cityName = mBinding.cityName.text.toString()
                     mFavWeather?.isInFavorites = true
                     weather?.isInFavorites = true
-                    mFavWeather?.let { it1 -> mFavoritesViewModel.updateFavorites(true, mBinding.cityName.text.toString()) }
+                    mFavWeather?.let { it1 -> mCitiesViewModel.updateFavorites(true, mBinding.cityName.text.toString()) }
                 } else {
                     favoriteImg.setBackgroundResource(R.drawable.ic_empty_heart)
                     addedToFav = false
                     mFavWeather?.isInFavorites = false
                     weather?.isInFavorites = false
-                    mFavWeather?.let { it1 -> mFavoritesViewModel.updateFavorites(false, mBinding.cityName.text.toString()) }
+                    mFavWeather?.let { it1 -> mCitiesViewModel.updateFavorites(false, mBinding.cityName.text.toString()) }
                 }
             }
             leftScrollArrow.setOnClickListener {
@@ -473,8 +473,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun checkIfAlreadyInFav(cityName: String) {
         try {
-            mFavoritesViewModel.setCityName(cityName)
-            mFavoritesViewModel.checkIfAlreadyInFav.observe(viewLifecycleOwner) {
+            mCitiesViewModel.setCityName(cityName)
+            mCitiesViewModel.checkIfAlreadyInFav.observe(viewLifecycleOwner) {
                 if (it) {
                     mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
                 } else {

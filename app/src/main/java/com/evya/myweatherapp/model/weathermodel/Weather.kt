@@ -9,12 +9,11 @@ import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-@Entity(tableName = "favorites")
+@Entity(tableName = "cities")
 data class Weather(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
