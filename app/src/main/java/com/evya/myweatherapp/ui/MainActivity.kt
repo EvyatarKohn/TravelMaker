@@ -181,7 +181,6 @@ class MainActivity : AppCompatActivity() {
                         lat = location.latitude.toString()
                         long = location.longitude.toString()
                         // mWeatherViewModel.getCityNameByLocation(lat, long)
-                        Log.i("Evyatar", "cityName: ${Geocoder(applicationContext, Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)?.get(0)?.locality.toString()}")
                         cityName = Geocoder(applicationContext, Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)?.get(0)?.locality.toString()
                         CoroutineScope(Dispatchers.IO).launch {
                             val weather = mFavoritesViewModel.fetchSpecificCity(cityName)
