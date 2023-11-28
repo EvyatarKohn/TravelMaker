@@ -1,8 +1,8 @@
 package com.evya.myweatherapp.di
 
 import android.app.Application
-import com.evya.myweatherapp.db.FavoritesDB
-import com.evya.myweatherapp.db.FavoritesDao
+import com.evya.myweatherapp.db.CitiesDB
+import com.evya.myweatherapp.db.CitiesDao
 import com.evya.myweatherapp.network.GeocodeApi
 import com.evya.myweatherapp.network.NewWeatherApi
 import com.evya.myweatherapp.network.TripApi
@@ -68,7 +68,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun getFavoritesDao(app: Application): FavoritesDao =
-        FavoritesDB.getDB(app).attractionsDao()
+    fun getCitiesDao(app: Application): CitiesDao =
+        CitiesDB.getDB(app).attractionsDao()
 
 }

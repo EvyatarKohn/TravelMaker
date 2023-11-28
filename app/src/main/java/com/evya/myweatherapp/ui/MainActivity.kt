@@ -40,7 +40,7 @@ import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setContext
-import com.evya.myweatherapp.viewmodels.FavoritesViewModel
+import com.evya.myweatherapp.viewmodels.CitiesViewModel
 import com.evya.myweatherapp.viewmodels.NewWeatherViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdListener
@@ -66,7 +66,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mWeatherViewModel: NewWeatherViewModel by viewModels()
-    private val mFavoritesViewModel: FavoritesViewModel by viewModels()
+    private val mCitiesViewModel: CitiesViewModel by viewModels()
     private var showAd: Int = 0
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity() {
                         // mWeatherViewModel.getCityNameByLocation(lat, long)
                         cityName = Geocoder(applicationContext, Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)?.get(0)?.locality.toString()
                         CoroutineScope(Dispatchers.IO).launch {
-                            val weather = mFavoritesViewModel.fetchSpecificCity(cityName)
+                            val weather = mCitiesViewModel.fetchSpecificCity(cityName)
                             withContext(Dispatchers.Main) {
                                 if (weather != null) {
                                     MainData.weather = weather
@@ -211,7 +211,7 @@ class MainActivity : AppCompatActivity() {
             it.first?.let { cityData ->
                 if (cityData.size > 0) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        val weather = mFavoritesViewModel.fetchSpecificCity(cityData[0].localNames.en)
+                        val weather = mCitiesViewModel.fetchSpecificCity(cityData[0].localNames.en)
                         withContext(Dispatchers.Main) {
                             if (weather != null) {
                                 MainData.weather = weather

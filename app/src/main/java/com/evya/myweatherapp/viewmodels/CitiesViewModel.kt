@@ -2,7 +2,7 @@ package com.evya.myweatherapp.viewmodels
 
 import androidx.lifecycle.*
 import com.evya.myweatherapp.model.weathermodel.Weather
-import com.evya.myweatherapp.repository.FavoritesRepository
+import com.evya.myweatherapp.repository.CitiesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,8 +12,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoritesViewModel @Inject constructor(
-    private val repository: FavoritesRepository
+class CitiesViewModel @Inject constructor(
+    private val repository: CitiesRepository
 ) : ViewModel() {
 
     private var mCityName: String? = null
