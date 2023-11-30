@@ -77,7 +77,7 @@ import java.util.Locale
 class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     companion object {
-        private const val TWO_HOURS = 7200000  // every 2 hour (7200000 milisec) make a new call
+        private const val FIVE_HOURS = 18_000_000  // every 5 hour (18,000,000 millisecond) make a new call
     }
 
     private val mWeatherViewModel: NewWeatherViewModel by viewModels()
@@ -239,7 +239,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 mFavWeather = tempWeather
                 weather = tempWeather
                 // every 2 hour (7200000 milisec) make a new call
-                if ((System.currentTimeMillis() - tempWeather.callTime) > TWO_HOURS) {
+                if ((System.currentTimeMillis() - tempWeather.callTime) > FIVE_HOURS) {
                     mCitiesViewModel.removeCityDataFromDB(tempWeather.cityName)
                     getWeatherByLocation(lat, long, degreesUnits)
 //                    mFavoritesViewModel.addCityDataToDB(tempWeather)
