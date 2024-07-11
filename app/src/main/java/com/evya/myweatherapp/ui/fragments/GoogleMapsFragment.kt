@@ -37,7 +37,12 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 
@@ -69,15 +74,18 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             mGoogleMap.setOnMapLoadedCallback {
-                mBinding.showWeatherBtn.visibility = View.VISIBLE
+//                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
             mGoogleMap.setOnMapClickListener { latLng ->
                 mGoogleMap.clear()
                 lat = latLng.latitude.toString()
                 long = latLng.longitude.toString()
+                mAddress = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(latLng.latitude, latLng.longitude, 1)?.firstOrNull() as Address
+                mLocation = mAddress.locality ?: mAddress.adminArea
                 mGoogleMap.addMarker(
                     MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
                 )
+                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
         }
 
@@ -113,6 +121,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 } else {
                     getAddressForSdkEarlierTheTiramisu(mLocation, geocoder)
                 }
+                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
 
             override fun onError(status: Status) {
@@ -122,7 +131,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
         mBinding.showWeatherBtn.setOnClickListener {
             val address = try {
-                mLocation
+                mLocation ?: arguments?.getString("cityName") ?: ""
             } catch (e: Exception) {
                 arguments?.getString("cityName") ?: ""
             }
@@ -149,20 +158,24 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         }
         list?.size?.let { listSize ->
             if (listSize > 0) {
-                mAddress = list[0]
-                lat = mAddress.latitude.toString()
-                long = mAddress.longitude.toString()
-                val latLang = LatLng(mAddress.latitude, mAddress.longitude)
-                mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
-                cityName = mAddress.locality
-                val params = bundleOf(
-                    PARAMS_CITY_NAME.paramsName to mAddress.locality
-                )
-                FireBaseEvents.sendFireBaseCustomEvents(
-                    SEARCH_IN_GOOGLE_MAP.eventName,
-                    params
-                )
+                CoroutineScope(Dispatchers.Main).launch {
+                    mAddress = list[0]
+                    lat = mAddress.latitude.toString()
+                    long = mAddress.longitude.toString()
+                    val latLang = LatLng(mAddress.latitude, mAddress.longitude)
+                    withContext(Dispatchers.Main) {
+                        mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                    }
+                    cityName = mAddress.locality
+                    val params = bundleOf(
+                        PARAMS_CITY_NAME.paramsName to mAddress.locality
+                    )
+                    FireBaseEvents.sendFireBaseCustomEvents(
+                        SEARCH_IN_GOOGLE_MAP.eventName,
+                        params
+                    )
+                }
             }
         }
     }
@@ -172,20 +185,24 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         location?.let {
             geocoder?.getFromLocationName(it, 1) { list ->
                 if (list.size > 0) {
-                    mAddress = list[0]
-                    lat = mAddress.latitude.toString()
-                    long = mAddress.longitude.toString()
-                    val latLang = LatLng(mAddress.latitude, mAddress.longitude)
-                    mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
-                    cityName = mAddress.locality
-                    val params = bundleOf(
-                        PARAMS_CITY_NAME.paramsName to mAddress.locality
-                    )
-                    FireBaseEvents.sendFireBaseCustomEvents(
-                        SEARCH_IN_GOOGLE_MAP.eventName,
-                        params
-                    )
+                    CoroutineScope(Dispatchers.Main).launch {
+                        mAddress = list[0]
+                        lat = mAddress.latitude.toString()
+                        long = mAddress.longitude.toString()
+                        val latLang = LatLng(mAddress.latitude, mAddress.longitude)
+                        withContext(Dispatchers.Main) {
+                            mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                        }
+                        cityName = mAddress.locality
+                        val params = bundleOf(
+                            PARAMS_CITY_NAME.paramsName to mAddress.locality
+                        )
+                        FireBaseEvents.sendFireBaseCustomEvents(
+                            SEARCH_IN_GOOGLE_MAP.eventName,
+                            params
+                        )
+                    }
                 }
             }
         }
