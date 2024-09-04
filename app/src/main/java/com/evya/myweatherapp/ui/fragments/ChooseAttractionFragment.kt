@@ -278,10 +278,14 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
     }
 
     fun whatToDo(kind: String, error: Int) {
-        val params = bundleOf(
-            PARAMS_WHAT_TO_DO.paramsName to mName
-        )
-        FireBaseEvents.sendFireBaseCustomEvents(WHAT_TO_DO.eventName, params)
+        try {
+            val params = bundleOf(
+                PARAMS_WHAT_TO_DO.paramsName to mName
+            )
+            FireBaseEvents.sendFireBaseCustomEvents(WHAT_TO_DO.eventName, params)
+        } catch (_: Exception) {
+
+        }
         mBinding.mainLayout.visibility = View.GONE
         mBinding.lottie.visibility = View.VISIBLE
         mBinding.autoCompleteTextview.visibility = View.GONE
