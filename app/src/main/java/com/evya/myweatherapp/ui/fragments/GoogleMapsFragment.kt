@@ -145,7 +145,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             val bundle = bundleOf(
                 LAT to mAddress.latitude.toFloat(),
                 LONG to mAddress.longitude.toFloat(),
-                CITY_NAME to mLocation,
+                CITY_NAME to (mLocation ?: ""),
                 FROM_GOOGLE_MAPS to true
             )
             mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
