@@ -1,7 +1,7 @@
 package com.evya.myweatherapp.network
 
 import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAround
-import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
+import com.evya.myweatherapp.model.dailyweathermodelold.DailyWeather
 import com.evya.myweatherapp.model.pollution.Pollution
 import com.evya.myweatherapp.model.weathermodel.Weather
 import retrofit2.Response

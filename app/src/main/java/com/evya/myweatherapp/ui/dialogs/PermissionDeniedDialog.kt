@@ -3,7 +3,6 @@ package com.evya.myweatherapp.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
@@ -30,7 +29,7 @@ class PermissionDeniedDialog : DialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
 
-        mBinding = PermissionDeniedDialogLayoutBinding.inflate(LayoutInflater.from(context))
+        mBinding = PermissionDeniedDialogLayoutBinding.inflate(layoutInflater)
         mBinding?.exitBtn?.setOnClickListener {
             activity?.finish()
         }

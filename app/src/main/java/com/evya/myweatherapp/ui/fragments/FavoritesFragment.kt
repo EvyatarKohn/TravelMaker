@@ -2,6 +2,7 @@ package com.evya.myweatherapp.ui.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -9,18 +10,19 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoriteFragmentLayoutBinding
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.DELETE_ALL_CITIES_FROM_FAVORITES
 import com.evya.myweatherapp.ui.adapters.FavoritesAdapter
 import com.evya.myweatherapp.ui.dialogs.DeleteFavoritesDialog
-import com.evya.myweatherapp.util.FireBaseEvents
-import com.evya.myweatherapp.util.UtilsFunctions
-import com.evya.myweatherapp.viewmodels.FavoritesViewModel
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
+import com.evya.myweatherapp.viewmodels.CitiesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
 
-    private val mFavoritesViewModel: FavoritesViewModel by viewModels()
+    private val mCitiesViewModel: CitiesViewModel by viewModels()
     private lateinit var mBinding: FavoriteFragmentLayoutBinding
     private lateinit var mFavoritesAdapter: FavoritesAdapter
     private lateinit var mNavController: NavController
@@ -31,11 +33,11 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
         mBinding = FavoriteFragmentLayoutBinding.bind(view)
         mNavController = Navigation.findNavController(view)
 
-        mFavoritesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner, {
-            if (it.isNullOrEmpty()) {
-                UtilsFunctions.showToast(R.string.no_saved_favorites, activity?.applicationContext)
+        mCitiesViewModel.fetchAllCitiesFromDB.observe(viewLifecycleOwner) { weatherList ->
+            if (weatherList.isNullOrEmpty()) {
+                showToast(context?.getString(R.string.no_saved_favorites))
             } else {
-                mFavoritesAdapter = FavoritesAdapter(it.sortedBy { it.name }, mNavController, this)
+                mFavoritesAdapter = FavoritesAdapter(weatherList.filter { it.isInFavorites }.sortedBy { it.timezone.substringAfter("/") }, mNavController, this)
                 val layoutManager =
                     LinearLayoutManager(
                         activity?.applicationContext,
@@ -45,32 +47,41 @@ class FavoritesFragment : Fragment(R.layout.favorite_fragment_layout) {
                 mBinding.citiesNameRecyclerView.layoutManager = layoutManager
                 mBinding.citiesNameRecyclerView.adapter = mFavoritesAdapter
             }
-        })
+        }
 
         mBinding.deleteAllFavorites.setOnClickListener {
             activity?.supportFragmentManager?.let {
-                DeleteFavoritesDialog.newInstance(this, true, "").show(
+                DeleteFavoritesDialog.newInstance(this, true, "", -1).show(
                     it, "DELETE_FAVORITES_DIALOG"
                 )
             }
         }
     }
 
-    fun deleteSpecificCityFromDBPopUp(cityName: String) {
+    fun deleteSpecificCityFromDBPopUp(cityName: String, position: Int) {
         mCityName = cityName
         activity?.supportFragmentManager?.let {
-            DeleteFavoritesDialog.newInstance(this, false, cityName).show(
+            DeleteFavoritesDialog.newInstance(this, false, cityName, position).show(
                 it, "DELETE_FAVORITES_DIALOG"
             )
         }
     }
 
-    fun deleteSpecificCityFromDB() {
-        mFavoritesViewModel.removeCityDataFromDB(mCityName)
+    fun deleteSpecificCityFromDB(position: Int) {
+        mCitiesViewModel.removeCityDataFromDB(mCityName)
+        mFavoritesAdapter.notifyItemRemoved(position)
+        mFavoritesAdapter.notifyDataSetChanged()
     }
 
     fun deleteAllCitiesFromDB() {
-        FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.DeleteAllCitiesFromFavorites.toString())
-        mFavoritesViewModel.deleteAllFavoritesFromDB()
+        val params = bundleOf()
+        FireBaseEvents.sendFireBaseCustomEvents(
+            DELETE_ALL_CITIES_FROM_FAVORITES.eventName,
+            params
+        )
+        mCitiesViewModel.deleteAllFavorite(true)
+        mFavoritesAdapter.notifyItemRangeRemoved(0, mFavoritesAdapter.itemCount)
+        mFavoritesAdapter.notifyDataSetChanged()
+
     }
 }

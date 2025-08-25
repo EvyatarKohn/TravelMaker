@@ -3,7 +3,6 @@ package com.evya.myweatherapp.ui.dialogs
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
@@ -16,24 +15,27 @@ class DeleteFavoritesDialog : DialogFragment() {
     private lateinit var mFavoritesFragment: FavoritesFragment
     private var mDeleteAllFavorites: Boolean = false
     private lateinit var mCityName: String
+    private var mAbsoluteAdapterPosition: Int = -2
 
     companion object {
         fun newInstance(
             favoritesFragment: FavoritesFragment,
             deleteAllFavorites: Boolean,
-            cityName: String
+            cityName: String,
+            absoluteAdapterPosition: Int
         ) =
             DeleteFavoritesDialog().apply {
                 mFavoritesFragment = favoritesFragment
                 mDeleteAllFavorites = deleteAllFavorites
                 mCityName = cityName
+                mAbsoluteAdapterPosition = absoluteAdapterPosition
             }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        mBinding = DeleteFavoritesDilaogLayoutBinding.inflate(LayoutInflater.from(context))
+        mBinding = DeleteFavoritesDilaogLayoutBinding.inflate(layoutInflater)
 
         if (mDeleteAllFavorites) {
             mBinding?.title?.text = resources.getString(R.string.are_you_sure_you_want_to_delete_all)
@@ -45,7 +47,7 @@ class DeleteFavoritesDialog : DialogFragment() {
             if (mDeleteAllFavorites) {
                 mFavoritesFragment.deleteAllCitiesFromDB()
             } else {
-                mFavoritesFragment.deleteSpecificCityFromDB()
+                mFavoritesFragment.deleteSpecificCityFromDB(mAbsoluteAdapterPosition)
             }
             dismiss()
         }
