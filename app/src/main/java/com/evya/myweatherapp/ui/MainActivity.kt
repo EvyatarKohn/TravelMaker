@@ -23,6 +23,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
+import com.android.billingclient.api.AcknowledgePurchaseParams
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingFlowParams
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.ProductDetails
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchasesUpdatedListener
+import com.android.billingclient.api.QueryProductDetailsParams
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
 import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
 import com.evya.myweatherapp.Constants.THREE_SEC
@@ -38,6 +47,7 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import com.evya.myweatherapp.ui.dialogs.InfoDialog
 import com.evya.myweatherapp.ui.dialogs.PermissionDeniedDialog
+import com.evya.myweatherapp.util.Prefs
 import com.evya.myweatherapp.util.UtilsFunctions
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setContext
 import com.evya.myweatherapp.viewmodels.CitiesViewModel
@@ -78,6 +88,14 @@ class MainActivity : AppCompatActivity() {
     private var mFirsTimeBack = true
     val adRequest = AdRequest.Builder().build()
     private var mInterstitialAd: InterstitialAd? = null
+    private var prefs: Prefs? = null
+
+    private val purchasesUpdatedListener =
+        PurchasesUpdatedListener { billingResult, purchases ->
+            // To be implemented in a later section.
+        }
+
+    private var billingClient: BillingClient? = null
 
     companion object {
         private val TAG = MainActivity::class.toString()
@@ -92,8 +110,19 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         setContext(this)
-        MobileAds.initialize(this) {}
-        loadInterstitialAd()
+        prefs = Prefs(this.applicationContext)
+        billingClient = BillingClient.newBuilder(this)
+            .setListener(purchasesUpdatedListener)
+            // Configure other settings.
+            .enablePendingPurchases()
+            .build()
+
+        connectGooglePlayBilling()
+        if (prefs?.getRemoveAd() == 0) {
+            MobileAds.initialize(this) {}
+            loadInterstitialAd()
+            handleBannerAd()
+        }
         initObservers()
        /* val testDeviceIds = Arrays.asList("ca-app-pub-3940256099942544/6300978111\n")
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
@@ -122,6 +151,81 @@ class MainActivity : AppCompatActivity() {
 
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
             navigateToRelevantScreen(id)
+        }
+    }
+
+    private fun connectGooglePlayBilling() {
+        billingClient?.startConnection(object : BillingClientStateListener {
+            override fun onBillingServiceDisconnected() {
+                connectGooglePlayBilling()
+            }
+
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Log.d(TAG, "Billing Client connected successfully" + 0)
+                    getProduct()
+                }
+            }
+        })
+    }
+
+    private fun getProduct() {
+        var skuList = arrayListOf<String>()
+        skuList.add("remove_ads_id")
+
+
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(
+                skuList.map { sku ->
+                    QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(sku)
+                        .setProductType(BillingClient.ProductType.INAPP)
+                        .build()
+                }
+            )
+            .build()
+
+        billingClient?.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+            // Process the result
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && productDetailsList.isNotEmpty()) {
+                for (productDetails in productDetailsList) {
+                    Log.i(TAG, "getProduct: $productDetails")
+                    if (productDetails.productId == "remove_ads_id") {
+                        mBinding.removeAds.setOnClickListener {
+                            launchPurchaseFlow(productDetails)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun launchPurchaseFlow(productDetails: ProductDetails) {
+        val productDetailsParamsList = listOf(
+            BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(productDetails)
+                .build()
+        )
+
+        val billingFlowParams = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(productDetailsParamsList)
+            .build()
+
+        billingClient?.launchBillingFlow(this, billingFlowParams)
+    }
+
+    private fun verifyPayment(purchase: Purchase?) {
+        if (purchase?.purchaseState == Purchase.PurchaseState.PURCHASED) {
+            if (!purchase.isAcknowledged) {
+                val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
+                    .setPurchaseToken(purchase.purchaseToken)
+                    .build()
+                billingClient?.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        prefs?.setRemoveAd(1)
+                    }
+                }
+            }
         }
     }
 
@@ -230,7 +334,6 @@ class MainActivity : AppCompatActivity() {
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
             startDestination(R.id.cityFragment)
-            handleBannerAd()
         }
     }
 
@@ -348,7 +451,19 @@ class MainActivity : AppCompatActivity() {
         if (approvedPermissions && !mGpsIsOn) {
             getLastLocation()
         }
+
+        billingClient?.queryPurchasesAsync(BillingClient.ProductType.INAPP) { billingResult, list ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                for (purchase in list) {
+                    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged) {
+                        verifyPayment(purchase)
+//                        approvedPermissions = true
+                    }
+                }
+            }
+        }
     }
+
 
 
     fun changeNavBarIndex(destination: Int, bottomNavId: Int, shouldCallApiAgain: Boolean = true) {

@@ -18,8 +18,8 @@ android {
         applicationId "com.evya.weatherapp"
         minSdkVersion 26
         targetSdkVersion 34
-        versionCode 69
-        versionName "4.0.5"
+        versionCode 70
+        versionName "4.0.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -34,6 +34,7 @@ android {
 
     buildTypes {
         release {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
@@ -132,4 +133,8 @@ dependencies {
     // Google Ads
     implementation "com.google.android.gms:play-services-ads:$play_services_ads"
     implementation "com.google.android.gms:play-services-ads-lite:$play_services_ads"
+
+    // Google billing
+    implementation "com.android.billingclient:billing:$billing_version"
+
 }
