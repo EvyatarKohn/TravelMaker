@@ -2,18 +2,29 @@ package com.evya.myweatherapp.ui.fragments
 
 import android.location.Address
 import android.location.Geocoder
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.Constants.CITY_NAME
+import com.evya.myweatherapp.Constants.FROM_GOOGLE_MAPS
+import com.evya.myweatherapp.Constants.LAT
+import com.evya.myweatherapp.Constants.LONG
+import com.evya.myweatherapp.MainData.cityName
+import com.evya.myweatherapp.MainData.lat
+import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.GoogleMapsFragmentLayoutBinding
-import com.evya.myweatherapp.ui.MainActivity
-import com.evya.myweatherapp.util.FireBaseEvents
-import com.evya.myweatherapp.util.UtilsFunctions
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SEARCH_IN_GOOGLE_MAP
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SHOW_WEATHER
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
+import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -26,7 +37,13 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Locale
 
 
 @ExperimentalCoroutinesApi
@@ -36,6 +53,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     private lateinit var mNavController: NavController
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mBinding: GoogleMapsFragmentLayoutBinding
+    private lateinit var mAddress: Address
+    private var mLocation: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,21 +68,24 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             mGoogleMap = googleMap
             val markerOptions = MarkerOptions()
 
-            val myLocation = LatLng(MainData.lat.toDouble(), MainData.long.toDouble())
+            val myLocation = LatLng(lat.toDouble(), long.toDouble())
             markerOptions.position(myLocation)
             mGoogleMap.addMarker(markerOptions)
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             mGoogleMap.setOnMapLoadedCallback {
-                mBinding.showWeatherBtn.visibility = View.VISIBLE
+//                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
             mGoogleMap.setOnMapClickListener { latLng ->
                 mGoogleMap.clear()
-                MainData.lat = latLng.latitude.toString()
-                MainData.long = latLng.longitude.toString()
+                lat = latLng.latitude.toString()
+                long = latLng.longitude.toString()
+                mAddress = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(latLng.latitude, latLng.longitude, 1)?.firstOrNull() as Address
+                mLocation = mAddress.locality ?: mAddress.adminArea
                 mGoogleMap.addMarker(
                     MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
                 )
+                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
         }
 
@@ -71,7 +93,8 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             activity?.applicationContext?.let {
                 Places.initialize(
                     it,
-                    getString(R.string.google_maps_key)
+                    getString(R.string.google_maps_key),
+                    Locale.US
                 )
                 Places.createClient(it)
             }
@@ -91,29 +114,97 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 // TODO: Get info about the selected place.
                 Log.i("GoogleMapsFragment", "Place: ${place.name}, ${place.id}")
                 mGoogleMap.clear()
-                val location = place.name
-                val geocoder = Geocoder(activity?.applicationContext)
-                val list = geocoder.getFromLocationName(location, 1) as ArrayList<Address>
-                if (list.size > 0) {
-                    val address = list[0]
-                    MainData.lat = address.latitude.toString()
-                    MainData.long = address.longitude.toString()
-                    val latLang = LatLng(address.latitude, address.longitude)
-                    mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
-                    FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.SearchInGoogleMap)
+                mLocation = place.name
+                val geocoder = activity?.applicationContext?.let { Geocoder(it, Locale.ENGLISH) }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    getAddressForTiramisuAndAbove(mLocation, geocoder)
+                } else {
+                    getAddressForSdkEarlierTheTiramisu(mLocation, geocoder)
                 }
+                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
 
             override fun onError(status: Status) {
-                UtilsFunctions.showToast(R.string.google_search_error, activity?.applicationContext)
+                showToast("${context?.resources?.getString(R.string.google_search_error)}: ${status.statusMessage}")
             }
         })
 
         mBinding.showWeatherBtn.setOnClickListener {
-            FireBaseEvents.sendFireBaseCustomEvents(FireBaseEvents.FirebaseEventsStrings.ShowWeather)
-            mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment)
-            (activity as MainActivity).changeNavBarIndex(R.id.cityFragment, R.id.weather)
+            val address = try {
+                mLocation ?: arguments?.getString("cityName") ?: ""
+            } catch (e: Exception) {
+                arguments?.getString("cityName") ?: ""
+            }
+
+            val params = bundleOf(
+                PARAMS_CITY_NAME.paramsName to address,
+            )
+
+            FireBaseEvents.sendFireBaseCustomEvents(SHOW_WEATHER.eventName, params)
+
+            val bundle = bundleOf(
+                LAT to mAddress.latitude.toFloat(),
+                LONG to mAddress.longitude.toFloat(),
+                CITY_NAME to (mLocation ?: ""),
+                FROM_GOOGLE_MAPS to true
+            )
+            mNavController.navigate(R.id.action_googleMapsFragment_to_cityFragment, bundle)
+        }
+    }
+
+    private fun getAddressForSdkEarlierTheTiramisu(location: String?, geocoder: Geocoder?) {
+        val list = location?.let {
+            geocoder?.getFromLocationName(it, 1)
+        }
+        list?.size?.let { listSize ->
+            if (listSize > 0) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    mAddress = list[0]
+                    lat = mAddress.latitude.toString()
+                    long = mAddress.longitude.toString()
+                    val latLang = LatLng(mAddress.latitude, mAddress.longitude)
+                    withContext(Dispatchers.Main) {
+                        mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                    }
+                    cityName = mAddress.locality
+                    val params = bundleOf(
+                        PARAMS_CITY_NAME.paramsName to mAddress.locality
+                    )
+                    FireBaseEvents.sendFireBaseCustomEvents(
+                        SEARCH_IN_GOOGLE_MAP.eventName,
+                        params
+                    )
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun getAddressForTiramisuAndAbove(location: String?, geocoder: Geocoder?) {
+        location?.let {
+            geocoder?.getFromLocationName(it, 1) { list ->
+                if (list.size > 0) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        mAddress = list[0]
+                        lat = mAddress.latitude.toString()
+                        long = mAddress.longitude.toString()
+                        val latLang = LatLng(mAddress.latitude, mAddress.longitude)
+                        withContext(Dispatchers.Main) {
+                            mGoogleMap.addMarker(MarkerOptions().position(latLang))
+                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+                        }
+                        cityName = mAddress.locality
+                        val params = bundleOf(
+                            PARAMS_CITY_NAME.paramsName to mAddress.locality
+                        )
+                        FireBaseEvents.sendFireBaseCustomEvents(
+                            SEARCH_IN_GOOGLE_MAP.eventName,
+                            params
+                        )
+                    }
+                }
+            }
         }
     }
 }

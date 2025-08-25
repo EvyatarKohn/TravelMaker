@@ -5,89 +5,83 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
-@Entity(tableName = "favorites")
+@Entity(tableName = "cities")
 data class Weather(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
-    @SerializedName("base")
+    @SerializedName("alerts")
     @Expose
-    val base: String,
+    val alerts: List<Alerts>?,
 
-    @SerializedName("clouds")
+    @SerializedName("current")
     @Expose
-    val clouds: Clouds,
+    val current: Current,
 
-    @SerializedName("cod")
+    @SerializedName("daily")
     @Expose
-    val cod: Int,
+    val daily: List<Daily>?,
 
-    @SerializedName("coord")
+    @SerializedName("hourly")
     @Expose
-    val coord: Coord,
+    val hourly: List<Hourly>?,
 
-    @SerializedName("dt")
+    @SerializedName("lat")
     @Expose
-    val dt: Int,
+    val lat: Double,
 
-    @SerializedName("id")
+    @SerializedName("lon")
     @Expose
-    val ids: Int,
+    val lon: Double,
 
-    @SerializedName("main")
+    @SerializedName("minutely")
     @Expose
-    val main: Main,
-
-    @SerializedName("name")
-    @Expose
-    val name: String,
-
-    @SerializedName("sys")
-    @Expose
-    val sys: Sys,
+    val minutely: List<Minutely>?,
 
     @SerializedName("timezone")
     @Expose
-    val timezone: Int,
+    val timezone: String,
 
-    @SerializedName("visibility")
+    @SerializedName("timezone_offset")
     @Expose
-    val visibility: Int,
+    val timezoneOffset: Int,
 
-    @SerializedName("weather")
-    @Expose
-    val weather: List<WeatherX>,
+    var cityName: String,
 
-    @SerializedName("wind")
-    @Expose
-    val wind: Wind
+    var isInFavorites: Boolean,
+
+    var callTime: Long,
+
+    var dailyWeather: DailyWeather?
+
 ) {
     fun changeDoubleToInt(double: Double): Int {
         return double.toInt()
     }
 
     fun setTimeToHour(time: Int): String {
-        val calendar = Calendar.getInstance()
-        val tz = TimeZone.getDefault()
-        calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.timeInMillis))
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return sdf.format(Date(time.toLong() * 1000))
+        sdf.timeZone = TimeZone.getTimeZone(timezone)
+        return sdf.format(Date((time.toLong() * 1000) + timezoneOffset))
     }
 
     fun getDegreeUnits(temp: Double): String {
-        return if (MainData.units == Constants.IMPERIAL) {
-            temp.toInt().toString() + " \u2109"
+        return if (MainData.degreesUnits == Constants.IMPERIAL) {
+            temp.toInt().toString() + " \u2109" // Fahrenheit symbol
         } else {
-            temp.toInt().toString() + " \u2103"
+            temp.toInt().toString() + " \u2103" // Celsius symbol
         }
     }
 
     fun getWindSpeedDegree(): String {
-        return if (MainData.units == Constants.IMPERIAL) {
+        return if (MainData.degreesUnits == Constants.IMPERIAL) {
             Constants.IMPERIAL_DEGREE
         } else {
             Constants.METRIC_DEGREE
@@ -95,11 +89,24 @@ data class Weather(
     }
 
     fun getVisibilityUnits(visibility: Int): String {
-        return if (MainData.units == Constants.IMPERIAL) {
+        return if (MainData.degreesUnits == Constants.IMPERIAL) {
             (visibility / 1609).toString() + Constants.MILE
         } else {
             (visibility / 1000).toString() + Constants.KM
         }
     }
 
+    fun precipitationToday(): String {
+        var rainHeight = "0"
+        val text = "Rain Today:\n"
+        if (daily?.get(0)?.rain != null) {
+            rainHeight = daily[0].rain.toString()
+        }
+
+        return if (MainData.degreesUnits == Constants.METRIC) {
+            text + rainHeight + Constants.MM
+        } else {
+            text + (String.format("%.2f", rainHeight.toDouble() * 0.04)) + Constants.INCH
+        }
+    }
 }

@@ -1,19 +1,11 @@
 package com.evya.myweatherapp.model.dailyweathermodel
 
 
-import com.google.gson.annotations.SerializedName
 import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
 data class Wind(
-    @SerializedName("deg")
+    @SerializedName("max")
     @Expose
-    val deg: Int,
-
-    @SerializedName("gust")
-    @Expose
-    val gust: Double,
-
-    @SerializedName("speed")
-    @Expose
-    val speed: Double
+    val max: Max
 )
