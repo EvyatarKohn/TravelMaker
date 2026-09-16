@@ -133,6 +133,9 @@ class MainActivity : AppCompatActivity() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         mNavHostFragment =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
+        mNavHostFragment.navController.addOnDestinationChangedListener { _, destination, _ ->
+            syncBottomNavigation(destination.id)
+        }
 
         lifecycleScope.launch {
             delay(THREE_SEC)
@@ -255,10 +258,10 @@ class MainActivity : AppCompatActivity() {
             // Location and city lookups can complete more than once. Never reset
             // the user's selected tab after the initial screen has been shown.
             mFlowStarted = true
-            selectNavigationItem(R.id.weather)
+            syncBottomNavigation(mNavHostFragment.navController.currentDestination?.id)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
-            startDestination(R.id.cityFragment)
+            if (mNavHostFragment.navController.currentDestination == null) startDestination(R.id.cityFragment)
             handleBannerAd()
         }
     }
@@ -431,7 +434,8 @@ class MainActivity : AppCompatActivity() {
             // Keep the graph's root entry. Popping the graph itself removes every
             // Fragment and can make FragmentManager optimize a remove/add pair
             // that FragmentNavigator can no longer associate with its back stack.
-            .setPopUpTo(controller.graph.startDestinationId, false)
+            .setPopUpTo(controller.graph.startDestinationId, false, true)
+            .setRestoreState(true)
             .setLaunchSingleTop(true)
             .build())
     }

@@ -13,6 +13,7 @@ class FavoritesAdapter(
     private val onOpen: (Weather) -> Unit,
     private val onRemove: (Weather) -> Unit
 ) : ListAdapter<Weather, FavoritesAdapter.ViewHolder>(Diff) {
+    init { stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         FavoritesItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )

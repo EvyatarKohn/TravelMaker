@@ -55,11 +55,30 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     private lateinit var mBinding: GoogleMapsFragmentLayoutBinding
     private lateinit var mAddress: Address
     private var mLocation: String? = null
+    private var savedCamera: CameraPosition? = null
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (::mGoogleMap.isInitialized) outState.putParcelable("map_camera", mGoogleMap.cameraPosition)
+        if (::mAddress.isInitialized) outState.putParcelable("map_address", mAddress)
+        outState.putString("map_location", mLocation)
+    }
+
+    override fun onDestroyView() {
+        if (::mGoogleMap.isInitialized) savedCamera = mGoogleMap.cameraPosition
+        super.onDestroyView()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mNavController = Navigation.findNavController(view)
         mBinding = GoogleMapsFragmentLayoutBinding.bind(view)
+        @Suppress("DEPRECATION")
+        val restoredCamera = savedInstanceState?.getParcelable<CameraPosition>("map_camera") ?: savedCamera
+        @Suppress("DEPRECATION")
+        val restoredAddress = savedInstanceState?.getParcelable<Address>("map_address")
+        if (restoredAddress != null) mAddress = restoredAddress
+        mLocation = savedInstanceState?.getString("map_location") ?: mLocation
 
         val mapView: SupportMapFragment =
             (childFragmentManager.findFragmentById(mBinding.mapLayout.id) as SupportMapFragment)
@@ -68,11 +87,13 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             mGoogleMap = googleMap
             val markerOptions = MarkerOptions()
 
-            val myLocation = LatLng(lat.toDouble(), long.toDouble())
+            val myLocation = if (::mAddress.isInitialized) LatLng(mAddress.latitude, mAddress.longitude)
+                else LatLng(lat.toDoubleOrNull() ?: 0.0, long.toDoubleOrNull() ?: 0.0)
             markerOptions.position(myLocation)
             mGoogleMap.addMarker(markerOptions)
             val cameraPosition = CameraPosition.Builder().target(myLocation).zoom(18f).build()
-            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(restoredCamera ?: cameraPosition))
+            mBinding.showWeatherBtn.visibility = if (::mAddress.isInitialized) View.VISIBLE else View.GONE
             mGoogleMap.setOnMapLoadedCallback {
 //                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
