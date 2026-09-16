@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mLocationRequest: LocationRequest
     private var mGpsIsOn = false
     private var mThreeSec = false
+    private var mFlowStarted = false
     private lateinit var mNavHostFragment: NavHostFragment
     private lateinit var mGraph: NavGraph
     private lateinit var mBinding: ActivityMainBinding
@@ -225,7 +226,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startFlow() {
-        if (mGpsIsOn && mThreeSec) {
+        if (mGpsIsOn && mThreeSec && !mFlowStarted) {
+            // Location and city lookups can complete more than once. Never reset
+            // the user's selected tab after the initial screen has been shown.
+            mFlowStarted = true
             mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
@@ -237,8 +241,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun getNewLocation() {
         mLocationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0).apply {
-            setMinUpdateIntervalMillis(5000)
-            setMinUpdateIntervalMillis(2)
+            setMaxUpdates(1)
 
         }.build()
         mFusedLocationProviderClient.requestLocationUpdates(
@@ -250,11 +253,17 @@ class MainActivity : AppCompatActivity() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            val lastLocation = locationResult.lastLocation
-            lat = lastLocation?.latitude.toString()
-            long = lastLocation?.longitude.toString()
+            val lastLocation = locationResult.lastLocation ?: return
+            mFusedLocationProviderClient.removeLocationUpdates(this)
+            lat = lastLocation.latitude.toString()
+            long = lastLocation.longitude.toString()
             getLastLocation()
         }
+    }
+
+    override fun onDestroy() {
+        mFusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        super.onDestroy()
     }
 
     private fun checkPermissions(): Boolean {
