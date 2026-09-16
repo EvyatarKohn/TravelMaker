@@ -2,87 +2,39 @@ package com.evya.myweatherapp.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.os.bundleOf
-import androidx.navigation.NavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.evya.myweatherapp.Constants.CITY_NAME
-import com.evya.myweatherapp.Constants.FROM_FAVORITES
-import com.evya.myweatherapp.Constants.LAT
-import com.evya.myweatherapp.Constants.LONG
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.FavoritesItemLayoutBinding
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CHOOSE_CITY_FROM_FAVORITES
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.DELETE_CITY_FROM_FAVORITES
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
 import com.evya.myweatherapp.model.weathermodel.Weather
-import com.evya.myweatherapp.ui.fragments.FavoritesFragment
 
 class FavoritesAdapter(
-    private val weather: List<Weather>,
-    private val navController: NavController,
-    private val favoritesFragment: FavoritesFragment
-) : RecyclerView.Adapter<FavoritesViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesViewHolder {
-        val itemBinding = FavoritesItemLayoutBinding.inflate(LayoutInflater.from(parent.context))
+    private val onOpen: (Weather) -> Unit,
+    private val onRemove: (Weather) -> Unit
+) : ListAdapter<Weather, FavoritesAdapter.ViewHolder>(Diff) {
+    init { stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
+        FavoritesItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    )
 
-        return FavoritesViewHolder(itemBinding)
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(getItem(position))
 
-    override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
-        holder.bind(
-            weather[position].cityName ?: "",
-            weather[position].lat,
-            weather[position].lon,
-            navController,
-            favoritesFragment
-        )
-    }
-
-    override fun getItemCount() = weather.size
-}
-
-class FavoritesViewHolder(itemBinding: FavoritesItemLayoutBinding) :
-    RecyclerView.ViewHolder(itemBinding.root) {
-    private var mCityName: TextView? = null
-
-    init {
-        mCityName = itemBinding.name
-    }
-
-    fun bind(
-        cityName: String,
-        lat: Double,
-        long: Double,
-        navController: NavController,
-        favoritesFragment: FavoritesFragment
-    ) {
-        mCityName?.text = cityName.trim()
-
-        itemView.setOnClickListener {
-            val params = bundleOf(
-                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
+    inner class ViewHolder(private val binding: FavoritesItemLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(weather: Weather) {
+            binding.name.text = weather.cityName.trim()
+            binding.removeFavorite.contentDescription = binding.root.context.getString(
+                R.string.favorites_remove_city, weather.cityName
             )
-            FireBaseEvents.sendFireBaseCustomEvents(CHOOSE_CITY_FROM_FAVORITES.eventName, params)
-
-            val bundle = bundleOf(
-                LAT to lat.toFloat(),
-                LONG to long.toFloat(),
-                CITY_NAME to mCityName?.text.toString(),
-                FROM_FAVORITES to true
-            )
-            navController.navigate(R.id.action_favoritesFragment_to_cityFragment, bundle)
-
+            binding.root.setOnClickListener { onOpen(weather) }
+            binding.removeFavorite.setOnClickListener { onRemove(weather) }
+            binding.root.setOnLongClickListener { onRemove(weather); true }
         }
+    }
 
-        itemView.setOnLongClickListener {
-            favoritesFragment.deleteSpecificCityFromDBPopUp(cityName, absoluteAdapterPosition)
-            val params = bundleOf(
-                PARAMS_CITY_NAME.paramsName to mCityName?.text.toString()
-            )
-            FireBaseEvents.sendFireBaseCustomEvents(DELETE_CITY_FROM_FAVORITES.eventName, params)
-            true
-        }
+    private object Diff : DiffUtil.ItemCallback<Weather>() {
+        override fun areItemsTheSame(oldItem: Weather, newItem: Weather) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Weather, newItem: Weather) = oldItem == newItem
     }
 }

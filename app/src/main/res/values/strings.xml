@@ -35,7 +35,7 @@
 
     <!-- Permission denied dialog texts  -->
     <string name="you_have_to_approve_permissions_title">We would like to use\nyour current location</string>
-    <string name="you_have_to_approve_permissions_sub_title">To get the updated information for\ntour current location, we need you to\nenable the GPS service\n(Always in use - even if app is in background)</string>
+    <string name="you_have_to_approve_permissions_sub_title">Use your location to show local weather and discover places nearby. Enable location services to get started.</string>
     <string name="exit_btn">No Thanks</string>
     <string name="enable_gps">Enable GPS</string>
     <string name="approve_permissions">Give permissions</string>
@@ -76,7 +76,7 @@
     <string name="radius">Radius (in KM)</string>
 
     <!-- Google maps Attraction Fragment Strings  -->
-    <string name="more_details">Long press on marker for more details</string>
+    <string name="more_details">Touch and hold this information window for details</string>
 
     <!-- No attraction dialog  -->
     <string name="There_is_no_attraction_in_your_area">There is no\n%1$s\nin your area</string>

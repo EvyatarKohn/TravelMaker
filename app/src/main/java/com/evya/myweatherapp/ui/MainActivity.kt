@@ -10,7 +10,6 @@ import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
@@ -21,7 +20,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
-import androidx.navigation.NavGraph
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
 import com.evya.myweatherapp.Constants.REQUEST_CODE_LOCATION_SETTING
@@ -55,9 +59,9 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
@@ -72,8 +76,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mLocationRequest: LocationRequest
     private var mGpsIsOn = false
     private var mThreeSec = false
+    private var mFlowStarted = false
+    private var mUpdatingNavigation = false
     private lateinit var mNavHostFragment: NavHostFragment
-    private lateinit var mGraph: NavGraph
     private lateinit var mBinding: ActivityMainBinding
     private var mFirsTimeBack = true
     val adRequest = AdRequest.Builder().build()
@@ -84,6 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         private val PERMISSIONS = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
         )
     }
 
@@ -91,6 +97,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.getInsetsController(window, mBinding.root).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(mBinding.root) { view, insets ->
+            val safeArea = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val keyboard = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.setPadding(safeArea.left, safeArea.top, safeArea.right, maxOf(safeArea.bottom, keyboard.bottom))
+            WindowInsetsCompat.CONSUMED
+        }
+        ViewCompat.requestApplyInsets(mBinding.root)
         setContext(this)
         MobileAds.initialize(this) {}
         loadInterstitialAd()
@@ -113,15 +133,18 @@ class MainActivity : AppCompatActivity() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         mNavHostFragment =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-        mGraph = mNavHostFragment.navController.navInflater.inflate(R.navigation.nav_graph)
+        mNavHostFragment.navController.addOnDestinationChangedListener { _, destination, _ ->
+            syncBottomNavigation(destination.id)
+        }
 
-        Handler(Looper.getMainLooper()).postDelayed({
+        lifecycleScope.launch {
+            delay(THREE_SEC)
             mThreeSec = true
             getLastLocation()
-        }, THREE_SEC)
+        }
 
         mBinding.bottomNavigationBar.setOnItemSelectedListener { id ->
-            navigateToRelevantScreen(id)
+            if (!mUpdatingNavigation) navigateToRelevantScreen(id)
         }
     }
 
@@ -180,10 +203,16 @@ class MainActivity : AppCompatActivity() {
                         approvedPermissions = true
                         lat = location.latitude.toString()
                         long = location.longitude.toString()
-                        // mWeatherViewModel.getCityNameByLocation(lat, long)
-                        cityName = Geocoder(applicationContext, Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)?.get(0)?.locality.toString()
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val weather = mCitiesViewModel.fetchSpecificCity(cityName)
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val resolvedCity = runCatching {
+                                Geocoder(applicationContext, Locale.ENGLISH)
+                                    .getFromLocation(location.latitude, location.longitude, 1)
+                                    ?.firstOrNull()
+                                    ?.locality
+                            }.getOrNull()
+                            if (!resolvedCity.isNullOrBlank()) cityName = resolvedCity
+                            val weather = cityName.takeIf { it.isNotBlank() }
+                                ?.let { mCitiesViewModel.fetchSpecificCity(it) }
                             withContext(Dispatchers.Main) {
                                 if (weather != null) {
                                     MainData.weather = weather
@@ -210,7 +239,7 @@ class MainActivity : AppCompatActivity() {
         mWeatherViewModel.cityNameData.observe(this) {
             it.first?.let { cityData ->
                 if (cityData.size > 0) {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    lifecycleScope.launch(Dispatchers.IO) {
                         val weather = mCitiesViewModel.fetchSpecificCity(cityData[0].localNames.en)
                         withContext(Dispatchers.Main) {
                             if (weather != null) {
@@ -225,11 +254,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startFlow() {
-        if (mGpsIsOn && mThreeSec) {
-            mBinding.bottomNavigationBar.setItemSelected(R.id.weather, true)
+        if (mGpsIsOn && mThreeSec && !mFlowStarted) {
+            // Location and city lookups can complete more than once. Never reset
+            // the user's selected tab after the initial screen has been shown.
+            mFlowStarted = true
+            syncBottomNavigation(mNavHostFragment.navController.currentDestination?.id)
             mBinding.bottomNavigationBar.visibility = View.VISIBLE
             mBinding.navHostFragment.visibility = View.VISIBLE
-            startDestination(R.id.cityFragment)
+            if (mNavHostFragment.navController.currentDestination == null) startDestination(R.id.cityFragment)
             handleBannerAd()
         }
     }
@@ -237,8 +269,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun getNewLocation() {
         mLocationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0).apply {
-            setMinUpdateIntervalMillis(5000)
-            setMinUpdateIntervalMillis(2)
+            setMaxUpdates(1)
 
         }.build()
         mFusedLocationProviderClient.requestLocationUpdates(
@@ -250,17 +281,26 @@ class MainActivity : AppCompatActivity() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            val lastLocation = locationResult.lastLocation
-            lat = lastLocation?.latitude.toString()
-            long = lastLocation?.longitude.toString()
+            val lastLocation = locationResult.lastLocation ?: return
+            mFusedLocationProviderClient.removeLocationUpdates(this)
+            lat = lastLocation.latitude.toString()
+            long = lastLocation.longitude.toString()
             getLastLocation()
         }
+    }
+
+    override fun onDestroy() {
+        mFusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        super.onDestroy()
     }
 
     private fun checkPermissions(): Boolean {
         return (ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED)
     }
 
@@ -280,7 +320,8 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode != PERMISSIONS_REQUEST_ID) return
+        if (checkPermissions()) {
             getLastLocation()
         } else {
             PermissionDeniedDialog.newInstance(true)
@@ -353,29 +394,61 @@ class MainActivity : AppCompatActivity() {
 
     fun changeNavBarIndex(destination: Int, bottomNavId: Int, shouldCallApiAgain: Boolean = true) {
         mFirsTimeBack = true
+        selectNavigationItem(bottomNavId)
+        if (mNavHostFragment.navController.currentDestination?.id == destination) return
         if (shouldCallApiAgain) {
-            loadInterstitialAd()
             handleInterstitialAd(destination)
+        } else {
+            startDestination(destination)
         }
-        mNavHostFragment.navController.graph = mGraph
-        mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
     }
 
-    fun setItemSelected(destination: Int, bottomNavId: Int, isSelected: Boolean) {
-
-        mBinding.bottomNavigationBar.setItemSelected(bottomNavId, isSelected)
-        mGraph.startDestination = destination
-        mNavHostFragment.navController.graph = mGraph
-        mNavHostFragment.navController.navigate(destination)
+    private fun selectNavigationItem(bottomNavId: Int) {
+        mUpdatingNavigation = true
+        try {
+            mBinding.bottomNavigationBar.setItemSelected(bottomNavId, true)
+        } finally {
+            mUpdatingNavigation = false
+        }
     }
 
     private fun startDestination(id: Int) {
-        if (mNavHostFragment.navController.currentDestination?.id == id) {
+        val controller = mNavHostFragment.navController
+        if (controller.currentDestination?.id == id) {
             return
         }
-        mGraph.startDestination = id
-        mNavHostFragment.navController.graph = mGraph
-        mNavHostFragment.navController.navigate(id)
+        if (controller.currentDestination == null) {
+            controller.graph = controller.navInflater.inflate(R.navigation.nav_graph).apply {
+                setStartDestination(id)
+            }
+            return
+        }
+        // FragmentNavigator commits asynchronously. A second navigation while the
+        // current entry is still transitioning can leave FragmentManager and the
+        // navigator back stack out of sync.
+        if (controller.currentBackStackEntry?.lifecycle?.currentState != Lifecycle.State.RESUMED) {
+            syncBottomNavigation(controller.currentDestination?.id)
+            return
+        }
+        controller.navigate(id, null, NavOptions.Builder()
+            // Keep the graph's root entry. Popping the graph itself removes every
+            // Fragment and can make FragmentManager optimize a remove/add pair
+            // that FragmentNavigator can no longer associate with its back stack.
+            .setPopUpTo(controller.graph.startDestinationId, false, true)
+            .setRestoreState(true)
+            .setLaunchSingleTop(true)
+            .build())
+    }
+
+    private fun syncBottomNavigation(destinationId: Int?) {
+        val bottomId = when (destinationId) {
+            R.id.cityFragment, R.id.alertsFragment -> R.id.weather
+            R.id.googleMapsFragment -> R.id.map
+            R.id.chooseAttractionFragment -> R.id.attractions
+            R.id.favoritesFragment -> R.id.favorites
+            else -> return
+        }
+        selectNavigationItem(bottomId)
     }
 
     private fun handleBannerAd() {
@@ -444,14 +517,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleInterstitialAd(destination: Int) {
-        if (mInterstitialAd != null && showAd >= 3 && destination != R.id.cityFragment) {
-            showAd = 0
-            mInterstitialAd?.show(this)
-        } else {
+        val ad = mInterstitialAd
+        if (ad == null || showAd < 3 || destination == R.id.cityFragment) {
             showAd++
             startDestination(destination)
+            if (ad == null) loadInterstitialAd()
+            return
         }
-        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+        showAd = 0
+        mInterstitialAd = null
+        ad.fullScreenContentCallback = object: FullScreenContentCallback() {
             override fun onAdClicked() {
                 // Called when a click is recorded for an ad.
                 val params = bundleOf()
@@ -470,6 +545,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 mInterstitialAd = null
                 startDestination(destination)
+                loadInterstitialAd()
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
@@ -483,6 +559,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 mInterstitialAd = null
                 startDestination(destination)
+                loadInterstitialAd()
             }
 
             override fun onAdImpression() {
@@ -503,6 +580,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+        ad.show(this)
     }
 
 
@@ -511,9 +589,6 @@ class MainActivity : AppCompatActivity() {
             this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     when {
-                        mNavHostFragment.navController.currentDestination?.label == "GoogleMapsAttractionFragment" -> {
-                            changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions)
-                        }
                         mFirsTimeBack -> {
                             Toast.makeText(
                                 applicationContext,

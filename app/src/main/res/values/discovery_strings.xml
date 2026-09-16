@@ -1,0 +1,37 @@
+<resources>
+    <string name="favorites_title">Your saved places</string>
+    <string name="favorites_subtitle">Keep your next destination close.</string>
+    <string name="favorites_search_hint">Search saved cities</string>
+    <string name="favorites_empty_title">A little inspiration for later</string>
+    <string name="favorites_empty_body">Save a city from its weather screen and find it here whenever you need it.</string>
+    <string name="favorites_no_matches">No matching cities</string>
+    <string name="favorites_no_matches_body">Try another name or clear your search.</string>
+    <string name="favorites_explore">Explore the map</string>
+    <string name="favorites_clear_search">Clear search</string>
+    <string name="favorites_clear_all">Remove all favorites</string>
+    <string name="favorites_remove_city">Remove %1$s from favorites</string>
+    <string name="favorites_open_weather">View weather</string>
+    <string name="favorites_remove_title">Remove saved place?</string>
+    <string name="favorites_remove_message">Remove %1$s from your favorites?</string>
+    <string name="favorites_remove_all_message">This will remove all saved cities from your favorites.</string>
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+    <plurals name="favorites_count">
+        <item quantity="one">%d saved city</item>
+        <item quantity="other">%d saved cities</item>
+    </plurals>
+    <string name="discover_title">Make a day of it</string>
+    <string name="discover_subtitle">Find something worth stepping outside for.</string>
+    <string name="discover_search_hint">Search activities, like museums</string>
+    <string name="discover_categories">Explore by category</string>
+    <string name="discover_distance">Search distance</string>
+    <string name="discover_distance_value">%d km</string>
+    <string name="discover_loading">Finding places nearby…</string>
+    <string name="discover_error_title">Could not load nearby places</string>
+    <string name="discover_error_body">Check your connection and try again. Your search is still here.</string>
+    <string name="discover_empty_title">Nothing nearby this time</string>
+    <string name="discover_empty_body">Try a wider search distance or choose another activity.</string>
+    <string name="discover_retry">Try again</string>
+    <string name="discover_choose_category">Choose an activity from the suggestions or categories below.</string>
+    <string name="discover_location_needed">Choose a location on the map before searching for activities.</string>
+</resources>
