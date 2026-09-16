@@ -1,294 +1,192 @@
 package com.evya.myweatherapp.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import com.evya.myweatherapp.Constants.manipulatedList
-import com.evya.myweatherapp.MainData.attractionRadius
-import com.evya.myweatherapp.MainData.lat
-import com.evya.myweatherapp.MainData.long
+import androidx.navigation.fragment.findNavController
+import com.evya.myweatherapp.Constants
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.databinding.ChooseAttractionFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CLICK_ON_INTERSTITIAL_AD
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_LOAD
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_IMPRESSION
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_LOADED
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SEARCH_ATTRACTIONS
-import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.WHAT_TO_DO
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings
+import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_WHAT_TO_DO
 import com.evya.myweatherapp.ui.MainActivity
-import com.evya.myweatherapp.ui.dialogs.NoAttractionFoundDialog
-import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
+import com.evya.myweatherapp.viewmodels.PlacesSearchState
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.util.Locale
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
 class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_layout) {
-
-    private val mPlacesViewModel: PlacesViewModel by viewModels()
-    private lateinit var mNavController: NavController
-    private lateinit var mBinding: ChooseAttractionFragmentLayoutBinding
-    private lateinit var mName: String
-    private var mInterstitialAd: InterstitialAd? = null
-
+    private val placesViewModel: PlacesViewModel by viewModels()
+    private var binding: ChooseAttractionFragmentLayoutBinding? = null
+    private var interstitialAd: InterstitialAd? = null
+    private var awaitingAd = false
+    private var categories: List<Pair<View, String>> = emptyList()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mBinding = ChooseAttractionFragmentLayoutBinding.bind(view)
-        loadInterstitialAd()
-
-        mNavController = Navigation.findNavController(view)
-        setOnClickListener()
-
-        val adapter = ArrayAdapter(
-            activity?.applicationContext!!,
-            android.R.layout.select_dialog_item,
-            manipulatedList()
+        val ui = ChooseAttractionFragmentLayoutBinding.bind(view)
+        binding = ui
+        categories = listOf(
+            ui.getHotelBtn to "accomodations", ui.getFoodBtn to "foods",
+            ui.getNatureBtn to "natural", ui.getMuseumsBtn to "museums",
+            ui.getHistoryBtn to "historic", ui.getCultureBtn to "cultural",
+            ui.getNightlifeBtn to "adult", ui.getTransportBtn to "transport", ui.getBanksBtn to "banks"
         )
-        mBinding.autoCompleteTextview.threshold = 1
-        mBinding.autoCompleteTextview.setAdapter(adapter)
-        mBinding.autoCompleteTextview.setOnItemClickListener { _, _, _, _ ->
-            handleInterstitialAd(
-                mBinding.autoCompleteTextview.text.toString().replace(" ", "_"),
-                R.string.general_error
-            )
-            val params = bundleOf(
-                PARAMS_WHAT_TO_DO.paramsName to mBinding.autoCompleteTextview.text
-            )
-            FireBaseEvents.sendFireBaseCustomEvents(SEARCH_ATTRACTIONS.eventName, params)
+        categories.forEach { (button, kind) -> button.setOnClickListener { startSearch(kind) } }
+
+        val activities = Constants.manipulatedList()
+        ui.autoCompleteTextview.threshold = 1
+        ui.autoCompleteTextview.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, activities))
+        ui.autoCompleteTextview.setOnItemClickListener { _, _, _, _ -> searchText(activities) }
+        ui.autoCompleteTextview.setOnEditorActionListener { _, action, _ ->
+            if (action == EditorInfo.IME_ACTION_SEARCH) {
+                searchText(activities)
+                true
+            } else false
         }
 
-
-        val radiusAdapter = ArrayAdapter(
-            activity?.applicationContext!!,
-            android.R.layout.simple_spinner_item,
-            arrayListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-        )
-        radiusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        mBinding.radiusSpinner.adapter = radiusAdapter
-        mBinding.radiusSpinner.prompt = "sasdas"
-
-        mBinding.radiusSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
-
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    attractionRadius =
-                        (parent?.getItemAtPosition(position) as Int * 1000).toString()
-                }
-
-            }
-
-        mPlacesViewModel.placesRepo.observe(viewLifecycleOwner) {
-            if (it.first != null) {
-                val latLong: ArrayList<LatLng> = ArrayList()
-                it.first?.features?.forEach { feature ->
-                    latLong.add(
-                        LatLng(
-                            feature.geometry.coordinates[0],
-                            feature.geometry.coordinates[1]
-                        )
-                    )
-                }
-                if (latLong.size > 0) {
-                    val bundle = bundleOf("places" to it.first)
-                    mNavController.navigate(
-                        R.id.action_chooseAttractionFragment_to_googleMapsAttractionFragment,
-                        bundle
-                    )
-                } else {
-                    mBinding.lottie.visibility = View.GONE
-                    activity?.supportFragmentManager?.let { fragmentManager ->
-
-                        if (mBinding.autoCompleteTextview.text.toString().isNotEmpty()) {
-                            mName = mBinding.autoCompleteTextview.text.toString()
-                        }
-                        NoAttractionFoundDialog.newInstance(mName)
-                            .show(fragmentManager, " NO_ATTRACTION_DIALOG")
-                    }
-                }
-            } else {
-                it.second?.let { it1 ->
-                    showToast(context?.resources?.getString(it1))
-                }
+        val preferences = requireContext().getSharedPreferences("discovery", Context.MODE_PRIVATE)
+        val distance = preferences.getInt("radius_km", (MainData.attractionRadius.toIntOrNull() ?: 1000) / 1000).coerceIn(1, 10)
+        MainData.attractionRadius = (distance * 1000).toString()
+        ui.radiusSpinner.adapter = ArrayAdapter(
+            requireContext(), R.layout.radius_spinner_item, (1..10).map { getString(R.string.discover_distance_value, it) }
+        ).apply { setDropDownViewResource(R.layout.radius_spinner_item) }
+        ui.radiusSpinner.setSelection(distance - 1)
+        ui.radiusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                MainData.attractionRadius = ((position + 1) * 1000).toString()
+                preferences.edit().putInt("radius_km", position + 1).apply()
             }
         }
+        ui.retrySearch.setOnClickListener { placesViewModel.retry() }
+        ui.cancelSearch.setOnClickListener { placesViewModel.cancel() }
+        placesViewModel.state.observe(viewLifecycleOwner, ::render)
+        loadAd()
     }
 
-    private fun loadInterstitialAd() {
-        val adRequest = (activity as MainActivity).adRequest
-
-        context?.let {
-            InterstitialAd.load(it, "ca-app-pub-9058418744370338/1048685069", adRequest, object : InterstitialAdLoadCallback() {
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        val params = bundleOf(
-                            PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to adError.message
-                        )
-                        FireBaseEvents.sendFireBaseCustomEvents(
-                            ON_INTERSTITIAL_AD_FAILED_TO_LOAD.eventName,
-                            params
-                        )
-                        mInterstitialAd = null
-                    }
-
-                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                        val params = bundleOf()
-                        FireBaseEvents.sendFireBaseCustomEvents(
-                            ON_INTERSTITIAL_AD_LOADED.eventName,
-                            params
-                        )
-                        mInterstitialAd = interstitialAd
-                    }
-                })
-        }
-    }
-
-    private fun setOnClickListener() {
-        mBinding.apply {
-            getHotelBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_hotels_btn)
-                handleInterstitialAd("accomodations", R.string.accommodations_request_error)
-            }
-
-            getNightlifeBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_night_life_btn)
-                handleInterstitialAd("adult", R.string.adults_request_error)
-            }
-
-            getTransportBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_transport_btn)
-                handleInterstitialAd("transport", R.string.transports_request_error)
-            }
-
-            getBanksBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_banks_btn)
-                handleInterstitialAd("banks", R.string.banks_request_error)
-            }
-
-            getFoodBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_food_btn)
-                handleInterstitialAd("foods", R.string.food_request_error)
-            }
-
-            getMuseumsBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_museums_btn)
-                handleInterstitialAd("museums", R.string.museum_request_error)
-            }
-
-            getHistoryBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_historic_btn)
-                handleInterstitialAd("historic", R.string.historic_request_error)
-            }
-
-            getCultureBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_cultural_btn)
-                handleInterstitialAd("cultural", R.string.natural_request_error)
-            }
-
-            getNatureBtn.setOnClickListener {
-                mName = resources.getString(R.string.get_natural_btn)
-                handleInterstitialAd("natural", R.string.natural_request_error)
-            }
-        }
-    }
-
-    private fun handleInterstitialAd(kind: String, error: Int) {
-        if (mInterstitialAd != null) {
-            activity?.let { mInterstitialAd?.show(it) }
+    private fun searchText(activities: List<String>) {
+        val text = binding?.autoCompleteTextview?.text.toString().trim()
+        val activity = activities.firstOrNull { it.equals(text, ignoreCase = true) }
+        if (activity == null) {
+            binding?.autoCompleteTextview?.error = getString(R.string.discover_choose_category)
         } else {
-            whatToDo(kind, error)
-        }
-        mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
-            override fun onAdClicked() {
-                // Called when a click is recorded for an ad.
-                val params = bundleOf()
-                FireBaseEvents.sendFireBaseCustomEvents(
-                    CLICK_ON_INTERSTITIAL_AD.eventName,
-                    params
-                )
-            }
-
-            override fun onAdDismissedFullScreenContent() {
-                // Called when ad is dismissed.
-                val params = bundleOf()
-                FireBaseEvents.sendFireBaseCustomEvents(
-                    ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT.eventName,
-                    params
-                )
-                mInterstitialAd = null
-                whatToDo(kind, error)
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                // Called when ad fails to show.
-                val params = bundleOf(
-                    PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to adError.message
-                )
-                FireBaseEvents.sendFireBaseCustomEvents(
-                    ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT.eventName,
-                    params
-                )
-                mInterstitialAd = null
-                whatToDo(kind, error)
-            }
-
-            override fun onAdImpression() {
-                // Called when an impression is recorded for an ad.
-                val params = bundleOf()
-                FireBaseEvents.sendFireBaseCustomEvents(
-                    ON_INTERSTITIAL_AD_IMPRESSION.eventName,
-                    params
-                )
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                // Called when ad is shown.
-                val params = bundleOf()
-                FireBaseEvents.sendFireBaseCustomEvents(
-                    ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT.eventName,
-                    params
-                )
-            }
+            logEvent(SEARCH_ATTRACTIONS, bundleOf(PARAMS_WHAT_TO_DO.paramsName to activity))
+            startSearch(activity.lowercase(Locale.ROOT).replace(" ", "_"))
         }
     }
 
-    fun whatToDo(kind: String, error: Int) {
-        try {
-            val params = bundleOf(
-                PARAMS_WHAT_TO_DO.paramsName to mName
-            )
-            FireBaseEvents.sendFireBaseCustomEvents(WHAT_TO_DO.eventName, params)
-        } catch (_: Exception) {
-
+    private fun startSearch(kind: String) {
+        if (awaitingAd || placesViewModel.state.value == PlacesSearchState.Loading) return
+        val latitude = MainData.lat.toDoubleOrNull()
+        val longitude = MainData.long.toDoubleOrNull()
+        if (latitude == null || longitude == null || latitude !in -90.0..90.0 || longitude !in -180.0..180.0) {
+            Toast.makeText(requireContext(), R.string.discover_location_needed, Toast.LENGTH_LONG).show()
+            return
         }
-        mBinding.mainLayout.visibility = View.GONE
-        mBinding.lottie.visibility = View.VISIBLE
-        mBinding.autoCompleteTextview.visibility = View.GONE
-        mPlacesViewModel.getWhatToDo(lat, long, kind, error)
+        val ui = binding ?: return
+        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+            .hideSoftInputFromWindow(ui.root.windowToken, 0)
+        ui.autoCompleteTextview.clearFocus()
+        val search = {
+            if (binding != null && findNavController().currentDestination?.id == R.id.chooseAttractionFragment) {
+                FireBaseEvents.sendFireBaseCustomEvents(WHAT_TO_DO.eventName, bundleOf(PARAMS_WHAT_TO_DO.paramsName to kind))
+                placesViewModel.search(latitude.toString(), longitude.toString(), kind)
+            }
+        }
+        val ad = interstitialAd
+        if (ad == null) {
+            search()
+            return
+        }
+        awaitingAd = true
+        interstitialAd = null
+        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+            override fun onAdDismissedFullScreenContent() {
+                logEvent(ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT)
+                awaitingAd = false
+                search()
+            }
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                logEvent(ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT,
+                    bundleOf(PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to adError.message))
+                awaitingAd = false
+                search()
+            }
+            override fun onAdClicked() = logEvent(CLICK_ON_INTERSTITIAL_AD)
+            override fun onAdImpression() = logEvent(ON_INTERSTITIAL_AD_IMPRESSION)
+            override fun onAdShowedFullScreenContent() = logEvent(ON_INTERSTITIAL_AD_SHOWED_FULL_SCREEN_CONTENT)
+        }
+        ad.show(requireActivity())
+    }
+
+    private fun render(state: PlacesSearchState) {
+        val ui = binding ?: return
+        val loading = state == PlacesSearchState.Loading
+        ui.loadingPanel.isVisible = loading
+        ui.radiusSpinner.isEnabled = !loading
+        ui.autoCompleteTextview.isEnabled = !loading
+        categories.forEach { (button, _) -> button.isEnabled = !loading; button.alpha = if (loading) 0.5f else 1f }
+        ui.statusPanel.isVisible = state == PlacesSearchState.Error || state == PlacesSearchState.Empty
+        val empty = state == PlacesSearchState.Empty
+        ui.statusTitle.setText(if (empty) R.string.discover_empty_title else R.string.discover_error_title)
+        ui.statusBody.setText(if (empty) R.string.discover_empty_body else R.string.discover_error_body)
+        if (state is PlacesSearchState.Success && findNavController().currentDestination?.id == R.id.chooseAttractionFragment) {
+            // Consume before navigating so returning from the map never opens it again.
+            placesViewModel.consumeResult()
+            findNavController().navigate(
+                R.id.action_chooseAttractionFragment_to_googleMapsAttractionFragment,
+                bundleOf("places" to state.places)
+            )
+        }
+    }
+
+    private fun loadAd() {
+        val request = (requireActivity() as MainActivity).adRequest
+        InterstitialAd.load(requireContext(), "ca-app-pub-9058418744370338/1048685069", request,
+            object : InterstitialAdLoadCallback() {
+                override fun onAdLoaded(ad: InterstitialAd) {
+                    logEvent(ON_INTERSTITIAL_AD_LOADED)
+                    if (binding != null) interstitialAd = ad
+                }
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    logEvent(ON_INTERSTITIAL_AD_FAILED_TO_LOAD,
+                        bundleOf(PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD.paramsName to error.message))
+                    interstitialAd = null
+                }
+            })
+    }
+
+    private fun logEvent(event: FireBaseEventsNamesStrings, params: Bundle = bundleOf()) {
+        FireBaseEvents.sendFireBaseCustomEvents(event.eventName, params)
+    }
+
+    override fun onDestroyView() {
+        categories = emptyList()
+        binding = null
+        interstitialAd?.fullScreenContentCallback = null
+        interstitialAd = null
+        awaitingAd = false
+        super.onDestroyView()
     }
 }

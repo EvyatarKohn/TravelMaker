@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.os.LocaleList
 import com.evya.myweatherapp.BuildConfig
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.analytics.analytics
+import com.google.firebase.Firebase
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.*
 import java.util.Locale
 

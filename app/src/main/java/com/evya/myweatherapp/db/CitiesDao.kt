@@ -13,7 +13,7 @@ interface CitiesDao {
     suspend fun addCityDataToDB(weather: Weather)
 
     @Query("SELECT * FROM cities WHERE cityName = :cityName")
-    suspend fun fetchSpecificCity(cityName: String): Weather
+    suspend fun fetchSpecificCity(cityName: String): Weather?
 
 /*    @Query("SELECT EXISTS(SELECT * FROM favorites WHERE cityName = :cityName)")
     fun fetchSpecificCity(cityName: String): Flow<Weather>*/
@@ -27,7 +27,7 @@ interface CitiesDao {
     /*@Query("SELECT * FROM favorites WHERE cityName = :cityName")
     fun checkIfAlreadyAddedToDB(cityName: String) : Flow<Boolean>
 */
-    @Query("SELECT isInFavorites FROM cities WHERE cityName = :cityName")
+    @Query("SELECT EXISTS(SELECT 1 FROM cities WHERE cityName = :cityName AND isInFavorites = 1)")
     fun checkIfAlreadyInFav(cityName: String) : Flow<Boolean>
 
     @Query("DELETE FROM cities WHERE cityName = :cityName")

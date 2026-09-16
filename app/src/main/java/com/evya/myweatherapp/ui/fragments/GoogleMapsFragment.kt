@@ -106,15 +106,15 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                     as AutocompleteSupportFragment
 
         // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.DISPLAY_NAME))
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 // TODO: Get info about the selected place.
-                Log.i("GoogleMapsFragment", "Place: ${place.name}, ${place.id}")
+                Log.i("GoogleMapsFragment", "Place: ${place.displayName}, ${place.id}")
                 mGoogleMap.clear()
-                mLocation = place.name
+                mLocation = place.displayName
                 val geocoder = activity?.applicationContext?.let { Geocoder(it, Locale.ENGLISH) }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     getAddressForTiramisuAndAbove(mLocation, geocoder)

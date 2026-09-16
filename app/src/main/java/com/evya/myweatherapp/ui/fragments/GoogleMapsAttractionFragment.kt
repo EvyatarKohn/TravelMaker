@@ -32,7 +32,6 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mPlaces: Places
     private lateinit var mMyLatLong: LatLng
-    private lateinit var mMarkerTitle: String
     private lateinit var mNavController: NavController
     private lateinit var mBinding: GoogleMapsAttractionFragmentLayoutBinding
 
@@ -75,17 +74,18 @@ class GoogleMapsAttractionFragment : Fragment(R.layout.google_maps_attraction_fr
 
             mGoogleMap.setOnMarkerClickListener { marker ->
                 marker.showInfoWindow()
-                mMarkerTitle = marker.title!!
                 true
             }
 
-            mGoogleMap.setOnMapLongClickListener {
+            mGoogleMap.setOnInfoWindowLongClickListener { marker ->
+                val title = marker.title?.takeIf { it.isNotBlank() }
+                    ?: return@setOnInfoWindowLongClickListener
                 val params = bundleOf(
-                    PARAMS_CLICKED_ATTRACTION.paramsName to mMarkerTitle
+                    PARAMS_CLICKED_ATTRACTION.paramsName to title
                 )
                 sendFireBaseCustomEvents(PRESS_ON_ATTRACTION_ON_GOOGLE_MAPS.eventName, params)
                 val googleSearchIntent = Intent(Intent.ACTION_WEB_SEARCH)
-                googleSearchIntent.putExtra(SearchManager.QUERY, mMarkerTitle)
+                googleSearchIntent.putExtra(SearchManager.QUERY, title)
                 googleSearchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 googleSearchIntent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                 startActivity(googleSearchIntent)

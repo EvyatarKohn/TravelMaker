@@ -6,6 +6,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -64,8 +65,6 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -217,7 +216,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     mBinding.cityName.text = cityData[0].localNames.en
                     mFavWeather?.cityName = cityData[0].localNames.en
                     weather?.cityName = cityData[0].localNames.en
-                    CoroutineScope(Dispatchers.IO).launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
                         if (mCitiesViewModel.fetchSpecificCity(cityData[0].localNames.en) == null) {
                             weather?.let { mCitiesViewModel.addCityDataToDB(it) }
                         }
@@ -231,7 +230,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 }
             }
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val tempWeather = mCitiesViewModel.fetchSpecificCity(weather?.cityName ?: arguments?.getString("cityName") ?:  "")
             if (tempWeather == null) {
                 getWeatherByLocation(lat, long, degreesUnits)
@@ -244,6 +243,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     getWeatherByLocation(lat, long, degreesUnits)
 //                    mFavoritesViewModel.addCityDataToDB(tempWeather)
                 } else {
+                    checkIfAlreadyInFav(tempWeather.cityName)
                     setWeatherData(tempWeather)
                 }
             }
@@ -475,6 +475,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         try {
             mCitiesViewModel.setCityName(cityName)
             mCitiesViewModel.checkIfAlreadyInFav.observe(viewLifecycleOwner) {
+                addedToFav = it
                 if (it) {
                     mBinding.favoriteImg.setBackgroundResource(R.drawable.ic_red_heart)
                 } else {

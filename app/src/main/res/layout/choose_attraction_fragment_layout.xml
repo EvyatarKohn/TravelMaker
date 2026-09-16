@@ -1,369 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layoutDirection="ltr">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/surface_soft" android:fillViewport="true">
+    <LinearLayout android:id="@+id/main_layout" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/discover_title" android:textSize="28sp"
+            android:fontFamily="@font/product_sans_bold" android:textColor="@color/ink" android:accessibilityHeading="true" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:text="@string/discover_subtitle"
+            android:textSize="15sp" android:textColor="@color/ink_secondary" />
+        <AutoCompleteTextView android:id="@+id/auto_complete_textview"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:minHeight="52dp" android:layout_marginTop="20dp"
+            android:background="@drawable/surface_search" android:hint="@string/discover_search_hint"
+            android:textColor="@color/ink" android:textColorHint="@color/ink_secondary"
+            android:textSize="16sp" android:inputType="textCapSentences" android:maxLines="1"
+            android:imeOptions="actionSearch" android:importantForAutofill="no" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" android:paddingHorizontal="16dp" android:paddingVertical="6dp"
+            android:orientation="horizontal" android:gravity="center_vertical" android:background="@drawable/surface_card">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:text="@string/discover_distance" android:textSize="16sp" android:textColor="@color/ink"
+                android:labelFor="@id/radius_spinner" />
+            <Spinner android:id="@+id/radius_spinner" android:layout_width="wrap_content" android:layout_height="48dp"
+                android:minWidth="100dp" android:prompt="@string/discover_distance" android:spinnerMode="dropdown" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/loading_panel" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical"
+            android:paddingVertical="20dp" android:visibility="gone" android:accessibilityLiveRegion="polite">
+            <ProgressBar android:layout_width="28dp" android:layout_height="28dp" android:indeterminateTint="@color/accent_dark" />
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="12dp" android:text="@string/discover_loading"
+                android:textColor="@color/ink" android:textSize="16sp" />
+            <Button android:id="@+id/cancel_search" android:layout_width="wrap_content" android:layout_height="48dp"
+                android:text="@string/cancel" android:textAllCaps="false" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/status_panel" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="16dp" android:padding="16dp"
+            android:background="@drawable/surface_card" android:orientation="vertical"
+            android:visibility="gone" android:accessibilityLiveRegion="polite">
+            <TextView android:id="@+id/status_title" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textSize="18sp" android:textColor="@color/ink" android:fontFamily="@font/product_sans_bold" />
+            <TextView android:id="@+id/status_body" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:textSize="15sp" android:textColor="@color/ink_secondary" />
+            <Button android:id="@+id/retry_search" android:layout_width="wrap_content" android:layout_height="48dp"
+                android:layout_marginTop="8dp" android:text="@string/discover_retry"
+                android:textAllCaps="false" android:textColor="@color/accent_dark" />
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="24dp" android:layout_marginBottom="8dp"
+            android:text="@string/discover_categories" android:textSize="18sp" android:textColor="@color/ink"
+            android:fontFamily="@font/product_sans_bold" android:accessibilityHeading="true" />
+        <GridLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:columnCount="3" android:alignmentMode="alignMargins" android:useDefaultMargins="false">
 
-    <ScrollView
-        android:id="@+id/main_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="true"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/attractions_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TableLayout
-                android:id="@+id/table_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:paddingVertical="15dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_hotel_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/hotel_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/hotels"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_hotels_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/hotel_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_nightlife_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/nightlife_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:drawablePadding="10dp"
-                            android:src="@drawable/nightlife"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_night_life_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/nightlife_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_transport_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/transport_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:drawablePadding="10dp"
-                            android:src="@drawable/transports"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_transport_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/transport_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_banks_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/bank_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/banks"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_banks_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/bank_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_food_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginVertical="25dp">
-
-                        <ImageView
-                            android:id="@+id/food_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:drawablePadding="10dp"
-                            android:src="@drawable/food"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_food_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/food_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_museums_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/museums_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:drawablePadding="10dp"
-                            android:src="@drawable/museums"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_museums_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/museums_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_history_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/history_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/history"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_historic_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/history_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_culture_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/culture_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:drawablePadding="10dp"
-                            android:src="@drawable/culture"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_cultural_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/culture_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/get_nature_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/nature_img"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_marginTop="4dp"
-                            android:drawablePadding="10dp"
-                            android:src="@drawable/nature"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/product_sans_regular"
-                            android:text="@string/get_natural_btn"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/nature_img" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </TableRow>
-            </TableLayout>
-
-            <TextView
-                android:id="@+id/radius_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:fontFamily="@font/product_sans_bold"
-                android:text="@string/radius"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/table_layout" />
-
-            <Spinner
-                android:id="@+id/radius_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:prompt="@string/attraction_radius"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/radius_text" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-    <AutoCompleteTextView
-        android:id="@+id/auto_complete_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="25dp"
-        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        android:gravity="center"
-        android:hint="@string/search_activities"
-        app:layout_constraintBottom_toTopOf="@+id/main_layout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/loader" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <LinearLayout android:id="@+id/get_hotel_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_hotels_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/hotels" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_hotels_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_food_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_food_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/food" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_food_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_nature_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_natural_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/nature" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_natural_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_museums_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_museums_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/museums" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_museums_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_history_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_historic_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/history" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_historic_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_culture_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_cultural_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/culture" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_cultural_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_nightlife_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_night_life_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/nightlife" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_night_life_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_transport_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_transport_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/transports" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_transport_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/get_banks_btn" android:layout_width="0dp"
+                    android:layout_height="wrap_content" android:layout_columnWeight="1"
+                    android:layout_gravity="fill" android:layout_margin="4dp" android:padding="10dp"
+                    android:minHeight="118dp" android:orientation="vertical" android:gravity="center"
+                    android:background="@drawable/surface_card" android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true" android:contentDescription="@string/get_banks_btn">
+                    <ImageView android:layout_width="60dp" android:layout_height="60dp"
+                        android:src="@drawable/banks" android:importantForAccessibility="no" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:gravity="center" android:text="@string/get_banks_btn"
+                        android:textSize="14sp" android:textColor="@color/ink" android:importantForAccessibility="no" />
+                </LinearLayout>
+        </GridLayout>
+    </LinearLayout>
+</ScrollView>
