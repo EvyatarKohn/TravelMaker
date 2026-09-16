@@ -1,6 +1,7 @@
 package com.evya.myweatherapp.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -12,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.evya.myweatherapp.Constants
 import com.evya.myweatherapp.MainData
@@ -23,6 +25,7 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.*
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_FAILED_TO_LOAD_INTERSTITIAL_AD
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_WHAT_TO_DO
 import com.evya.myweatherapp.ui.MainActivity
+import com.evya.myweatherapp.ui.AttractionMapActivity
 import com.evya.myweatherapp.viewmodels.PlacesSearchState
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
 import com.google.android.gms.ads.AdError
@@ -32,6 +35,8 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -125,7 +130,14 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
             override fun onAdDismissedFullScreenContent() {
                 logEvent(ON_INTERSTITIAL_AD_DISMISSED_FULL_SCREEN_CONTENT)
                 awaitingAd = false
-                search()
+                // Let the Back event that dismissed the full-screen ad finish
+                // before starting the result activity.
+                viewLifecycleOwner.lifecycleScope.launch {
+                    delay(300)
+                    if (binding != null && lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
+                        search()
+                    }
+                }
             }
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 logEvent(ON_INTERSTITIAL_AD_FAILED_TO_SHOW_FULL_SCREEN_CONTENT,
@@ -152,12 +164,12 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         ui.statusTitle.setText(if (empty) R.string.discover_empty_title else R.string.discover_error_title)
         ui.statusBody.setText(if (empty) R.string.discover_empty_body else R.string.discover_error_body)
         if (state is PlacesSearchState.Success && findNavController().currentDestination?.id == R.id.chooseAttractionFragment) {
-            // Consume before navigating so returning from the map never opens it again.
+            startActivity(Intent(requireContext(), AttractionMapActivity::class.java).apply {
+                putExtra(AttractionMapActivity.EXTRA_PLACES, state.places)
+                putExtra(AttractionMapActivity.EXTRA_LATITUDE, MainData.lat.toDoubleOrNull() ?: 0.0)
+                putExtra(AttractionMapActivity.EXTRA_LONGITUDE, MainData.long.toDoubleOrNull() ?: 0.0)
+            })
             placesViewModel.consumeResult()
-            findNavController().navigate(
-                R.id.action_chooseAttractionFragment_to_googleMapsAttractionFragment,
-                bundleOf("places" to state.places)
-            )
         }
     }
 

@@ -22,7 +22,7 @@ data class Properties(
 
     @SerializedName("osm")
     @Expose
-    val osm: String,
+    val osm: String?,
 
     @SerializedName("rate")
     @Expose
@@ -30,7 +30,7 @@ data class Properties(
 
     @SerializedName("wikidata")
     @Expose
-    val wikidata: String,
+    val wikidata: String?,
 
     @SerializedName("xid")
     @Expose

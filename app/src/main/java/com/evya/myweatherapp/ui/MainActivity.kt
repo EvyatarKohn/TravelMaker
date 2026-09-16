@@ -24,6 +24,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.evya.myweatherapp.Constants.PERMISSIONS_REQUEST_ID
@@ -199,10 +200,16 @@ class MainActivity : AppCompatActivity() {
                         approvedPermissions = true
                         lat = location.latitude.toString()
                         long = location.longitude.toString()
-                        // mWeatherViewModel.getCityNameByLocation(lat, long)
-                        cityName = Geocoder(applicationContext, Locale.ENGLISH).getFromLocation(location.latitude, location.longitude, 1)?.get(0)?.locality.toString()
                         lifecycleScope.launch(Dispatchers.IO) {
-                            val weather = mCitiesViewModel.fetchSpecificCity(cityName)
+                            val resolvedCity = runCatching {
+                                Geocoder(applicationContext, Locale.ENGLISH)
+                                    .getFromLocation(location.latitude, location.longitude, 1)
+                                    ?.firstOrNull()
+                                    ?.locality
+                            }.getOrNull()
+                            if (!resolvedCity.isNullOrBlank()) cityName = resolvedCity
+                            val weather = cityName.takeIf { it.isNotBlank() }
+                                ?.let { mCitiesViewModel.fetchSpecificCity(it) }
                             withContext(Dispatchers.Main) {
                                 if (weather != null) {
                                     MainData.weather = weather
@@ -403,20 +410,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startDestination(id: Int) {
-        if (mNavHostFragment.navController.currentDestination?.id == id) {
+        val controller = mNavHostFragment.navController
+        if (controller.currentDestination?.id == id) {
             return
         }
-        val controller = mNavHostFragment.navController
         if (controller.currentDestination == null) {
             controller.graph = controller.navInflater.inflate(R.navigation.nav_graph).apply {
                 setStartDestination(id)
             }
-        } else {
-            controller.navigate(id, null, NavOptions.Builder()
-                .setPopUpTo(controller.graph.id, false)
-                .setLaunchSingleTop(true)
-                .build())
+            return
         }
+        // FragmentNavigator commits asynchronously. A second navigation while the
+        // current entry is still transitioning can leave FragmentManager and the
+        // navigator back stack out of sync.
+        if (controller.currentBackStackEntry?.lifecycle?.currentState != Lifecycle.State.RESUMED) {
+            syncBottomNavigation(controller.currentDestination?.id)
+            return
+        }
+        controller.navigate(id, null, NavOptions.Builder()
+            // Keep the graph's root entry. Popping the graph itself removes every
+            // Fragment and can make FragmentManager optimize a remove/add pair
+            // that FragmentNavigator can no longer associate with its back stack.
+            .setPopUpTo(controller.graph.startDestinationId, false)
+            .setLaunchSingleTop(true)
+            .build())
+    }
+
+    private fun syncBottomNavigation(destinationId: Int?) {
+        val bottomId = when (destinationId) {
+            R.id.cityFragment, R.id.alertsFragment -> R.id.weather
+            R.id.googleMapsFragment -> R.id.map
+            R.id.chooseAttractionFragment -> R.id.attractions
+            R.id.favoritesFragment -> R.id.favorites
+            else -> return
+        }
+        selectNavigationItem(bottomId)
     }
 
     private fun handleBannerAd() {
@@ -557,11 +585,6 @@ class MainActivity : AppCompatActivity() {
             this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     when {
-                        mNavHostFragment.navController.currentDestination?.label == "GoogleMapsAttractionFragment" -> {
-                            if (!mNavHostFragment.navController.popBackStack()) {
-                                changeNavBarIndex(R.id.chooseAttractionFragment, R.id.attractions, false)
-                            }
-                        }
                         mFirsTimeBack -> {
                             Toast.makeText(
                                 applicationContext,

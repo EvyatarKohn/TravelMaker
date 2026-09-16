@@ -49,6 +49,10 @@ Versions were checked against Google Maven, Maven Central, Gradle's release serv
 - Location permissions request precise and approximate access together and accept approximate permission.
 - Gradle distribution integrity is checked using the published SHA-256 checksum.
 - Tab switches navigate explicitly and clear the previous tab's back stack; reassigning the same graph no longer switches destinations in current Navigation.
+- Attraction search waits for the full-screen ad dismissal to finish before presenting results.
+- Attraction results open in a dedicated `AttractionMapActivity` backed by `MapView`. This keeps the results screen outside the Navigation fragment manager and removes the `FragmentNavigator.kt:236` failure path.
+- OpenTripMap's optional `osm` and `wikidata` fields are nullable, matching real API responses and preventing Parcelable restoration failures.
+- Reverse geocoding runs off the main thread and treats service failures as recoverable, avoiding UI stalls and platform geocoder crashes.
 - Removed the obsolete Ads services manifest override, whose referenced resource no longer exists in the updated Ads SDK.
 
 ## Validation
@@ -56,7 +60,7 @@ Versions were checked against Google Maven, Maven Central, Gradle's release serv
 - Debug app and instrumentation APKs build successfully.
 - All five JVM tests and three Room database tests pass; database tests ran on the Android 17 emulator with a 16 KB page-size image.
 - Android lint reports zero errors. Existing warnings include deprecated APIs, accessibility, and resource cleanup suggestions.
-- Android 17 smoke checks passed for weather loading with approximate location, switching between Attractions, Favorites, and Maps, and readable system bars with content outside the status/navigation insets.
+- Android 17 smoke checks passed for weather loading with approximate location, switching between Attractions, Favorites, and Maps, opening a Hotels result map with markers, returning from the map, and readable system bars with content outside the status/navigation insets.
 
 ## References
 
