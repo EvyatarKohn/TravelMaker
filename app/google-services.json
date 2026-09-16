@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "368735409643",
     "project_id": "travel-maker-331608",
-    "storage_bucket": "travel-maker-331608.appspot.com"
+    "storage_bucket": "travel-maker-331608.firebasestorage.app"
   },
   "client": [
     {
@@ -20,7 +20,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDYdbe7A3sA_ukHH2C1uGH3sCJw6gdhMlw"
+          "current_key": "AIzaSyAB0Y9B3ammlUm2QcdnlaU_CwZDennfd-k"
         }
       ],
       "services": {

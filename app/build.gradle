@@ -7,6 +7,15 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream -> localProperties.load(stream) }
+}
+def mapsApiKey = localProperties.getProperty('MAPS_API_KEY', '')
+if (mapsApiKey.isEmpty()) {
+    logger.warn('MAPS_API_KEY is missing from local.properties. Maps/Places will not work until you add it.')
+}
 
 android {
     compileSdk 37
@@ -17,6 +26,9 @@ android {
         versionCode 75
         versionName "5.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // Injected at build time; do not commit real keys to source control
+        resValue "string", "google_maps_key", mapsApiKey
+        manifestPlaceholders += [MAPS_API_KEY: mapsApiKey]
     }
 
     signingConfigs {
@@ -45,6 +57,7 @@ android {
     buildFeatures {
         viewBinding true
         buildConfig true
+        resValues true
     }
 
     dataBinding {

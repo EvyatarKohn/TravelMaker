@@ -22,21 +22,12 @@
         android:theme="@style/AppTheme">
 
         <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+             Maps API key is injected from local.properties (MAPS_API_KEY) at build time.
+             Restrict the key in Google Cloud Console to this app's package name + SHA-1.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDYdbe7A3sA_ukHH2C1uGH3sCJw6gdhMlw" />
-        <!--
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
             android:value="${MAPS_API_KEY}" />
-        -->
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

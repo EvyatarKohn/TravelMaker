@@ -40,9 +40,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 
 
@@ -101,8 +99,15 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 mGoogleMap.clear()
                 lat = latLng.latitude.toString()
                 long = latLng.longitude.toString()
-                mAddress = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(latLng.latitude, latLng.longitude, 1)?.firstOrNull() as Address
-                mLocation = mAddress.locality ?: mAddress.adminArea
+                val address = Geocoder(requireContext(), Locale.getDefault())
+                    .getFromLocation(latLng.latitude, latLng.longitude, 1)
+                    ?.firstOrNull()
+                if (address == null) {
+                    showToast(getString(R.string.google_search_error))
+                    return@setOnMapClickListener
+                }
+                mAddress = address
+                mLocation = resolvePlaceName(address, null)
                 mGoogleMap.addMarker(
                     MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
                 )
@@ -180,22 +185,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
         list?.size?.let { listSize ->
             if (listSize > 0) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    mAddress = list[0]
-                    lat = mAddress.latitude.toString()
-                    long = mAddress.longitude.toString()
-                    val latLang = LatLng(mAddress.latitude, mAddress.longitude)
-                    withContext(Dispatchers.Main) {
-                        mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
-                    }
-                    cityName = mAddress.locality
-                    val params = bundleOf(
-                        PARAMS_CITY_NAME.paramsName to mAddress.locality
-                    )
-                    FireBaseEvents.sendFireBaseCustomEvents(
-                        SEARCH_IN_GOOGLE_MAP.eventName,
-                        params
-                    )
+                    applyResolvedAddress(list[0], location)
                 }
             }
         }
@@ -207,25 +197,38 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             geocoder?.getFromLocationName(it, 1) { list ->
                 if (list.size > 0) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        mAddress = list[0]
-                        lat = mAddress.latitude.toString()
-                        long = mAddress.longitude.toString()
-                        val latLang = LatLng(mAddress.latitude, mAddress.longitude)
-                        withContext(Dispatchers.Main) {
-                            mGoogleMap.addMarker(MarkerOptions().position(latLang))
-                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
-                        }
-                        cityName = mAddress.locality
-                        val params = bundleOf(
-                            PARAMS_CITY_NAME.paramsName to mAddress.locality
-                        )
-                        FireBaseEvents.sendFireBaseCustomEvents(
-                            SEARCH_IN_GOOGLE_MAP.eventName,
-                            params
-                        )
+                        applyResolvedAddress(list[0], location)
                     }
                 }
             }
         }
+    }
+
+    private fun applyResolvedAddress(address: Address, fallbackName: String?) {
+        mAddress = address
+        lat = address.latitude.toString()
+        long = address.longitude.toString()
+        val placeName = resolvePlaceName(address, fallbackName)
+        cityName = placeName
+        mLocation = placeName
+        val latLang = LatLng(address.latitude, address.longitude)
+        mGoogleMap.addMarker(MarkerOptions().position(latLang))
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18f))
+        FireBaseEvents.sendFireBaseCustomEvents(
+            SEARCH_IN_GOOGLE_MAP.eventName,
+            bundleOf(PARAMS_CITY_NAME.paramsName to placeName)
+        )
+    }
+
+    private fun resolvePlaceName(address: Address, fallback: String?): String {
+        return listOf(
+            address.locality,
+            address.subLocality,
+            address.subAdminArea,
+            address.adminArea,
+            address.featureName,
+            fallback,
+            mLocation
+        ).firstOrNull { !it.isNullOrBlank() }.orEmpty()
     }
 }
