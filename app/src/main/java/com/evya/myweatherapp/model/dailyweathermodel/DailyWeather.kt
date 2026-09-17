@@ -1,43 +1,51 @@
 package com.evya.myweatherapp.model.dailyweathermodel
 
 
-import com.evya.myweatherapp.Constants
-import com.evya.myweatherapp.R
-import com.google.gson.annotations.SerializedName
 import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
 data class DailyWeather(
-    @SerializedName("city")
+    @SerializedName("cloud_cover")
     @Expose
-    val city: City,
+    val cloudCover: CloudCover,
 
-    @SerializedName("cnt")
+    @SerializedName("date")
     @Expose
-    val cnt: Int,
+    val date: String,
 
-    @SerializedName("cod")
+    @SerializedName("humidity")
     @Expose
-    val cod: String,
+    val humidity: Humidity,
 
-    @SerializedName("list")
+    @SerializedName("lat")
     @Expose
-    val list: List<DailyWeatherData>,
+    val lat: Double,
 
+    @SerializedName("lon")
     @Expose
-    @SerializedName("message")
-    val message: Int
-) {
+    val lon: Double,
 
-    fun precipitationLast3H(): String {
-        var rainHeight = "0"
-        var text = "Rain last\n3h\n"
-        if (list[0].rain != null) {
-            rainHeight = list[0].rain.h.toString()
-        } else if (list[0].snow != null) {
-            rainHeight = list[0].snow.h.toString()
-            text = "Snow last\n3h\n"
-        }
+    @SerializedName("precipitation")
+    @Expose
+    val precipitation: Precipitation,
 
-        return text + rainHeight + Constants.MM
-    }
-}
+    @SerializedName("pressure")
+    @Expose
+    val pressure: Pressure,
+
+    @SerializedName("temperature")
+    @Expose
+    val temperature: Temperature,
+
+    @SerializedName("tz")
+    @Expose
+    val tz: String,
+
+    @SerializedName("units")
+    @Expose
+    val units: String,
+
+    @SerializedName("wind")
+    @Expose
+    val wind: Wind
+)

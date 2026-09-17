@@ -1,0 +1,12 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" android:orientation="vertical" android:padding="16dp" android:background="@drawable/dashboard_card">
+    <TextView android:id="@+id/order" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/accent_dark" android:textSize="13sp" />
+    <TextView android:id="@+id/name" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textSize="20sp" android:textColor="@color/ink" android:textStyle="bold" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/up" style="@style/TravelButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/plan_up" />
+        <Button android:id="@+id/down" style="@style/TravelButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/plan_down" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/directions" style="@style/TravelButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/plan_directions" />
+        <Button android:id="@+id/remove" style="@style/TravelButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/plan_remove" />
+    </LinearLayout>
+</LinearLayout>

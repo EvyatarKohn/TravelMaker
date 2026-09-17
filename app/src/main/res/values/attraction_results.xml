@@ -1,0 +1,12 @@
+<resources>
+    <string name="results_title">Nearby places</string>
+    <string name="results_back">Back</string>
+    <string name="results_filter">Filter by category</string>
+    <string name="results_all">All categories</string>
+    <string name="results_show_map">Show on map</string>
+    <string name="results_open_maps">Open in Google Maps</string>
+    <string name="results_unnamed">Unnamed place</string>
+    <string name="results_count">%1$d places · nearest first</string>
+    <string name="results_details">%1$s km away · %2$s</string>
+    <string name="results_no_maps">No app available to open this map</string>
+</resources>

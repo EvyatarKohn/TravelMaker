@@ -1,25 +1,12 @@
 <resources>
     <!--
-    TODO: Before you run your application, you need a Google Maps API key.
+    google_maps_key is provided at build time from local.properties (MAPS_API_KEY).
+    See local.properties.example in the project root.
 
-    To get one, follow this link, follow the directions and press "Create" at the end:
-
-    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=38:FE:0C:97:B7:D6:4D:69:AD:46:21:A9:0A:D2:E4:E0:CA:FF:B6:AC%3Bcom.evya.myweatherapp.ui
-
-    You can also add your credentials to an existing key, using these values:
-
-    Package name:
-    com.evya.myweatherapp.ui
-
-    SHA-1 certificate fingerprint:
-    38:FE:0C:97:B7:D6:4D:69:AD:46:21:A9:0A:D2:E4:E0:CA:FF:B6:AC
-
-    Alternatively, follow the directions here:
-    https://developers.google.com/maps/documentation/android/start#get-key
-
-    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
-    string in this file.
+    Restrict the key in Google Cloud Console:
+    - Application restrictions: Android apps
+    - Package name: com.evya.weatherapp
+    - SHA-1: your debug (and release) signing certificate fingerprint(s)
+    - API restrictions: Maps SDK for Android, Places API (only what you use)
     -->
-    <!--    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCipgz1qyM-A2uV8NRcRzjyHpaR1gzvM7s</string>-->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyB1jdeL-1TpkSlPndE-yxXiMkES2km-hdw</string>
 </resources>

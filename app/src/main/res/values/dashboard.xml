@@ -1,0 +1,76 @@
+<resources>
+    <color name="canvas">#F5F4EF</color>
+    <color name="card_surface">#FFFFFF</color>
+    <color name="hero_start">#DDF3EC</color>
+    <color name="hero_end">#F1F7DE</color>
+    <color name="accent_warm">#B65527</color>
+    <string name="dashboard_title">A good day starts here.</string>
+    <string name="dashboard_eyebrow">YOUR WEATHER, YOUR WAY</string>
+    <string name="dashboard_hourly">The next 24 hours</string>
+    <string name="dashboard_daily">The week ahead</string>
+    <string name="dashboard_details">A closer look</string>
+    <string name="dashboard_outdoors">Make time for outside</string>
+    <string name="dashboard_plan">My day plan</string>
+    <string name="dashboard_explore">Find places nearby</string>
+    <string name="dashboard_refresh">Refresh forecast</string>
+    <string name="dashboard_loading">Getting your forecast…</string>
+    <string name="dashboard_updated">Updated %1$s</string>
+    <string name="dashboard_cached">Showing your saved forecast. Refresh when connected.</string>
+    <string name="dashboard_no_data">Your forecast will appear here. Choose a location or try again.</string>
+    <string name="dashboard_feels_like">Feels like %1$s</string>
+    <string name="dashboard_previous">Earlier days</string>
+    <string name="dashboard_next">Later days</string>
+    <string name="dashboard_favorite">Save or unsave this city</string>
+    <string name="dashboard_alerts">View weather alerts</string>
+    <string name="dashboard_units">Change temperature units</string>
+    <string name="hour_rain">%1$d%% rain</string>
+    <string name="best_window">%1$s – %2$s</string>
+    <string name="best_window_reason">A comfortable daylight window: %1$s, up to %2$d%% rain chance, wind %3$s.</string>
+    <string name="best_window_empty">No comfortable two-hour daylight window in the next 24 hours. Try an indoor activity and check again later.</string>
+    <string name="best_window_missing">Hourly forecast unavailable. Refresh to find a good time to head out.</string>
+    <string name="best_window_alert">Weather alerts are active. Read them before planning an outdoor activity.</string>
+    <string name="best_window_note">Based on the forecast, not a guarantee. Conditions can change.</string>
+    <string name="metric_sunrise">Sunrise\n%1$s</string>
+    <string name="metric_sunset">Sunset\n%1$s</string>
+    <string name="metric_humidity">Humidity\n%1$d%%</string>
+    <string name="metric_wind">Wind\n%1$s</string>
+    <string name="metric_conditions">Conditions\n%1$s</string>
+    <string name="metric_visibility">Visibility\n%1$s</string>
+    <string name="metric_rain_chance">Rain chance\n%1$d%%</string>
+    <string name="metric_rain">Rain today\n%1$s</string>
+    <string name="metric_uv">UV index\n%1$s</string>
+    <style name="DashboardHeading">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:fontFamily">@font/product_sans_bold</item>
+    </style>
+    <style name="DashboardMetric">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:minHeight">84dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:background">@drawable/dashboard_card</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingExtra">6dp</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="TravelButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/accent_dark</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>
