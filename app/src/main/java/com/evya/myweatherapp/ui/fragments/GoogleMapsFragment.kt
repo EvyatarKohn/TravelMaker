@@ -9,6 +9,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.evya.myweatherapp.Constants.CITY_NAME
@@ -24,7 +25,6 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SEARCH_IN_GOOGLE_MAP
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SHOW_WEATHER
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
-import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -41,6 +41,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.util.Locale
 
 
@@ -54,6 +57,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     private lateinit var mAddress: Address
     private var mLocation: String? = null
     private var savedCamera: CameraPosition? = null
+    private var geocodeJob: Job? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -63,6 +67,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     }
 
     override fun onDestroyView() {
+        geocodeJob?.cancel()
         if (::mGoogleMap.isInitialized) savedCamera = mGoogleMap.cameraPosition
         super.onDestroyView()
     }
@@ -96,22 +101,21 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 //                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
             mGoogleMap.setOnMapClickListener { latLng ->
+                geocodeJob?.cancel()
                 mGoogleMap.clear()
-                lat = latLng.latitude.toString()
-                long = latLng.longitude.toString()
-                val address = Geocoder(requireContext(), Locale.getDefault())
-                    .getFromLocation(latLng.latitude, latLng.longitude, 1)
-                    ?.firstOrNull()
-                if (address == null) {
-                    showToast(getString(R.string.google_search_error))
-                    return@setOnMapClickListener
+                val fallback = getString(R.string.selected_map_location)
+                applyResolvedAddress(createCoordinateAddress(latLng), fallback)
+                val geocoder = Geocoder(requireContext().applicationContext, Locale.ENGLISH)
+                geocodeJob = viewLifecycleOwner.lifecycleScope.launch {
+                    val address = withContext(Dispatchers.IO) {
+                        try { geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)?.firstOrNull() }
+                        catch (_: IOException) { null }
+                    }
+                    if (address != null) {
+                        mGoogleMap.clear()
+                        applyResolvedAddress(address, fallback)
+                    }
                 }
-                mAddress = address
-                mLocation = resolvePlaceName(address, null)
-                mGoogleMap.addMarker(
-                    MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
-                )
-                mBinding.showWeatherBtn.visibility = View.VISIBLE
             }
         }
 
@@ -132,30 +136,25 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                     as AutocompleteSupportFragment
 
         // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.DISPLAY_NAME))
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.DISPLAY_NAME, Place.Field.LOCATION))
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
-                // TODO: Get info about the selected place.
-                Log.i("GoogleMapsFragment", "Place: ${place.displayName}, ${place.id}")
+                if (!::mGoogleMap.isInitialized) return
+                val coordinates = place.location ?: return
+                geocodeJob?.cancel()
                 mGoogleMap.clear()
-                mLocation = place.displayName
-                val geocoder = activity?.applicationContext?.let { Geocoder(it, Locale.ENGLISH) }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    getAddressForTiramisuAndAbove(mLocation, geocoder)
-                } else {
-                    getAddressForSdkEarlierTheTiramisu(mLocation, geocoder)
-                }
-                mBinding.showWeatherBtn.visibility = View.VISIBLE
+                applyResolvedAddress(createCoordinateAddress(coordinates), place.displayName)
             }
 
             override fun onError(status: Status) {
-                showToast("${context?.resources?.getString(R.string.google_search_error)}: ${status.statusMessage}")
+                // Keep the last resolved place; do not interrupt with an error toast.
             }
         })
 
         mBinding.showWeatherBtn.setOnClickListener {
+            if (!::mAddress.isInitialized || mNavController.currentDestination?.id != R.id.googleMapsFragment) return@setOnClickListener
             val address = try {
                 mLocation ?: arguments?.getString("cityName") ?: ""
             } catch (e: Exception) {
@@ -179,8 +178,13 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     }
 
     private fun getAddressForSdkEarlierTheTiramisu(location: String?, geocoder: Geocoder?) {
-        val list = location?.let {
-            geocoder?.getFromLocationName(it, 1)
+        val list = try {
+            location?.let {
+                geocoder?.getFromLocationName(it, 1)
+            }
+        } catch (e: IOException) {
+            Log.w("GoogleMapsFragment", "Unable to geocode location name: $location", e)
+            null
         }
         list?.size?.let { listSize ->
             if (listSize > 0) {
@@ -193,19 +197,42 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun getAddressForTiramisuAndAbove(location: String?, geocoder: Geocoder?) {
-        location?.let {
-            geocoder?.getFromLocationName(it, 1) { list ->
-                if (list.size > 0) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        applyResolvedAddress(list[0], location)
+        try {
+            location?.let {
+                geocoder?.getFromLocationName(it, 1) { list ->
+                    if (list.size > 0) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            applyResolvedAddress(list[0], location)
+                        }
                     }
                 }
             }
+        } catch (e: IOException) {
+            Log.w("GoogleMapsFragment", "Unable to geocode location name: $location", e)
+        }
+    }
+
+    private fun getAddressFromLocation(latLng: LatLng): Address? {
+        return try {
+            Geocoder(requireContext(), Locale.ENGLISH)
+                .getFromLocation(latLng.latitude, latLng.longitude, 1)
+                ?.firstOrNull()
+        } catch (e: IOException) {
+            Log.w("GoogleMapsFragment", "Unable to reverse geocode map location", e)
+            null
+        }
+    }
+
+    private fun createCoordinateAddress(latLng: LatLng): Address {
+        return Address(Locale.ENGLISH).apply {
+            latitude = latLng.latitude
+            longitude = latLng.longitude
         }
     }
 
     private fun applyResolvedAddress(address: Address, fallbackName: String?) {
         mAddress = address
+        mBinding.showWeatherBtn.visibility = View.VISIBLE
         lat = address.latitude.toString()
         long = address.longitude.toString()
         val placeName = resolvePlaceName(address, fallbackName)

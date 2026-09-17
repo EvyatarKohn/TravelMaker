@@ -5,115 +5,89 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAround
-import com.evya.myweatherapp.model.dailyweathermodelold.DailyWeather
-import com.evya.myweatherapp.model.pollution.Pollution
 import com.evya.myweatherapp.model.weathermodel.Weather
+import com.evya.myweatherapp.model.dailyweathermodelold.DailyWeather
+import com.evya.myweatherapp.model.citiesaroundmodel.CitiesAround
+import com.evya.myweatherapp.model.pollution.Pollution
 import com.evya.myweatherapp.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WeatherViewModel @Inject constructor(
-    private val repository: WeatherRepository
-) : ViewModel() {
+class WeatherViewModel @Inject constructor(private val repository: WeatherRepository) : ViewModel() {
+    private val mWeatherLiveData = MutableLiveData<Pair<Weather?, Int?>>()
+    val weatherRepo: LiveData<Pair<Weather?, Int?>> = mWeatherLiveData
 
-    private var mWeatherLiveData = MutableLiveData<Pair<Weather?, Int?>>()
-    val weatherRepo: LiveData<Pair<Weather?, Int?>>
-        get() = mWeatherLiveData
+    private val mDailyWeatherLiveData = MutableLiveData<Pair<DailyWeather?, Int?>>()
+    val dailyWeatherRepo: LiveData<Pair<DailyWeather?, Int?>> = mDailyWeatherLiveData
 
-    private var mDailyWeatherLiveData = MutableLiveData<Pair<DailyWeather?, Int?>>()
-    val dailyWeatherRepo: LiveData<Pair<DailyWeather?, Int?>>
-        get() = mDailyWeatherLiveData
+    private val mCitiesAroundLiveData = MutableLiveData<Pair<CitiesAround?, Int?>>()
+    val citiesAroundRepo: LiveData<Pair<CitiesAround?, Int?>> = mCitiesAroundLiveData
 
-    private var mCitiesAroundLiveData = MutableLiveData<Pair<CitiesAround?, Int?>>()
-    val citiesAroundRepo: LiveData<Pair<CitiesAround?, Int?>>
-        get() = mCitiesAroundLiveData
+    private val mPollutionLiveData = MutableLiveData<Pair<Pollution?, Int?>>()
+    val pollutionRepo: LiveData<Pair<Pollution?, Int?>> = mPollutionLiveData
 
-    private var mPollutionLiveData = MutableLiveData<Pair<Pollution?, Int?>>()
-    val pollutionRepo: LiveData<Pair<Pollution?, Int?>>
-        get() = mPollutionLiveData
+    private var weatherJob: Job? = null
+    private var dailyWeatherJob: Job? = null
+    private var citiesAroundJob: Job? = null
+    private var pollutionJob: Job? = null
 
-
-    fun getWeather(cityName: String, units: String) = viewModelScope.launch {
-        var cityNameTemp = cityName
-        if (cityName.contains("(")) {
-            cityNameTemp = cityName.substring(0, cityName.length - 5)
+    fun getWeather(cityName: String, units: String) {
+        weatherJob?.cancel()
+        weatherJob = viewModelScope.launch {
+            val result = weatherRequest(R.string.city_not_found_error) {
+                repository.getWeather(cityName.substringBefore("(").trim(), units)
+            }
+            result.first?.responseUnits = units
+            mWeatherLiveData.value = result
         }
-        repository.getWeather(cityNameTemp, units).let { response ->
-            if (response.isSuccessful) {
-                mWeatherLiveData.postValue(Pair(response.body(), null))
-            } else {
-                mWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
+    }
+
+    fun getWeatherByLocation(lat: String, long: String, units: String) {
+        weatherJob?.cancel()
+        weatherJob = viewModelScope.launch {
+            val result = weatherRequest(R.string.city_not_found_error) {
+                repository.getCityByLocation(lat, long, units)
+            }
+            result.first?.responseUnits = units
+            mWeatherLiveData.value = result
+        }
+    }
+
+    fun getDailyWeather(cityName: String, countryCode: String, units: String) {
+        dailyWeatherJob?.cancel()
+        dailyWeatherJob = viewModelScope.launch {
+            mDailyWeatherLiveData.value = weatherRequest(R.string.daily_weather_error) {
+                repository.getDailyWeather(cityName.substringBefore("(").trim() + "," + countryCode, units)
             }
         }
     }
 
-    fun getWeatherByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
-        repository.getCityByLocation(lat, long, units).let { response ->
-            if (response.isSuccessful) {
-                if (response.body()?.timezone?.substringAfter("/").isNullOrEmpty() || response.body()?.timezone?.substringBefore("/").isNullOrEmpty()) {
-                    mWeatherLiveData.postValue(
-                        Pair(null, R.string.city_not_found_error)
-                    )
-                }
-                mWeatherLiveData.postValue(Pair(response.body(), null))
-            } else {
-                mWeatherLiveData.postValue(Pair(null, R.string.city_not_found_error))
+    fun getDailyWeatherByLocation(lat: String, long: String, units: String) {
+        dailyWeatherJob?.cancel()
+        dailyWeatherJob = viewModelScope.launch {
+            mDailyWeatherLiveData.value = weatherRequest(R.string.daily_weather_error) {
+                repository.getDailyWeatherByLocation(lat, long, units)
             }
         }
     }
 
-    fun getDailyWeather(cityName: String, countryCode: String, units: String) =
-        viewModelScope.launch {
-            var cityNameTemp = cityName
-            if (cityName.contains("(")) {
-                cityNameTemp = cityName.substring(0, cityName.length - 5)
-            }
-            cityNameTemp += ",$countryCode"
-            repository.getDailyWeather(cityNameTemp, units).let { response ->
-                if (response.isSuccessful) {
-                    mDailyWeatherLiveData.postValue(Pair(response.body(), null))
-                } else {
-                    mDailyWeatherLiveData.postValue(
-                        Pair(null, R.string.daily_weather_error)
-                    )
-                }
-            }
-        }
-
-    fun getDailyWeatherByLocation(lat: String, long: String, units: String) =
-        viewModelScope.launch {
-            repository.getDailyWeatherByLocation(lat, long, units).let { response ->
-                if (response.isSuccessful) {
-                    mDailyWeatherLiveData.postValue(Pair(response.body(), null))
-                } else {
-                    mDailyWeatherLiveData.postValue(
-                        Pair(null, R.string.daily_weather_error)
-                    )
-                }
-            }
-        }
-
-    fun getCitiesAround(lat: String, long: String, units: String) = viewModelScope.launch {
-        repository.getCitiesAround(lat, long, units).let { response ->
-            if (response.isSuccessful) {
-                mCitiesAroundLiveData.postValue(Pair(response.body(), null))
-            } else {
-                mCitiesAroundLiveData.postValue(
-                    Pair(null, R.string.cities_around_error)
-                )
+    fun getCitiesAround(lat: String, long: String, units: String) {
+        citiesAroundJob?.cancel()
+        citiesAroundJob = viewModelScope.launch {
+            mCitiesAroundLiveData.value = weatherRequest(R.string.cities_around_error) {
+                repository.getCitiesAround(lat, long, units)
             }
         }
     }
 
-    fun getAirPollution(lat: String, long: String) = viewModelScope.launch {
-        repository.getAirPollution(lat, long).let { response ->
-            if (response.isSuccessful) {
-                mPollutionLiveData.postValue(Pair(response.body(), null))
-            } else {
-                mPollutionLiveData.postValue(Pair(null, R.string.pollution_error))
+    fun getAirPollution(lat: String, long: String) {
+        pollutionJob?.cancel()
+        pollutionJob = viewModelScope.launch {
+            mPollutionLiveData.value = weatherRequest(R.string.pollution_error) {
+                repository.getAirPollution(lat, long)
             }
         }
     }

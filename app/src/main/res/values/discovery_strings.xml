@@ -34,4 +34,8 @@
     <string name="discover_retry">Try again</string>
     <string name="discover_choose_category">Choose an activity from the suggestions or categories below.</string>
     <string name="discover_location_needed">Choose a location on the map before searching for activities.</string>
+    <string name="discover_weather_indoor">Weather looks rough for outdoor time. Museums, food, and indoor spots are a safer bet.</string>
+    <string name="discover_weather_outdoor">A good outdoor window is ahead. Parks, viewpoints, and open-air places fit well.</string>
+    <string name="discover_weather_unknown">Browse any category. Weather tips appear after a forecast loads.</string>
+    <string name="results_weather_sorted">Sorted with indoor-friendly places first for today’s conditions.</string>
 </resources>

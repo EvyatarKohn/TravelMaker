@@ -50,6 +50,7 @@
     <string name="show_weather_btn">Show weather</string>
     <string name="search_bar_hint">Enter Address, City Or Zip Code</string>
     <string name="google_search_error">Error in search request</string>
+    <string name="selected_map_location">Selected map location</string>
 
     <!--  Places Api strings  -->
     <string name="museum_request_error">Museum request error</string>

@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -26,6 +25,8 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAM
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_WHAT_TO_DO
 import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.AttractionMapActivity
+import com.evya.myweatherapp.util.bestOutdoorWindow
+import com.evya.myweatherapp.util.preferIndoorOuting
 import com.evya.myweatherapp.viewmodels.PlacesSearchState
 import com.evya.myweatherapp.viewmodels.PlacesViewModel
 import com.google.android.gms.ads.AdError
@@ -88,6 +89,28 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         ui.cancelSearch.setOnClickListener { placesViewModel.cancel() }
         placesViewModel.state.observe(viewLifecycleOwner, ::render)
         loadAd()
+        showWeatherHint(ui)
+    }
+
+    private fun showWeatherHint(ui: ChooseAttractionFragmentLayoutBinding) {
+        val weather = MainData.weather
+        if (weather == null) {
+            ui.weatherHint.setText(R.string.discover_weather_unknown)
+            return
+        }
+        val now = System.currentTimeMillis() / 1000
+        val hours = weather.hourly.orEmpty().filter { it.dt.toLong() >= now - 3600 }
+            .sortedBy { it.dt }.take(24)
+        val window = bestOutdoorWindow(
+            hours,
+            weather.daily.orEmpty().map { it.sunrise.toLong()..it.sunset.toLong() },
+            weather.isImperial(),
+            now,
+        )
+        ui.weatherHint.setText(
+            if (preferIndoorOuting(weather, window != null)) R.string.discover_weather_indoor
+            else R.string.discover_weather_outdoor
+        )
     }
 
     private fun searchText(activities: List<String>) {
@@ -106,7 +129,11 @@ class ChooseAttractionFragment : Fragment(R.layout.choose_attraction_fragment_la
         val latitude = MainData.lat.toDoubleOrNull()
         val longitude = MainData.long.toDoubleOrNull()
         if (latitude == null || longitude == null || latitude !in -90.0..90.0 || longitude !in -180.0..180.0) {
-            Toast.makeText(requireContext(), R.string.discover_location_needed, Toast.LENGTH_LONG).show()
+            val ui = binding ?: return
+            ui.statusPanel.isVisible = true
+            ui.statusTitle.setText(R.string.discover_error_title)
+            ui.statusBody.setText(R.string.discover_location_needed)
+            ui.retrySearch.isVisible = false
             return
         }
         val ui = binding ?: return

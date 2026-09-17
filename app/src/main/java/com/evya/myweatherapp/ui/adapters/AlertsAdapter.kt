@@ -56,5 +56,5 @@ class AlertsViewHolder(itemBinding: AlertItemBinding) :
         desc?.text = alertsDescription
         sender?.text = senderName
     }
-    private fun getAlertTime(alertTime: Int?) = SimpleDateFormat("dd/MM  HH:mm", Locale.getDefault()).format((alertTime ?: 1) * 1000L)
+    private fun getAlertTime(alertTime: Int?) = SimpleDateFormat("dd/MM  HH:mm", Locale.ENGLISH).format((alertTime ?: 1) * 1000L)
 }

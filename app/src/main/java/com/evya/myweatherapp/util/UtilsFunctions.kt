@@ -7,7 +7,6 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 
 class UtilsFunctions {
@@ -18,13 +17,6 @@ class UtilsFunctions {
 
         fun setContext(context: Context) {
             this.context = context
-        }
-        fun showToast(error: String?) {
-            Toast.makeText(
-                context,
-                error,
-                Toast.LENGTH_SHORT
-            ).show()
         }
 
         fun setSpanBold(start: Int, textView: TextView, string: String? = null) {
