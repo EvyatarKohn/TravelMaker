@@ -1,0 +1,4 @@
+<resources>
+    <string name="widget_open">Open TravelMaker to refresh the forecast</string>
+    <string name="widget_description">Your last viewed forecast. Updates when weather is loaded in the app.</string>
+</resources>

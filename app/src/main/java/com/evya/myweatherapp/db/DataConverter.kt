@@ -194,3 +194,12 @@ val MIGRATION_FORM_1_TO_2 = object : Migration(1, 2) {
         db.execSQL("ALTER TABLE cities_temp RENAME TO cities")
     }
 }
+
+/** Preserves favorites/cache when adding per-response temperature units. */
+val MIGRATION_10_11 = object : Migration(10, 11) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "ALTER TABLE cities ADD COLUMN responseUnits TEXT NOT NULL DEFAULT 'metric'"
+        )
+    }
+}

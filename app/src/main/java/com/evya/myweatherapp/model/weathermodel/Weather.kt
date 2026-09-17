@@ -4,7 +4,6 @@ package com.evya.myweatherapp.model.weathermodel
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.evya.myweatherapp.Constants
-import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.model.dailyweathermodel.DailyWeather
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -59,9 +58,14 @@ data class Weather(
 
     var callTime: Long,
 
-    var dailyWeather: DailyWeather?
+    var dailyWeather: DailyWeather?,
+
+    /** Units of the API values stored on this row (`metric` / `imperial`). Not from the JSON body. */
+    var responseUnits: String = Constants.METRIC,
 
 ) {
+    fun isImperial(): Boolean = responseUnits == Constants.IMPERIAL
+
     fun changeDoubleToInt(double: Double): Int {
         return double.toInt()
     }
@@ -69,11 +73,11 @@ data class Weather(
     fun setTimeToHour(time: Int): String {
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         sdf.timeZone = TimeZone.getTimeZone(timezone)
-        return sdf.format(Date((time.toLong() * 1000) + timezoneOffset))
+        return sdf.format(Date(time.toLong() * 1000))
     }
 
     fun getDegreeUnits(temp: Double): String {
-        return if (MainData.degreesUnits == Constants.IMPERIAL) {
+        return if (isImperial()) {
             temp.toInt().toString() + " \u2109" // Fahrenheit symbol
         } else {
             temp.toInt().toString() + " \u2103" // Celsius symbol
@@ -81,7 +85,7 @@ data class Weather(
     }
 
     fun getWindSpeedDegree(): String {
-        return if (MainData.degreesUnits == Constants.IMPERIAL) {
+        return if (isImperial()) {
             Constants.IMPERIAL_DEGREE
         } else {
             Constants.METRIC_DEGREE
@@ -89,24 +93,23 @@ data class Weather(
     }
 
     fun getVisibilityUnits(visibility: Int): String {
-        return if (MainData.degreesUnits == Constants.IMPERIAL) {
+        return if (isImperial()) {
             (visibility / 1609).toString() + Constants.MILE
         } else {
             (visibility / 1000).toString() + Constants.KM
         }
     }
 
-    fun precipitationToday(): String {
-        var rainHeight = "0"
-        val text = "Rain Today:\n"
-        if (daily?.get(0)?.rain != null) {
-            rainHeight = daily[0].rain.toString()
-        }
-
-        return if (MainData.degreesUnits == Constants.METRIC) {
-            text + rainHeight + Constants.MM
+    fun precipitationAmount(): String {
+        val rainHeight = daily?.firstOrNull()?.rain?.toString() ?: "0"
+        return if (!isImperial()) {
+            rainHeight + Constants.MM
         } else {
-            text + (String.format("%.2f", rainHeight.toDouble() * 0.04)) + Constants.INCH
+            String.format(Locale.US, "%.2f", rainHeight.toDouble() * 0.04) + Constants.INCH
         }
+    }
+
+    fun precipitationToday(): String {
+        return "Rain Today:\n" + precipitationAmount()
     }
 }

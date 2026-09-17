@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.evya.myweatherapp.model.weathermodel.Weather
 
-@Database(entities = [Weather::class], version = 10, exportSchema = false)
+@Database(entities = [Weather::class], version = 11, exportSchema = false)
 @TypeConverters(DataConverter::class)
 abstract class CitiesDB : RoomDatabase() {
 
@@ -26,7 +26,7 @@ abstract class CitiesDB : RoomDatabase() {
                             CitiesDB::class.java,
                             "cities.db"
                         )
-//                            .addMigrations(MIGRATION_FORM_1_TO_2)
+                            .addMigrations(MIGRATION_10_11)
                             .fallbackToDestructiveMigration()
                             .build()
                 }

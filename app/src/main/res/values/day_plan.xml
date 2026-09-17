@@ -1,0 +1,25 @@
+<resources>
+    <string name="plan_title">Your day, your way.</string>
+    <string name="plan_subtitle">Save the places you love. Put them in your order.</string>
+    <string name="plan_add">Add to day plan</string>
+    <string name="plan_added">In your day plan</string>
+    <string name="plan_open">Day plan</string>
+    <string name="plan_date">Choose a date</string>
+    <string name="plan_date_value">Planned for %1$s</string>
+    <string name="plan_notes">Notes, meeting points, things to bring…</string>
+    <string name="plan_empty">Your next adventure starts with a place. Find attractions and tap “Add to day plan”.</string>
+    <string name="plan_local">Saved on this device · Route and travel times are not calculated</string>
+    <string name="plan_share">Share plan</string>
+    <string name="plan_directions">Directions</string>
+    <string name="plan_remove">Remove</string>
+    <string name="plan_up">Move up</string>
+    <string name="plan_down">Move down</string>
+    <string name="plan_removed">Place removed from your day plan</string>
+    <string name="plan_undo">Undo</string>
+    <string name="plan_stop">Stop %1$d · %2$s</string>
+    <string name="plan_no_share">No sharing app is available</string>
+    <string name="results_selected">Selected on map</string>
+    <string name="results_empty">No places in this category. Choose another category.</string>
+    <string name="results_fit">Show all places</string>
+    <string name="results_search_hint">Filter places by name</string>
+</resources>

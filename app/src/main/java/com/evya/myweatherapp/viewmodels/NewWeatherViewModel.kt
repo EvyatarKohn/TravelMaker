@@ -11,6 +11,7 @@ import com.evya.myweatherapp.model.geocode.GeoCode
 import com.evya.myweatherapp.repository.NewWeatherRepository
 import com.evya.myweatherapp.repository.GeoCodeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,15 +26,36 @@ class NewWeatherViewModel @Inject constructor(private val newWeatherRepository: 
     private val mCityNameLiveData = MutableLiveData<Pair<GeoCode?, Int?>>()
     val cityNameData: LiveData<Pair<GeoCode?, Int?>> = mCityNameLiveData
 
-    fun getWeatherByLocation(lat: String, long: String, units: String) = viewModelScope.launch {
-        mWeatherLiveData.value = weatherRequest(R.string.city_not_found_error) { newWeatherRepository.getWeatherByLocation(lat, long, units) }
+    private var weatherJob: Job? = null
+    private var dailyWeatherJob: Job? = null
+    private var cityNameJob: Job? = null
+
+    fun getWeatherByLocation(lat: String, long: String, units: String) {
+        weatherJob?.cancel()
+        weatherJob = viewModelScope.launch {
+            val result = weatherRequest(R.string.city_not_found_error) {
+                newWeatherRepository.getWeatherByLocation(lat, long, units)
+            }
+            result.first?.responseUnits = units
+            mWeatherLiveData.value = result
+        }
     }
 
-    fun getWeatherForSpecificDay(lat: String, long: String, date: String, units: String) = viewModelScope.launch {
-        mDailyWeatherLiveData.value = weatherRequest(R.string.daily_error) { newWeatherRepository.getWeatherForSpecificDay(lat, long, date, units) }
+    fun getWeatherForSpecificDay(lat: String, long: String, date: String, units: String) {
+        dailyWeatherJob?.cancel()
+        dailyWeatherJob = viewModelScope.launch {
+            mDailyWeatherLiveData.value = weatherRequest(R.string.daily_error) {
+                newWeatherRepository.getWeatherForSpecificDay(lat, long, date, units)
+            }
+        }
     }
 
-    fun getCityNameByLocation(lat: String, long: String) = viewModelScope.launch {
-        mCityNameLiveData.value = weatherRequest(R.string.city_not_found_error) { geoCodeRepo.getCityNameByLocation(lat, long) }
+    fun getCityNameByLocation(lat: String, long: String) {
+        cityNameJob?.cancel()
+        cityNameJob = viewModelScope.launch {
+            mCityNameLiveData.value = weatherRequest(R.string.city_not_found_error) {
+                geoCodeRepo.getCityNameByLocation(lat, long)
+            }
+        }
     }
 }
