@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,6 +24,10 @@ import com.evya.myweatherapp.model.placesmodel.Feature
 import com.evya.myweatherapp.model.placesmodel.Places
 import com.evya.myweatherapp.model.PlanStop
 import com.evya.myweatherapp.repository.DayPlanStore
+import com.evya.myweatherapp.MainData
+import com.evya.myweatherapp.util.bestOutdoorWindow
+import com.evya.myweatherapp.util.preferIndoorOuting
+import com.evya.myweatherapp.util.rankPlacesForWeather
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -122,7 +125,22 @@ class AttractionMapActivity : AppCompatActivity() {
 
     private fun showResults(all: List<Feature>) {
         val query = binding.search.text.toString().trim()
-        visiblePlaces = all.filter { (filter.isEmpty() || filter in kinds(it)) && name(it).contains(query, true) }
+        val filtered = all.filter { (filter.isEmpty() || filter in kinds(it)) && name(it).contains(query, true) }
+        val weather = MainData.weather
+        val now = System.currentTimeMillis() / 1000
+        val hours = weather?.hourly.orEmpty().filter { it.dt.toLong() >= now - 3600 }
+            .sortedBy { it.dt }.take(24)
+        val window = weather?.let {
+            bestOutdoorWindow(
+                hours,
+                it.daily.orEmpty().map { day -> day.sunrise.toLong()..day.sunset.toLong() },
+                it.isImperial(),
+                now,
+            )
+        }
+        val indoorFirst = preferIndoorOuting(weather, window != null)
+        visiblePlaces = rankPlacesForWeather(filtered, indoorFirst)
+        binding.weatherSortHint.isVisible = indoorFirst && visiblePlaces.isNotEmpty()
         resultsAdapter.notifyDataSetChanged()
         binding.resultCount.text = getString(R.string.results_count, visiblePlaces.size)
         binding.emptyResults.isVisible = visiblePlaces.isEmpty()
@@ -170,7 +188,7 @@ class AttractionMapActivity : AppCompatActivity() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         } catch (_: ActivityNotFoundException) {
-            Toast.makeText(this, R.string.results_no_maps, Toast.LENGTH_SHORT).show()
+            // Maps app unavailable.
         }
     }
 

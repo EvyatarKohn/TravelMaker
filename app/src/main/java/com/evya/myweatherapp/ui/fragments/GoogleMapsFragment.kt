@@ -25,7 +25,6 @@ import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SEARCH_IN_GOOGLE_MAP
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.SHOW_WEATHER
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsParamsStrings.PARAMS_CITY_NAME
-import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -106,7 +105,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 mGoogleMap.clear()
                 val fallback = getString(R.string.selected_map_location)
                 applyResolvedAddress(createCoordinateAddress(latLng), fallback)
-                val geocoder = Geocoder(requireContext().applicationContext, Locale.getDefault())
+                val geocoder = Geocoder(requireContext().applicationContext, Locale.ENGLISH)
                 geocodeJob = viewLifecycleOwner.lifecycleScope.launch {
                     val address = withContext(Dispatchers.IO) {
                         try { geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)?.firstOrNull() }
@@ -150,7 +149,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
             }
 
             override fun onError(status: Status) {
-                showToast("${context?.resources?.getString(R.string.google_search_error)}: ${status.statusMessage}")
+                // Keep the last resolved place; do not interrupt with an error toast.
             }
         })
 
@@ -215,7 +214,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
     private fun getAddressFromLocation(latLng: LatLng): Address? {
         return try {
-            Geocoder(requireContext(), Locale.getDefault())
+            Geocoder(requireContext(), Locale.ENGLISH)
                 .getFromLocation(latLng.latitude, latLng.longitude, 1)
                 ?.firstOrNull()
         } catch (e: IOException) {
@@ -225,7 +224,7 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     }
 
     private fun createCoordinateAddress(latLng: LatLng): Address {
-        return Address(Locale.getDefault()).apply {
+        return Address(Locale.ENGLISH).apply {
             latitude = latLng.latitude
             longitude = latLng.longitude
         }

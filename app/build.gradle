@@ -132,4 +132,7 @@ dependencies {
 
     // Google Ads
     implementation "com.google.android.gms:play-services-ads:$play_services_ads"
+
+    // Widget background refresh
+    implementation "androidx.work:work-runtime-ktx:2.10.5"
 }

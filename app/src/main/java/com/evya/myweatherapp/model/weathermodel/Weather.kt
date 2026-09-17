@@ -71,7 +71,7 @@ data class Weather(
     }
 
     fun setTimeToHour(time: Int): String {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val sdf = SimpleDateFormat("HH:mm", Locale.ENGLISH)
         sdf.timeZone = TimeZone.getTimeZone(timezone)
         return sdf.format(Date(time.toLong() * 1000))
     }

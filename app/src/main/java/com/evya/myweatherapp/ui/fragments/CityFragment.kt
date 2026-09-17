@@ -35,6 +35,7 @@ import com.evya.myweatherapp.MainData.lat
 import com.evya.myweatherapp.MainData.long
 import com.evya.myweatherapp.MainData.weather
 import com.evya.myweatherapp.R
+import com.evya.myweatherapp.UnitPrefs
 import com.evya.myweatherapp.databinding.CityFragmentLayoutBinding
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEvents
 import com.evya.myweatherapp.firebaseanalytics.FireBaseEventsNamesStrings.CHANGE_TEMP_UNITS
@@ -66,7 +67,6 @@ import kotlin.math.roundToInt
 import com.evya.myweatherapp.ui.dialogs.DailyDialog
 import com.evya.myweatherapp.util.forecastScrollTarget
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
-import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
 import com.evya.myweatherapp.viewmodels.CitiesViewModel
 import com.evya.myweatherapp.viewmodels.NewWeatherViewModel
 import com.google.android.gms.ads.AdError
@@ -252,7 +252,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mWeatherViewModel.dailyWeatherData.observe(viewLifecycleOwner) { response ->
             if (response.first == null) {
-                response.second?.let { showToast(getString(it)) }
                 return@observe
             }
             mFavWeather?.dailyWeather = response.first
@@ -274,7 +273,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 //                    checkIfAlreadyInDB(cityData[0].localNames.en)
 //                    mFavoritesViewModel.setCityName(cityData[0].localNames.en)
                 } else {
-                    showToast(context?.getString(R.string.didnt_choose_city_error))
                     (activity as MainActivity).getLastLocation()
                 }
             }
@@ -334,6 +332,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         val normalized = if (units == IMPERIAL) IMPERIAL else METRIC
         degreesUnits = normalized
         mCelsius = normalized == METRIC
+        UnitPrefs.save(requireContext(), normalized)
         val start = if (mCelsius) 0 else mBinding.units.text.length - 1
         val end = if (mCelsius) 1 else mBinding.units.text.length
         setColorSpan(start, end, R.color.turquoise, R.string.units, mBinding.units)
@@ -459,12 +458,14 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     end = units.text.length
                     degreesUnits = IMPERIAL
                     mCelsius = false
+                    UnitPrefs.save(requireContext(), degreesUnits)
 
                 } else {
                     start = 0
                     end = 1
                     degreesUnits = METRIC
                     mCelsius = true
+                    UnitPrefs.save(requireContext(), degreesUnits)
                 }
 
                 setColorSpan(
@@ -525,7 +526,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                     )
                     mNavController.navigate(R.id.action_cityFragment_to_alertsFragment, bundle)
 
-                } ?: showToast("No alerts in this area")
+                }
             }
         }
     }

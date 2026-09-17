@@ -7,15 +7,21 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import com.evya.myweatherapp.MainData
 import com.evya.myweatherapp.R
 import com.evya.myweatherapp.model.weathermodel.Weather
 import com.evya.myweatherapp.util.forecastTime
 
-/** Last successful in-app forecast with timestamp; no background API calls. */
+/** Home-screen forecast; refreshed in-app and periodically by [WeatherWidgetWorker]. */
 class WeatherWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, manager: AppWidgetManager, appWidgetIds: IntArray) {
         appWidgetIds.forEach { manager.updateAppWidget(it, views(context)) }
     }
+
+    override fun onEnabled(context: Context) {
+        WeatherWidgetWorker.ensureScheduled(context)
+    }
+
     companion object {
         fun publish(context: Context, weather: Weather) {
             context.getSharedPreferences("weather_widget", Context.MODE_PRIVATE).edit()
@@ -23,12 +29,17 @@ class WeatherWidget : AppWidgetProvider() {
                 .putString("temperature", weather.getDegreeUnits(weather.current.temp))
                 .putString("description", weather.current.weather.firstOrNull()?.description.orEmpty())
                 .putString("updated", forecastTime(weather.callTime / 1000, weather.timezone, "d MMM HH:mm"))
+                .putString("lat", weather.lat.toString())
+                .putString("lon", weather.lon.toString())
+                .putString("units", weather.responseUnits.ifBlank { MainData.degreesUnits })
                 .apply()
             val manager = AppWidgetManager.getInstance(context)
             manager.getAppWidgetIds(ComponentName(context, WeatherWidget::class.java)).forEach {
                 manager.updateAppWidget(it, views(context))
             }
+            WeatherWidgetWorker.ensureScheduled(context)
         }
+
         private fun views(context: Context): RemoteViews {
             val prefs = context.getSharedPreferences("weather_widget", Context.MODE_PRIVATE)
             return RemoteViews(context.packageName, R.layout.weather_widget).apply {

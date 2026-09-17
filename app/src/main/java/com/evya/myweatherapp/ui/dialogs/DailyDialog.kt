@@ -88,7 +88,7 @@ class DailyDialog: DialogFragment() {
         val calendar = Calendar.getInstance()
         val tz = TimeZone.getDefault()
         calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.timeInMillis))
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val sdf = SimpleDateFormat("HH:mm", Locale.ENGLISH)
         return sdf.format(Date(time.toLong() * 1000))
     }
 
