@@ -41,6 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.util.Locale
 
 
@@ -99,19 +100,9 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
                 mGoogleMap.clear()
                 lat = latLng.latitude.toString()
                 long = latLng.longitude.toString()
-                val address = Geocoder(requireContext(), Locale.getDefault())
-                    .getFromLocation(latLng.latitude, latLng.longitude, 1)
-                    ?.firstOrNull()
-                if (address == null) {
-                    showToast(getString(R.string.google_search_error))
-                    return@setOnMapClickListener
-                }
-                mAddress = address
-                mLocation = resolvePlaceName(address, null)
-                mGoogleMap.addMarker(
-                    MarkerOptions().position(LatLng(latLng.latitude, latLng.longitude))
-                )
-                mBinding.showWeatherBtn.visibility = View.VISIBLE
+                val address = getAddressFromLocation(latLng)
+                    ?: createCoordinateAddress(latLng)
+                applyResolvedAddress(address, getString(R.string.selected_map_location))
             }
         }
 
@@ -179,8 +170,13 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
     }
 
     private fun getAddressForSdkEarlierTheTiramisu(location: String?, geocoder: Geocoder?) {
-        val list = location?.let {
-            geocoder?.getFromLocationName(it, 1)
+        val list = try {
+            location?.let {
+                geocoder?.getFromLocationName(it, 1)
+            }
+        } catch (e: IOException) {
+            Log.w("GoogleMapsFragment", "Unable to geocode location name: $location", e)
+            null
         }
         list?.size?.let { listSize ->
             if (listSize > 0) {
@@ -193,14 +189,36 @@ class GoogleMapsFragment : Fragment(R.layout.google_maps_fragment_layout) {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun getAddressForTiramisuAndAbove(location: String?, geocoder: Geocoder?) {
-        location?.let {
-            geocoder?.getFromLocationName(it, 1) { list ->
-                if (list.size > 0) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        applyResolvedAddress(list[0], location)
+        try {
+            location?.let {
+                geocoder?.getFromLocationName(it, 1) { list ->
+                    if (list.size > 0) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            applyResolvedAddress(list[0], location)
+                        }
                     }
                 }
             }
+        } catch (e: IOException) {
+            Log.w("GoogleMapsFragment", "Unable to geocode location name: $location", e)
+        }
+    }
+
+    private fun getAddressFromLocation(latLng: LatLng): Address? {
+        return try {
+            Geocoder(requireContext(), Locale.getDefault())
+                .getFromLocation(latLng.latitude, latLng.longitude, 1)
+                ?.firstOrNull()
+        } catch (e: IOException) {
+            Log.w("GoogleMapsFragment", "Unable to reverse geocode map location", e)
+            null
+        }
+    }
+
+    private fun createCoordinateAddress(latLng: LatLng): Address {
+        return Address(Locale.getDefault()).apply {
+            latitude = latLng.latitude
+            longitude = latLng.longitude
         }
     }
 

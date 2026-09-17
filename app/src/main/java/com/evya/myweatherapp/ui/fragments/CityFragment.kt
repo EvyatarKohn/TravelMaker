@@ -54,6 +54,7 @@ import com.evya.myweatherapp.ui.MainActivity
 import com.evya.myweatherapp.ui.adapters.CitiesAroundAdapter
 import com.evya.myweatherapp.ui.adapters.DailyWeatherAdapter
 import com.evya.myweatherapp.ui.dialogs.DailyDialog
+import com.evya.myweatherapp.util.forecastScrollTarget
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setColorSpan
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.setSpanBold
 import com.evya.myweatherapp.util.UtilsFunctions.Companion.showToast
@@ -94,31 +95,29 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     var getSpecificDayWeather: ((time: Int) -> Unit)? = null
     private var mInterstitialAd: InterstitialAd? = null
     private var showAd = 0
-    private val linearLayoutManager =  LinearLayoutManager(activity?.applicationContext, LinearLayoutManager.HORIZONTAL, false)
     private val scrollListener = object : OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            mBinding.apply {
-                linearLayoutManager.let {
-                    if (it.findFirstCompletelyVisibleItemPosition() == 0) {
-                        leftScrollArrow.visibility = View.GONE
-                    } else {
-                        leftScrollArrow.visibility = View.VISIBLE
-                    }
-
-                    if (it.findLastCompletelyVisibleItemPosition() == (mDailyAdapter.itemCount - 1)) {
-                        rightScrollArrow.visibility = View.GONE
-                    } else {
-                        rightScrollArrow.visibility = View.VISIBLE
-                    }
-                }
-            }
+            val manager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+            val itemCount = recyclerView.adapter?.itemCount ?: 0
+            mBinding.leftScrollArrow.isVisible = itemCount > 0 &&
+                manager.findFirstVisibleItemPosition() != RecyclerView.NO_POSITION &&
+                manager.findFirstCompletelyVisibleItemPosition() != 0
+            mBinding.rightScrollArrow.isVisible = itemCount > 0 &&
+                manager.findLastVisibleItemPosition() != RecyclerView.NO_POSITION &&
+                manager.findLastCompletelyVisibleItemPosition() != itemCount - 1
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mBinding = CityFragmentLayoutBinding.bind(view)
+        // Layout managers belong to an individual RecyclerView and its view lifecycle.
+        mBinding.mainCitiesRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        mBinding.dailyWeatherRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        mBinding.dailyWeatherRecyclerView.addOnScrollListener(scrollListener)
         mNavController = Navigation.findNavController(view)
         onClickListener()
         setColorSpan(
@@ -199,12 +198,21 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
             } else {
 //                getCityByLocation(lat, long, degreesUnits)
                 it.second?.let { it1 ->
-                    showToast(context?.getString(it1, mCityName))
+                    com.google.android.material.snackbar.Snackbar.make(
+                        mBinding.root, getString(it1, mCityName),
+                        com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
+                    ).setAction(R.string.weather_retry) {
+                        getWeatherByLocation(lat, long, degreesUnits)
+                    }.show()
                 }
             }
         }
 
         mWeatherViewModel.dailyWeatherData.observe(viewLifecycleOwner) { response ->
+            if (response.first == null) {
+                response.second?.let { showToast(getString(it)) }
+                return@observe
+            }
             mFavWeather?.dailyWeather = response.first
             weather?.dailyWeather = response.first
             handleInterstitialAd(response.first)
@@ -239,7 +247,8 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 weather = tempWeather
                 // every 2 hour (7200000 milisec) make a new call
                 if ((System.currentTimeMillis() - tempWeather.callTime) > FIVE_HOURS) {
-                    mCitiesViewModel.removeCityDataFromDB(tempWeather.cityName)
+                    // Keep the last successful forecast visible if refreshing fails.
+                    setWeatherData(tempWeather)
                     getWeatherByLocation(lat, long, degreesUnits)
 //                    mFavoritesViewModel.addCityDataToDB(tempWeather)
                 } else {
@@ -318,7 +327,6 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
     private fun setTopAdapter(list: List<CitiesAroundData>) {
         mMainCitiesAdapter = CitiesAroundAdapter(activity?.applicationContext, list, mNavController)
-        mBinding.mainCitiesRecyclerView.layoutManager = linearLayoutManager
         mBinding.mainCitiesRecyclerView.adapter = mMainCitiesAdapter
     }
 
@@ -342,9 +350,7 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
 
         mDailyAdapter =
             DailyWeatherAdapter(this, dailyWeatherList, minTempArray, maxTempArray, activity?.applicationContext)
-        mBinding.dailyWeatherRecyclerView.layoutManager = linearLayoutManager
         mBinding.dailyWeatherRecyclerView.adapter = mDailyAdapter
-        mBinding.dailyWeatherRecyclerView.addOnScrollListener(scrollListener)
 
         getSpecificDayWeather = { time ->
             val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(time * 1000L)
@@ -369,6 +375,16 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
         mCountryCode = weather.timezone.substringBefore("/")
 
         mBinding.mainImageRain.isVisible = isRaining(weather.current.weather[0].description)
+    }
+
+    private fun scrollForecast(offset: Int) {
+        val recyclerView = mBinding.dailyWeatherRecyclerView
+        val manager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val position = if (offset < 0) manager.findFirstVisibleItemPosition()
+            else manager.findLastVisibleItemPosition()
+        val target = forecastScrollTarget(position, recyclerView.adapter?.itemCount ?: 0, offset)
+            ?: return
+        recyclerView.smoothScrollToPosition(target)
     }
 
     private fun onClickListener() {
@@ -435,27 +451,11 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
                 }
             }
             leftScrollArrow.setOnClickListener {
-                mBinding.rightScrollArrow.visibility = View.VISIBLE
-                if ((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 0) {
-                    mBinding.dailyWeatherRecyclerView.smoothScrollToPosition((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() - 3)
-                } else {
-                    mBinding.dailyWeatherRecyclerView.smoothScrollToPosition(0)
-                }
-
-                if((dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() == 0) {
-                    mBinding.leftScrollArrow.visibility = View.GONE
-                }
+                scrollForecast(-3)
             }
 
             rightScrollArrow.setOnClickListener{
-                val layoutManager = (dailyWeatherRecyclerView.layoutManager as LinearLayoutManager)
-                mBinding.leftScrollArrow.visibility = View.VISIBLE
-                dailyWeatherRecyclerView.smoothScrollToPosition(
-                    (dailyWeatherRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() + 3
-                )
-                if(layoutManager.findLastCompletelyVisibleItemPosition() == (dailyWeatherRecyclerView.adapter?.itemCount?.minus(1) ?: false)) {
-                    mBinding.rightScrollArrow.visibility = View.GONE
-                }
+                scrollForecast(3)
             }
 
             alertSignImg.setOnClickListener {
@@ -501,6 +501,16 @@ class CityFragment : Fragment(R.layout.city_fragment_layout) {
     }*/
 
 
+
+    override fun onDestroyView() {
+        mBinding.dailyWeatherRecyclerView.removeOnScrollListener(scrollListener)
+        mBinding.dailyWeatherRecyclerView.adapter = null
+        mBinding.dailyWeatherRecyclerView.layoutManager = null
+        mBinding.mainCitiesRecyclerView.adapter = null
+        mBinding.mainCitiesRecyclerView.layoutManager = null
+        getSpecificDayWeather = null
+        super.onDestroyView()
+    }
 
     override fun onResume() {
         super.onResume()
