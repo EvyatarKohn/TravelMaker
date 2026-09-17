@@ -14,4 +14,10 @@
     <color name="grey_f7">#f7f7f7</color>
     <color name="grey_54">#545454</color>
     <color name="blue_link">#0645AD</color>
+    <color name="blue">#0000ff</color>
+    <color name="surface_soft">#F4F8F8</color>
+    <color name="ink">#183B40</color>
+    <color name="ink_secondary">#526C70</color>
+    <color name="accent_dark">#007C80</color>
+    <color name="border_soft">#D9E6E6</color>
 </resources>

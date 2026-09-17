@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:layout_marginBottom="12dp" android:background="@drawable/dashboard_card">
+    <TextView android:id="@+id/selected_label" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/results_selected" android:textSize="12sp" android:textColor="@color/accent_dark" android:visibility="gone" />
+    <TextView android:id="@+id/place_name" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/ink" />
+    <TextView android:id="@+id/place_details" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/ink_secondary" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button android:id="@+id/show_on_map" style="@style/TravelButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/results_show_map" />
+        <Button android:id="@+id/open_maps" style="@style/TravelButton" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/plan_directions" />
+    </LinearLayout>
+    <Button android:id="@+id/save_place" style="@style/TravelButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/plan_add" />
+</LinearLayout>

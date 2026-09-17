@@ -1,0 +1,4 @@
+<resources>
+    <string name="weather_retry">Retry</string>
+    <string name="weather_connection_error">Could not connect to the weather service. Check your connection and try again.</string>
+</resources>

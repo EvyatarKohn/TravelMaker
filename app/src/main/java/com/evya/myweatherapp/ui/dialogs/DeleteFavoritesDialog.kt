@@ -1,78 +1,33 @@
 package com.evya.myweatherapp.ui.dialogs
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.view.Window
+import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.evya.myweatherapp.R
-import com.evya.myweatherapp.databinding.DeleteFavoritesDilaogLayoutBinding
-import com.evya.myweatherapp.ui.fragments.FavoritesFragment
 
 class DeleteFavoritesDialog : DialogFragment() {
-    private var mBinding: DeleteFavoritesDilaogLayoutBinding? = null
-    private lateinit var mFavoritesFragment: FavoritesFragment
-    private var mDeleteAllFavorites: Boolean = false
-    private lateinit var mCityName: String
-
     companion object {
-        fun newInstance(
-            favoritesFragment: FavoritesFragment,
-            deleteAllFavorites: Boolean,
-            cityName: String
-        ) =
-            DeleteFavoritesDialog().apply {
-                mFavoritesFragment = favoritesFragment
-                mDeleteAllFavorites = deleteAllFavorites
-                mCityName = cityName
-            }
+        const val RESULT = "delete_favorites"
+        const val DELETE_ALL = "delete_all"
+        const val CITY = "city"
+        fun newInstance(all: Boolean, city: String = "") = DeleteFavoritesDialog().apply {
+            arguments = bundleOf(DELETE_ALL to all, CITY to city)
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        mBinding = DeleteFavoritesDilaogLayoutBinding.inflate(LayoutInflater.from(context))
-
-        if (mDeleteAllFavorites) {
-            mBinding?.title?.text = resources.getString(R.string.are_you_sure_you_want_to_delete_all)
-        } else {
-            mBinding?.title?.text = resources.getString(R.string.are_you_sure_you_want_to_delete, mCityName)
-        }
-
-        mBinding?.yes?.setOnClickListener {
-            if (mDeleteAllFavorites) {
-                mFavoritesFragment.deleteAllCitiesFromDB()
-            } else {
-                mFavoritesFragment.deleteSpecificCityFromDB()
+        val all = requireArguments().getBoolean(DELETE_ALL)
+        val city = requireArguments().getString(CITY).orEmpty()
+        return AlertDialog.Builder(requireContext())
+            .setTitle(if (all) R.string.favorites_clear_all else R.string.favorites_remove_title)
+            .setMessage(if (all) getString(R.string.favorites_remove_all_message)
+                else getString(R.string.favorites_remove_message, city))
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.remove) { _, _ ->
+                parentFragmentManager.setFragmentResult(RESULT, bundleOf(DELETE_ALL to all, CITY to city))
             }
-            dismiss()
-        }
-
-        mBinding?.no?.setOnClickListener {
-            dismiss()
-        }
-
-        return AlertDialog.Builder(requireActivity()).setView(mBinding?.root).create()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val window = dialog?.window
-        window?.setBackgroundDrawableResource(android.R.color.transparent)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mBinding = null
+            .create()
     }
 }

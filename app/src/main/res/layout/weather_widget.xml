@@ -1,0 +1,6 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center_vertical" android:padding="16dp" android:background="@drawable/dashboard_hero">
+    <TextView android:id="@+id/widget_city" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink" android:textSize="18sp" android:textStyle="bold" android:maxLines="1" android:ellipsize="end" />
+    <TextView android:id="@+id/widget_temperature" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink" android:textSize="32sp" android:textStyle="bold" />
+    <TextView android:id="@+id/widget_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink" android:textSize="14sp" android:maxLines="1" android:ellipsize="end" />
+    <TextView android:id="@+id/widget_updated" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_secondary" android:textSize="11sp" android:maxLines="1" />
+</LinearLayout>

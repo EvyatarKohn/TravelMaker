@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layoutDirection="ltr">
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/map_layout"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@color/surface_soft">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:paddingHorizontal="16dp">
+        <Button android:id="@+id/back_button" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/results_back" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:paddingHorizontal="16dp" android:text="@string/results_title" android:textSize="22sp" android:textStyle="bold" android:textColor="@color/ink" />
+        <Button android:id="@+id/day_plan" style="@style/TravelButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/plan_open" />
+    </LinearLayout>
+    <com.google.android.gms.maps.MapView android:id="@+id/map_layout" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+    <Button android:id="@+id/show_all" style="@style/TravelButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/results_fit" />
+    <TextView android:id="@+id/weather_sort_hint" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="16dp" android:paddingBottom="4dp" android:text="@string/results_weather_sorted" android:textColor="@color/accent_dark" android:textSize="13sp" android:visibility="gone" />
+    <EditText android:id="@+id/search" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginHorizontal="16dp" android:paddingHorizontal="16dp" android:background="@drawable/dashboard_card" android:textColor="@color/ink" android:textColorHint="@color/ink_secondary" android:hint="@string/results_search_hint" android:inputType="text" android:maxLines="1" android:imeOptions="actionDone" android:importantForAutofill="no" />
+    <Spinner android:id="@+id/category_filter" android:layout_width="match_parent" android:layout_height="48dp" android:paddingHorizontal="16dp" android:contentDescription="@string/results_filter" />
+    <TextView android:id="@+id/result_count" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="20dp" android:paddingBottom="8dp" android:textColor="@color/ink_secondary" android:accessibilityLiveRegion="polite" />
+    <TextView android:id="@+id/empty_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:text="@string/results_empty" android:textColor="@color/ink_secondary" android:visibility="gone" />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/results_list" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingHorizontal="12dp" android:paddingBottom="12dp" />
+</LinearLayout>
